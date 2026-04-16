@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=myapp
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_DATABASE=myapp
+      - MARIADB_USER=user
+      - MARIADB_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  mqtt:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto_broker
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mariadb-data:
