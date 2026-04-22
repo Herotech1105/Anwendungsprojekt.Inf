@@ -2,6 +2,7 @@ import os
 import subprocess
 
 def write_file(path, content):
+    """Writes to file and handles errors"""
     try:
         with open(path, 'w') as f:
             f.write(content)
@@ -9,13 +10,14 @@ def write_file(path, content):
         print(f"Error writing to {path}: {e}")
 
 def run_cmd(cmd):
-    """Executes a shell command and handles errors."""
+    """Executes a shell command and handles errors"""
     try:
         subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing: {cmd}\n{e.stderr}")
 
 def configure_ap():
+    """Creates Configuration"""
     # 1. Configuration Parameters
     wlan_iface = "wlan0"
     eth_iface = "eth0"
@@ -25,10 +27,11 @@ def configure_ap():
     print(f"--- Starting Configuration on {wlan_iface} ---")
 
     # 2. Stop services to prevent locks during config
+    print("Stopping hostapd and dnsmasq")
     run_cmd("systemctl stop hostapd dnsmasq")
 
     # 3. Hostapd Configuration
-    # Changed TKIP to CCMP for better security and N-speed support
+    print("Writing Hostapd-Configuration to '/etc/hostapd/hostapd.conf'")
     hostapd_conf = f"""
 interface={wlan_iface}
 driver=nl80211
@@ -47,7 +50,7 @@ rsn_pairwise=CCMP
     write_file("/etc/hostapd/hostapd.conf", hostapd_conf)
 
     # 4. Dnsmasq Configuration
-    # Added 'bind-interfaces' to prevent conflicts with other DNS services
+    print("Writing DNSMASQ-Configuration to '/etc/dnsmasq.conf'")
     dnsmasq_conf = f"""
 interface={wlan_iface}
 bind-interfaces
@@ -65,7 +68,7 @@ address=/gw.wlan/192.168.4.1
     run_cmd(f"ip link set {wlan_iface} up")
 
     # 6. Enable IP Forwarding (Persistent)
-    # This ensures it survives a reboot if you don't run the script again
+    print("Enable persistent IP Forwarding")
     run_cmd("sysctl -w net.ipv4.ip_forward=1")
 
     # 7. Firewall & NAT (Flush old rules to prevent duplicates)
@@ -82,6 +85,7 @@ address=/gw.wlan/192.168.4.1
     run_cmd("systemctl enable hostapd dnsmasq")
     run_cmd("systemctl start hostapd dnsmasq")
 
+    # 9. Setup Complete
     print(f"\n--- Setup Complete! ---")
     print(f"SSID: {ssid}")
     print(f"Gateway: 192.168.4.1")
