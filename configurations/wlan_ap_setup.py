@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 def write_file(path, content):
     """Writes to file and handles errors"""
     try:
@@ -9,12 +10,14 @@ def write_file(path, content):
     except OSError as e:
         print(f"Error writing to {path}: {e}")
 
+
 def run_cmd(cmd):
     """Executes a shell command and handles errors"""
     try:
         subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing: {cmd}\n{e.stderr}")
+
 
 def configure_ap():
     """Creates Configuration"""
@@ -27,8 +30,8 @@ def configure_ap():
     print(f"--- Starting Configuration on {wlan_iface} ---")
 
     # 2. Stop services to prevent locks during config
-    print("Stopping hostapd and dnsmasq")
-    run_cmd("systemctl stop hostapd dnsmasq")
+    print("Stopping services")
+    run_cmd("systemctl stop hostapd dnsmasq nftables")
 
     # 3. Hostapd Configuration
     print("Writing Hostapd-Configuration to '/etc/hostapd/hostapd.conf'")
@@ -71,27 +74,56 @@ address=/gw.wlan/192.168.4.1
     print("Enable persistent IP Forwarding")
     run_cmd("sysctl -w net.ipv4.ip_forward=1")
 
-    # 7. Firewall & NAT (Flush old rules to prevent duplicates)
-    print("Configuring NAT and Routing...")
-    run_cmd("iptables -F")
-    run_cmd("iptables -t nat -F")
-    run_cmd(f"iptables -t nat -A POSTROUTING -o {eth_iface} -j MASQUERADE")
-    run_cmd(f"iptables -A FORWARD -i {eth_iface} -o {wlan_iface} -m state --state RELATED,ESTABLISHED -j ACCEPT")
-    run_cmd(f"iptables -A FORWARD -i {wlan_iface} -o {eth_iface} -j ACCEPT")
+    # 7. Firewall & NAT
+    print("Configuring NAT")
+    nat_config = """#!/usr/sbin/bft -f
+
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0;
+        policy drop;
+        iif "lo" accept
+        ct state established,related accept
+        iif "wlan0" tcp dport 22 accept
+        ip protocol icmp accept
+    }
+}
+
+table ip nat {
+    chain prerouting {
+        type nat hook prerouting priority dstnat;
+        policy accept;
+    }
+    chain postrouting {
+        type nat hook postrouting priority srcnat;
+        policy accept;
+        oif "wlan0" masquerade
+    }
+}
+"""
+    write_file("/etc/nftables.conf", nat_config)
 
     # 8. Start Services
     print("Restarting services...")
     run_cmd("systemctl unmask hostapd")
-    run_cmd("systemctl enable hostapd dnsmasq")
-    run_cmd("systemctl start hostapd dnsmasq")
+    run_cmd("systemctl enable hostapd dnsmasq nftables")
+    run_cmd("systemctl start hostapd dnsmasq nftables")
 
     # 9. Setup Complete
     print(f"\n--- Setup Complete! ---")
     print(f"SSID: {ssid}")
     print(f"Gateway: 192.168.4.1")
 
+
 if __name__ == "__main__":
     if os.geteuid() != 0:
         print("Please run this script with 'sudo'.")
     else:
         configure_ap()
+
+# Sources:
+# https://www.elektronik-kompendium.de/sites/raspberry-pi/2002171.htm 23.04.2026
+# API Kapitel 2 Folien
+# https://raspberrypi-guide.github.io/networking/create-wireless-access-point 23.04.2026
