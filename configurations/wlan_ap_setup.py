@@ -26,6 +26,7 @@ def configure_ap():
     eth_iface = "eth0"
     ssid = "Production"
     password = "Production-01"
+    run_cmd("nmcli device set wlan0 managed no")
 
     print(f"--- Starting Configuration on {wlan_iface} ---")
 
@@ -72,11 +73,12 @@ address=/gw.wlan/192.168.4.1
 
     # 6. Enable IP Forwarding (Persistent)
     print("Enable persistent IP Forwarding")
-    run_cmd("sysctl -w net.ipv4.ip_forward=1")
+    ip_sysctl = "net.ipv4.ip_forward=1"
+    write_file("/etc/sysctl.conf", ip_sysctl)
 
     # 7. Firewall & NAT
     print("Configuring NAT")
-    nat_config = """#!/usr/sbin/bft -f
+    nat_config = """#!/usr/sbin/nft -f
 
 flush ruleset
 
@@ -86,8 +88,17 @@ table inet filter {
         policy drop;
         iif "lo" accept
         ct state established,related accept
-        iif "wlan0" tcp dport 22 accept
+        tcp dport 22 accept 
         ip protocol icmp accept
+    }
+
+    chain output {
+        type filter hook output priority 0;
+        policy accept; # Explicitly allow you to send data out
+    }
+    
+    chain forward {
+        type filter hook forward priority 0; policy accept;
     }
 }
 
@@ -99,10 +110,11 @@ table ip nat {
     chain postrouting {
         type nat hook postrouting priority srcnat;
         policy accept;
-        oif "wlan0" masquerade
+        oif "eth0" masquerade
     }
 }
 """
+
     write_file("/etc/nftables.conf", nat_config)
 
     # 8. Start Services
@@ -127,3 +139,4 @@ if __name__ == "__main__":
 # https://www.elektronik-kompendium.de/sites/raspberry-pi/2002171.htm 23.04.2026
 # API Kapitel 2 Folien
 # https://raspberrypi-guide.github.io/networking/create-wireless-access-point 23.04.2026
+# https://u-labs.de/portal/einstiegt-in-nftables-so-funktioniert-die-neue-firewall-unterschiede-zu-iptables/ 24.04.2026
