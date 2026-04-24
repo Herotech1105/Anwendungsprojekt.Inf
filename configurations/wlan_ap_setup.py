@@ -73,6 +73,7 @@ address=/gw.wlan/192.168.4.1
 
     # 6. Enable IP Forwarding (Persistent)
     print("Enable persistent IP Forwarding")
+    run_cmd("sysctl -w net.ipv4.ip_forward=1")
     ip_sysctl = "net.ipv4.ip_forward=1"
     write_file("/etc/sysctl.conf", ip_sysctl)
 
@@ -88,7 +89,7 @@ table inet filter {
         policy drop;
         iif "lo" accept
         ct state established,related accept
-        tcp dport 22 accept 
+        iif "wlan0" tcp dport 22 accept 
         ip protocol icmp accept
     }
 
