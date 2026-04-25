@@ -89,8 +89,9 @@ table inet filter {
         policy drop;
         iif "lo" accept
         ct state established,related accept
-        iif "wlan0" tcp dport 22 accept 
+        tcp dport 22 accept 
         ip protocol icmp accept
+        iif "wlan0" udp dport { 53, 67 } accept
     }
 
     chain output {
