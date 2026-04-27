@@ -1,28 +1,17 @@
 from picozero import pico_led
-from machine import Pin
-from time import sleep
-import dht
+from time import sleep, time
 import network
+import urequests as requests
 
 """WLAN Parameter für den Aufbau einer Verbindung"""
 SSID = "Production"
 PASSWORD = "Production-01"
 
-"""Inputs / Outputs für Sensoren / Aktoren"""
-sensor = dht.DHT22(Pin(2))
-radiator = Pin(12, Pin.OUT)
-fan = Pin(13, Pin.OUT)
-
-"""Pico LED zeigt an, ob der Pico W läuft"""
-pico_led.on()
-
-"""Zustände für Temperatur- und Luftfeuchtigkeit"""
-STATE_HIGH_TEMP_LOW_HUM = 0
-STATE_LOW_TEMP_LOW_HUM  = 1
-STATE_HIGH_TEMP_HIGH_HUM = 2
-STATE_LOW_TEMP_HIGH_HUM  = 3
-
-current_state = None
+"""REST API für Friedrichshafen"""
+API_URL = (
+    "https://api.open-meteo.com/v1/forecast"
+    "?latitude=47.65&longitude=9.48&current_weather=true"
+)
 
 def connect_wifi():
     """Verbindung zum WLAN"""
@@ -39,69 +28,50 @@ def connect_wifi():
     return wlan
 
 
-def apply_state(state):
-    """Anwendung State-Machine"""
-    global current_state
-
-    if state == STATE_HIGH_TEMP_LOW_HUM:
-        radiator.off()
-        fan.on()
-        print("STATE: Temp HIGH, Hum LOW")
-
-    elif state == STATE_LOW_TEMP_LOW_HUM:
-        radiator.on()
-        fan.on()
-        print("STATE: Temp LOW, Hum LOW")
-
-    elif state == STATE_HIGH_TEMP_HIGH_HUM:
-        radiator.off()
-        fan.off()
-        print("STATE: Temp HIGH, Hum HIGH")
-
-    elif state == STATE_LOW_TEMP_HIGH_HUM:
-        radiator.on()
-        fan.off()
-        print("STATE: Temp LOW, Hum HIGH")
-
-    current_state = state
+def fetch_outside_temperature():
+    """Daten aus Friedrichshafen"""
+    try:
+        print("Hole Außentemperatur von Open-Meteo...")
+        r = requests.get(API_URL)
+        data = r.json()
+        r.close()
+        temp = data["current_weather"]["temperature"]
+        print("Außentemperatur Friedrichshafen:", temp, "°C")
+        return temp
+    except Exception as e:
+        print("Fehler bei API:", e)
+        return None
 
 
-def determine_state(temp, hum):
-    """State-Machine"""
-    if temp > 20.5 and hum < 52.0:
-        return STATE_HIGH_TEMP_LOW_HUM
+def get_blink_interval(temp):
+    """Pico LED Blinkintervall"""
+    if temp is None:
+        return 1.0
+    if temp < 10:
+        return 2.0
+    elif temp <= 25:
+        return 1.0
+    else:
+        return 0.3
 
-    if temp < 19.5 and hum < 52.0:
-        return STATE_LOW_TEMP_LOW_HUM
 
-    if temp > 20.5 and hum > 58.0:
-        return STATE_HIGH_TEMP_HIGH_HUM
+wlan = connect_wifi() # Wlan verbinden
 
-    if temp < 19.5 and hum > 58.0:
-        return STATE_LOW_TEMP_HIGH_HUM
-
-    return current_state
-
-wlan = connect_wifi()
+outside_temp = fetch_outside_temperature()
+blink_interval = get_blink_interval(outside_temp)
+next_api_call = time() + 600  # alle 10 Minuten
 
 while True:
     """Haupt-Loop"""
-    try:
-        sensor.measure()
-        temp = sensor.temperature()
-        hum = sensor.humidity()
+    pico_led.on()
+    sleep(blink_interval / 2)
+    pico_led.off()
+    sleep(blink_interval / 2)
 
-        print("Temperature: {:.1f}°C   Humidity: {:.1f}%".format(temp, hum))
-
-        new_state = determine_state(temp, hum)
-
-        if new_state != current_state:
-            apply_state(new_state)
-
-    except OSError:
-        print("Failed to read sensor:", e)
-
-    sleep(2)
+    if time() >= next_api_call:
+        outside_temp = fetch_outside_temperature()
+        blink_interval = get_blink_interval(outside_temp)
+        next_api_call = time() + 600
 
 # https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3
 # Zugriff: 18.04.2026
