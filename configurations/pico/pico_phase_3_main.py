@@ -9,15 +9,8 @@ import urequests as requests
 SSID = "Production" # Production
 PASSWORD = "Production-01" # Production-01
 
-"""Backend-Proxy
+"""Backend-Proxy"""
 BACKEND_PROXY_URL = "http://192.168.50.20:5000/weather"
-
-REST API für Friedrichshafen
-API_URL = (
-    "https://api.open-meteo.com/v1/forecast"
-    "?latitude=47.65&longitude=9.48&current_weather=true"
-)
-"""
 
 """Inputs / Outputs für Sensoren / Aktoren"""
 sensor = dht.DHT22(Pin(2, Pin.IN, Pin.PULL_UP))
@@ -48,32 +41,6 @@ def connect_wifi():
 
     print("Verbunden! IP:", wlan.ifconfig()[0])
     return wlan
-
-"""
-def fetch_outside_temperature():
-    try:
-        print("Hole Außentemperatur von Open-Meteo...")
-        r = requests.get(API_URL)
-        data = r.json()
-        r.close()
-        temp = data["current_weather"]["temperature"]
-        print("Außentemperatur Friedrichshafen:", temp, "°C")
-        return temp
-    except Exception as e:
-        print("Fehler bei API:", e)
-        return None
-
-
-def get_blink_interval(temp):
-    if temp is None:
-        return 1.0
-    if temp < 10:
-        return 2.0
-    elif temp <= 25:
-        return 1.0
-    else:
-        return 0.3
-"""
 
 def apply_state(state):
     """Anwendung State-Machine"""
@@ -120,26 +87,8 @@ def determine_state(temp, hum):
 
 # wlan = connect_wifi() # Wlan verbinden
 
-"""
-outside_temp = fetch_outside_temperature()
-blink_interval = get_blink_interval(outside_temp)
-next_api_call = time() + 600  # alle 10 Minuten
-"""
-
 while True:
     """Haupt-Loop"""
-    """
-    pico_led.on()
-    sleep(blink_interval / 2)
-    pico_led.off()
-    sleep(blink_interval / 2)
-
-    if time() >= next_api_call:
-        outside_temp = fetch_outside_temperature()
-        blink_interval = get_blink_interval(outside_temp)
-        next_api_call = time() + 600
-    """
-   
     try:
         sensor.measure()
         temp = sensor.temperature()
@@ -155,7 +104,7 @@ while True:
     except OSError:
         print("Failed to read sensor:", e)
 
-    sleep(2)
+    sleep(60)
 
 
 # https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3
