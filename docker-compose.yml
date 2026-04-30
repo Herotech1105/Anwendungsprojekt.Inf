@@ -38,15 +38,19 @@ services:
     container_name: mosquitto_broker
     restart: always
     ports:
-      - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config:rw
+      - ./mosquitto/data:/mosquitto/data:rw
+      - ./mosquitto/log:/mosquitto/log:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /set/localtime:/etc/localtime:ro
+    restart ´: unless-stopped
     networks:
-      - app-network
-
+      app-network:
+        aliasses:
+          - mqtt.lab.local
+      
 networks:
   app-network:
     driver: bridge
