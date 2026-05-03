@@ -53,10 +53,12 @@ services:
           - mqtt.lab.local
       sensor-network:
         aliasses:
-          - mqtt.lab.local
+          - mqtt.local
       
 networks:
   app-network:
+    driver: bridge
+  sensor-network:
     driver: bridge
 
 volumes:
