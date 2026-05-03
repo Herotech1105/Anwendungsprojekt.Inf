@@ -35,10 +35,11 @@ services:
 
   mqtt:
     image: eclipse-mosquitto:latest
-    container_name: mosquitto_broker
+    container_name: mqtt
     restart: always
     ports:
-      - "9001:9001"
+      - "1883:1883"
+      - "8883:8883"
     volumes:
       - ./mosquitto/config:/mosquitto/config:rw
       - ./mosquitto/data:/mosquitto/data:rw
@@ -48,6 +49,9 @@ services:
     restart ´: unless-stopped
     networks:
       app-network:
+        aliasses:
+          - mqtt.lab.local
+      sensor-network:
         aliasses:
           - mqtt.lab.local
       

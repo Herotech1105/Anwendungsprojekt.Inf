@@ -1,0 +1,3 @@
+user iotuser
+topic write sensor/data
+topic read actuator/control
