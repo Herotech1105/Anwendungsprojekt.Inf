@@ -36,7 +36,6 @@ services:
   mqtt:
     image: eclipse-mosquitto:latest
     container_name: mqtt
-    restart: always
     ports:
       - "1883:1883"
       - "8883:8883"
@@ -46,13 +45,10 @@ services:
       - ./mosquitto/log:/mosquitto/log:rw
       - /etc/timezone:/etc/timezone:ro
       - /set/localtime:/etc/localtime:ro
-    restart ´: unless-stopped
+    restart: unless-stopped
     networks:
-      app-network:
-        aliasses:
-          - mqtt.lab.local
       sensor-network:
-        aliasses:
+        aliases:
           - mqtt.local
       
 networks:
