@@ -43,6 +43,7 @@ services:
       - ./mosquitto/config:/mosquitto/config:rw
       - ./mosquitto/data:/mosquitto/data:rw
       - ./mosquitto/log:/mosquitto/log:rw
+      - ./mosquitto/secure:/mosquitto/secure:r
       - /etc/timezone:/etc/timezone:ro
       - /set/localtime:/etc/localtime:ro
     restart: unless-stopped
