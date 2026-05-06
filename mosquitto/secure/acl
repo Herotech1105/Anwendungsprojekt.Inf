@@ -1,3 +1,7 @@
 user iotuser
 topic write sensor/data
 topic read actuator/control
+
+user testuser
+topic read sensor/data
+topic write actuator/control
