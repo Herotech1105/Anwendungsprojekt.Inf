@@ -42,12 +42,15 @@ services:
       - ./mosquitto/config:/mosquitto/config:rw
       - ./mosquitto/data:/mosquitto/data:rw
       - ./mosquitto/log:/mosquitto/log:rw
-      - ./mosquitto/secure:/mosquitto/secure:r
+      - ./mosquitto/secure:/mosquitto/secure:ro
       - /etc/timezone:/etc/timezone:ro
       - /set/localtime:/etc/localtime:ro
     restart: unless-stopped
     networks:
       sensor-network:
+        aliases:
+          - mqtt.local
+      app-network:
         aliases:
           - mqtt.local
       
