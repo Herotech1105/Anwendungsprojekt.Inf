@@ -1,7 +1,7 @@
 require('dotenv').config(); // use .env file
 const express = require('express');
 const app = express();
-const pool = require('./config/database');
+const { getPool } = require('./config/database');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); 
@@ -39,6 +39,8 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     let conn;
     try {
         // connect to the database
+        const pool = await getPool();
+        console.log(pool);
         conn = await pool.getConnection();
         
         // Prepared Statement
