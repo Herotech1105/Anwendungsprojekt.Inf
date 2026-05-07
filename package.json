@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/Herotech1105/Anwendungsprojekt.Inf#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mariadb": "^3.5.2",
+    "require": "^0.4.4"
   }
 }
