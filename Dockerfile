@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD [ "node", "app-net/app.js" ]
+CMD [ "node", "app-net/server.js" ]
