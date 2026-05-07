@@ -2,6 +2,7 @@ require('dotenv').config(); // use .env file
 const mariadb = require('mariadb');
 const express = require('express');
 const app = express();
+const { getPool } = require('./config/database');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); 
@@ -29,16 +30,7 @@ app.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`);
 });
 
-//SQL Statements // ---------------------------------------- //
-
-// Pool configuration
-const pool = mariadb.createPool({
-     host: 'maria.local', 
-     user: 'db_write_user', 
-     password: 'password',
-     database: 'password',
-     connectionLimit: 5
-});
+//SQL Statements // ------------------------------------------------------------- //
 
 // @Post: save sensordata into database
 app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
@@ -48,6 +40,8 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     let conn;
     try {
         // connect to the database
+        const pool = await getPool();
+        console.log(pool);
         conn = await pool.getConnection();
         
         // Prepared Statement
