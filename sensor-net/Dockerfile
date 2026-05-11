@@ -1,6 +1,6 @@
 FROM python:3.12-alpine
 WORKDIR /code
-ENV MQTT_HOST=192.168.4.18
+ENV MQTT_HOST=mqtt
 ENV MQTT_USER="testuser"
 ENV MQTT_PASSWORD="test"
 ENV MQTT_TOPIC="sensor/data"
