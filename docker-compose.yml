@@ -5,8 +5,8 @@ services:
     restart: always
     environment:
       - DB_HOST=mariadb
-      - DB_USER=db_write_user
-      - DB_PASSWORD=password
+      - DB_USER=websrv_write
+      - DB_PASSWORD=pass-0123-iot
       - DB_NAME=myapp
       - PORT=3000
       - API_KEY=api_key
