@@ -14,6 +14,7 @@ import signal
 import ssl
 import sys
 import time
+import traceback
 from datetime import datetime, timezone
 from typing import Optional, Tuple
 
@@ -236,7 +237,8 @@ def main() -> None:
             client.connect(MQTT_HOST, MQTT_PORT, keepalive=MQTT_KEEPALIVE)
             client.loop_forever(retry_first_connection=True)
         except (OSError, ssl.SSLError) as exc:
-            log.error("Verbindungsfehler: %s. Neuer Versuch in 5s...", exc)
+            log.error("Detailed Connection Error:")
+            traceback.print_exc()
             time.sleep(5)
 
 

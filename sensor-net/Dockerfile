@@ -1,11 +1,11 @@
 FROM python:3.12-alpine
 WORKDIR /code
-ENV MQTT_HOST=mqtt
-ENV MQTT_USER="testuser"
-ENV MQTT_PASSWORD="test"
-ENV MQTT_TOPIC="sensor/data"
-ENV MQTT_CA_FILE="mqtt.crt"
-ENV MQTT_CLIENT_ID="controller"
+ENV MQTT_HOST=192.268.4.18
+ENV MQTT_PORT=8883
+ENV MQTT_USER=testuser
+ENV MQTT_PASSWORD=test
+ENV MQTT_TOPIC=sensor/data
+ENV MQTT_CA_FILE=ca.crt
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY mqtt.crt .
