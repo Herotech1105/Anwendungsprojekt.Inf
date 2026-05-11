@@ -124,7 +124,10 @@ def forward_to_backend(
             json=payload,
             headers=headers,
             timeout=HTTP_TIMEOUT,
+            verify=False, # Until nginx Certificate can be verified
         )
+
+
     except requests.RequestException as exc:
         log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)
         return
