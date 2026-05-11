@@ -9,6 +9,7 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=myapp
       - PORT=3000
+      - API_KEY=api_key
     depends_on:
       - db
     networks:

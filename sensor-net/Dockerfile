@@ -7,6 +7,7 @@ ENV MQTT_PASSWORD=test
 ENV MQTT_TOPIC=sensor/data
 ENV MQTT_CA_FILE=ca.crt
 ENV BACKEND_URL=https://www.lab.local/api/internal/sensordata
+ENV API_KEY=apikey
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY ca.crt .
