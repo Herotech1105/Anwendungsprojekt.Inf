@@ -1,6 +1,6 @@
 services:
   app:
-    build: ./app-net
+    build: .
     container_name: backend
     restart: always
     environment:
