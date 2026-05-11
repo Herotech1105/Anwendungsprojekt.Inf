@@ -35,7 +35,7 @@ MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", "controller")
 MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", "60"))
 # Wenn das Server-Zertifikat keinen passenden SAN/CN fuer den Docker-DNS-Namen
 # besitzt, kann die Hostname-Pruefung temporaer abgeschaltet werden.
-MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "false").lower() == "true"
+MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 
 # HTTP (Publish-Seite -> Webserver / Reverse Proxy)
 BACKEND_URL = os.getenv(
