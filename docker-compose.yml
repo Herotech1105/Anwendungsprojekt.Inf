@@ -3,8 +3,6 @@ services:
     build: ./app-net
     container_name: backend
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       - DB_HOST=mariadb
       - DB_USER=db_write_user
@@ -25,8 +23,6 @@ services:
       - MARIADB_DATABASE=myapp
       - MARIADB_USER=user
       - MARIADB_PASSWORD=password
-    ports:
-      - "3306:3306"
     volumes:
       - /mariadb/db:/var/lib/mysql
       - /mariadb/conf.d:/etc/mysql/conf.d:ro
@@ -53,14 +49,21 @@ services:
       sensor-network:
         aliases:
           - mqtt.local
-      app-network:
-        aliases:
-          - mqtt.local
 
   nginx:
     build: ./nginx
+    container_name: nginx_proxy
+    restart: unless-stopped
     ports:
       - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      app-network:
+        - aliases:
+            - proxy
 
 networks:
   app-network:
