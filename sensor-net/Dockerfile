@@ -4,11 +4,11 @@ ENV MQTT_HOST=192.168.4.18
 ENV MQTT_USER="testuser"
 ENV MQTT_PASSWORD="test"
 ENV MQTT_TOPIC="sensor/data"
-ENV MQTT_CA_FILE="ca.crt"
+ENV MQTT_CA_FILE="mqtt.crt"
 ENV MQTT_CLIENT_ID="controller"
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY ca.crt .
+COPY mqtt.crt .
 COPY . .
 EXPOSE 5000
 CMD ["python3", "controller.py" , "--debug"]
