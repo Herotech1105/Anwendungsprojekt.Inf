@@ -51,7 +51,7 @@ services:
           - mqtt.local
 
   nginx:
-    build: ./nginx
+    image: nginx:latest
     container_name: nginx_proxy
     restart: unless-stopped
     ports:
