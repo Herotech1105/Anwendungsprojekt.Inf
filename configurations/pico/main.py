@@ -1,28 +1,32 @@
 from time import sleep, time
-# import urequests as requests
+import ujson
 import wifi
 import states
+import mqtt
 
-"""Backend-Proxy"""
-BACKEND_PROXY_URL = "http://192.168.50.20:5000/weather"
+wlan = wifi.connect_wifi()
 
-# wlan = wifi.connect_wifi() # Wlan verbinden
+mqtt.client.connect()
 
 while True:
     """Haupt-Loop"""
     try:
         states.sensor.measure()
-        temp = states.sensor.temperature()
-        hum = states.sensor.humidity()
+        temp = round(states.sensor.temperature(), 1)
+        hum = round(states.sensor.humidity(), 1)
 
-        print("Temperature: {:.1f}°C   Humidity: {:.1f}%".format(temp, hum))
+        payload = ujson.dumps({
+          "temperature": temp,
+          "humidity": hum
+        })
+        
+        mqtt.client.publish("sensor/data", payload)
 
-        new_state = states.determine_state(temp, hum)
+        temp_state = states.determine_temp_state(temp)
+        hum_state  = states.determine_hum_state(hum)
 
-        if new_state != states.current_state:
-            states.apply_state(new_state)
-
-    except OSError:
+        states.apply_state(temp_state, hum_state)
+    except OSError as e:
         print("Failed to read sensor:", e)
 
     sleep(60)
