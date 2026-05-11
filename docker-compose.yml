@@ -75,6 +75,8 @@ services:
       - ./sensor-data/ca.crt:/ca.crt
     depends_on:
       - mqtt
+    extra_hosts:
+      - "www.lab.local:host-gateway"
     networks:
       sensor-network:
 
