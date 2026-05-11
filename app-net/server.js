@@ -20,6 +20,8 @@ const authenticateApiKey = (req, res, next) => {
 
 app.use(express.static('public'));
 
+app.set('trust proxy', true);
+
 // get status of server
 app.get('/api/status', (req, res) => {
     res.json({ status: 'online', timestamp: new Date() });
