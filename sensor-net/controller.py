@@ -39,7 +39,7 @@ MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 
 # HTTP (Publish-Seite -> Webserver / Reverse Proxy)
 BACKEND_URL = os.getenv(
-    "BACKEND_URL", "http://backend:3000/api/internal/sensordata"
+    "BACKEND_URL", "http://www.lab.local/api/internal/sensordata"
 )
 API_KEY = os.getenv("API_KEY", "")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
