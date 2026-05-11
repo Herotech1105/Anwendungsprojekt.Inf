@@ -72,7 +72,7 @@ services:
     build: sensor-net/
     restart: unless-stopped
     volumes:
-      - ./sensor-data/ca.crt:ca.crt
+      - ./sensor-data/ca.crt:/ca.crt
     depends_on:
       - mqtt
     networks:
