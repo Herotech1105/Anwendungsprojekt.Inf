@@ -36,7 +36,7 @@ app.listen(PORT, () => {
 // @Post: save sensordata into database
 app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     // validate data
-    const { temperature, humidity, timestamp} = validateSensorPayload(req.body.json()); 
+    const { temperature, humidity, timestamp} = validateSensorPayload(JSON.parse(req.body));
 
     let conn;
     try {
