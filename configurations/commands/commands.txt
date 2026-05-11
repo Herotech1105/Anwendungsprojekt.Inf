@@ -1,0 +1,17 @@
+# CA mit eigenem CN
+openssl genrsa -out ca.key 2048
+
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
+  -subj "/CN=mqtt.local"
+
+# Broker
+openssl genrsa -out mqtt.key 2048
+
+openssl req -new -key mqtt.key -out mqtt.csr \
+  -subj "/CN=192.168.4.18"
+
+openssl x509 -req -days 3650 -in mqtt.csr \
+  -CA ca.crt -CAkey ca.key -CAcreateserial -out mqtt.crt
+
+# Prüfen
+openssl verify -CAfile ca.crt mqtt.crt
