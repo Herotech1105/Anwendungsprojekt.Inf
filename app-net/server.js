@@ -64,6 +64,7 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
 validateSensorPayload = (data) => {
     const { temperature, humidity, timestamp } = data;
 
+    console.log(temperature, humidity, timestamp)
     // check if temperature and humidity are numbers
     if(isNaN(temperature) || isNaN(humidity)){
         return null;
