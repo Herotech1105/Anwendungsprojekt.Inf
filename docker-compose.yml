@@ -6,8 +6,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=db
-      - DB_USER=user
+      - DB_HOST=mariadb
+      - DB_USER=db_write_user
       - DB_PASSWORD=password
       - DB_NAME=myapp
     depends_on:
@@ -28,12 +28,13 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mariadb-data:/var/lib/mysql
-      - ./MariaDB:/docker-entrypoint-initdb.d
+      - /mariadb/db:/var/lib/mysql
+      - /mariadb/conf.d:/etc/mysql/conf.d:ro
+      - /mariadb/01_config.sql:/docker-entrypoint-initdb.d/01_config.sql:ro
     networks:
       app-network:
         aliases:
-          - maria.local
+          - maria
 
   mqtt:
     image: eclipse-mosquitto:latest

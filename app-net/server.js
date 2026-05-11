@@ -1,5 +1,4 @@
 require('dotenv').config(); // use .env file
-const mariadb = require('mariadb');
 const express = require('express');
 const app = express();
 const { getPool } = require('./config/database');
@@ -35,7 +34,7 @@ app.listen(PORT, () => {
 // @Post: save sensordata into database
 app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     // validate data
-    const { temperature, humidity, timestamp} = validateSensorPayload; 
+    const { temperature, humidity, timestamp} = validateSensorPayload(req.body.json()); 
 
     let conn;
     try {
@@ -49,7 +48,7 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
         const result = await conn.query(sql, [temperature, humidity, timestamp]);
 
         res.status(201).json({ 
-            status: "ok", inserted
+            status: "ok"
         });
     } catch (err) {
         res.status(400).json({ error: err.message || "invalid payload"});
@@ -64,7 +63,7 @@ validateSensorPayload = (data) => {
     const { temperature, humidity, timestamp } = data;
 
     // check if temperature and humidity are numbers
-    if(isNaN(temperature || isNaN(humidity))){
+    if(isNaN(temperature) || isNaN(humidity)){
         return null;
     }
 
@@ -81,11 +80,11 @@ validateSensorPayload = (data) => {
 
     // check if timestamp is still up-to-date
     const currentDate = new Date();
-    const minuteDifference = Math.floor((currentDate - date) / 6000);
+    const minuteDifference = Math.floor((currentDate - date) / 60000);
     if(minuteDifference < -5 || minuteDifference > 60){
         return null;
     }
     
     // return valid data
-    return (temperature, humidity, temperature);
+    return {temperature, humidity, timestamp};
 }

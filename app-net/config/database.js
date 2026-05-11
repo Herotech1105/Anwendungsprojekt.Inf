@@ -5,10 +5,10 @@ async function getPool() {
         // Hier ist der dynamische Import
         const mariadb = await import('mariadb');
         pool = mariadb.createPool({
-            host: 'maria.local', 
+            host: 'mariadb', 
             user: 'db_write_user', 
             password: 'password',
-            database: 'password',
+            database: 'myapp',
             connectionLimit: 5
         });
     }
