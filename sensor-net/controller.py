@@ -29,7 +29,7 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", "8883"))
 MQTT_USER = os.getenv("MQTT_USER", "testuser")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "sensor/data")
-MQTT_CA_FILE = os.getenv("MQTT_CA_FILE", "/app/CA/ca.crt")
+MQTT_CA_FILE = os.getenv("MQTT_CA_FILE")
 MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", "controller")
 MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", "60"))
 # Wenn das Server-Zertifikat keinen passenden SAN/CN fuer den Docker-DNS-Namen

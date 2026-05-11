@@ -68,6 +68,14 @@ services:
     depends_on:
       - webapp
 
+  controller:
+    build: sensor-net/
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+    networks:
+      sensor-network:
+
 networks:
   app-network:
     driver: bridge
