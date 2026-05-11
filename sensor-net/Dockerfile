@@ -7,8 +7,8 @@ ENV MQTT_TOPIC="sensor/data"
 ENV MQTT_CA_FILE="ca.crt"
 ENV MQTT_CLIENT_ID="controller"
 COPY requirements.txt .
-COPY ../CA/ca.crt .
 RUN pip install -r requirements.txt
+COPY ca.crt .
 COPY . .
 EXPOSE 5000
 CMD ["python3", "controller.py" , "--debug"]
