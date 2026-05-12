@@ -1,0 +1,39 @@
+"""Konfiguration und Logging fuer den Sensor-Controller."""
+
+import logging
+import os
+
+# MQTT (Subscribe-Seite)
+MQTT_HOST = os.getenv("MQTT_HOST", "mqtt.local")
+MQTT_PORT = int(os.getenv("MQTT_PORT", "8883"))
+MQTT_USER = os.getenv("MQTT_USER", "testuser")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "sensor/data")
+MQTT_CA_FILE = os.getenv("MQTT_CA_FILE")
+MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", "controller")
+MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", "60"))
+# Wenn das Server-Zertifikat keinen passenden SAN/CN fuer den Docker-DNS-Namen
+# besitzt, kann die Hostname-Pruefung temporaer abgeschaltet werden.
+MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
+
+# HTTP (Publish-Seite -> Webserver / Reverse Proxy)
+BACKEND_URL = os.getenv(
+    "BACKEND_URL", "https://www.lab.local/api/internal/sensordata"
+)
+API_KEY = os.getenv("API_KEY", "")
+HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
+
+# Plausibilitaetsbereiche (decken sich mit validateSensorPayload in server.js)
+TEMP_MIN = float(os.getenv("TEMP_MIN", "0"))
+TEMP_MAX = float(os.getenv("TEMP_MAX", "100"))
+HUM_MIN = float(os.getenv("HUM_MIN", "0"))
+HUM_MAX = float(os.getenv("HUM_MAX", "100"))
+
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+# Logging
+logging.basicConfig(
+    level=LOG_LEVEL,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+log = logging.getLogger("controller")
