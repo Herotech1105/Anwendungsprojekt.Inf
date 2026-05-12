@@ -29,7 +29,7 @@ services:
     volumes:
       - /mariadb/db:/var/lib/mysql
       - /mariadb/conf.d:/etc/mysql/conf.d:ro
-      - /mariadb/01_config.sql:/docker-entrypoint-initdb.d/01_config.sql:ro#
+      - /mariadb/01_config.sql:/docker-entrypoint-initdb.d/01_config.sql:ro
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       start_period: 10s
@@ -60,12 +60,17 @@ services:
           - mqtt.local
 
   nginx:
-    image: nginx:latest
+    image: owasp/modsecurity-crs:nginx
     container_name: nginx_proxy
     restart: unless-stopped
     ports:
       - "443:443"
       - "80:80"
+    environment:
+      - PARANOIA=1
+      - BACKEND=http://webapp:3000
+      - PROXY_SSL=off
+      - MSG="ModSecurity Attack Detected"
     volumes:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
       - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
