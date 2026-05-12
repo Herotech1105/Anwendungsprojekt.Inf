@@ -8,9 +8,9 @@ ENV MQTT_TOPIC=sensor/data
 ENV MQTT_CA_FILE=ca.crt
 ENV BACKEND_URL=https://www.lab.local/api/internal/sensordata
 ENV API_KEY=api_key
-ENV MQTT_TLS_INSECURE=false
+ENV MQTT_TLS_INSECURE=true
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 5000
-CMD ["python3", "controller.py" , "--debug"]
+CMD ["python3", "controller.py"]
