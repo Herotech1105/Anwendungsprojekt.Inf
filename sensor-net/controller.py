@@ -46,9 +46,9 @@ HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
 
 # Plausibilitaetsbereiche (decken sich mit validateSensorPayload in server.js)
 TEMP_MIN = float(os.getenv("TEMP_MIN", "0"))
-TEMP_MAX = float(os.getenv("TEMP_MAX", "60"))
-HUM_MIN = float(os.getenv("HUM_MIN", "10"))
-HUM_MAX = float(os.getenv("HUM_MAX", "70"))
+TEMP_MAX = float(os.getenv("TEMP_MAX", "100"))
+HUM_MIN = float(os.getenv("HUM_MIN", "0"))
+HUM_MAX = float(os.getenv("HUM_MAX", "100"))
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
