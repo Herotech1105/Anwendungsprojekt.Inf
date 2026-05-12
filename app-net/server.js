@@ -42,13 +42,14 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     try {
         // connect to the database
         const pool = await getPool();
-        console.log(pool);
         conn = await pool.getConnection();
+        console.log("Connection to mariaDB established")
 
         // Prepared Statement
         const sql = "INSERT INTO sensor_data (temperature, humidity, timestamp) VALUES (?, ?, ?)";
         const result = await conn.query(sql, [temperature, humidity, timestamp]);
 
+        console.log("Query: ", result)
         res.status(201).json({
             status: "ok"
         });
@@ -64,7 +65,6 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
 validateSensorPayload = (data) => {
     const {temperature, humidity, timestamp} = data;
 
-    console.log(temperature, humidity, timestamp)
     // check if temperature and humidity are numbers
     if (isNaN(temperature) || isNaN(humidity)) {
         return null;
