@@ -40,7 +40,6 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
 
     let conn;
     try {
-        // connect to the database
         const pool = await getPool();
         conn = await pool.getConnection();
         console.log("Connection to mariaDB established")
@@ -49,7 +48,7 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
         const sql = "INSERT INTO sensor_data (temperature, humidity, timestamp) VALUES (?, ?, ?)";
         const result = await conn.query(sql, [temperature, humidity, timestamp]);
 
-        console.log("Query: ", result)
+        console.log("Execution: ", result)
         res.status(201).json({
             status: "ok"
         });
@@ -77,11 +76,11 @@ validateSensorPayload = (data) => {
     }
 
     // check if temperature and humidity are in valid ranges
-    if (temperature < 0 || temperature > 60 || humidity < 10 || humidity > 70) {
+    if (temperature < 0 || temperature > 100 || humidity < 0 || humidity > 100) {
         return null;
     }
 
-    // check if timestamp is still up-to-date
+    // check if timestamp is up-to-date
     const currentDate = new Date();
     const minuteDifference = Math.floor((currentDate - date) / 60000);
     if (minuteDifference < -5 || minuteDifference > 60) {
@@ -89,9 +88,10 @@ validateSensorPayload = (data) => {
     }
 
 
-    const formated_timestamp = date.toISOString().slice(0, 19).replace('T', ' ')
-    // return valid data
     // Source - https://stackoverflow.com/a/11150727
+    const formated_timestamp = date.toISOString().slice(0, 19).replace('T', ' ')
+
+    // return valid data
     return {
         temperature, humidity, formated_timestamp
     };

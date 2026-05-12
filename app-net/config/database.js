@@ -8,7 +8,6 @@ let pool;
 
 async function getPool() {
     if (!pool) {
-        // Hier ist der dynamische Import
         const mariadb = await import('mariadb');
         pool = mariadb.createPool({
             host: DB_HOST,
