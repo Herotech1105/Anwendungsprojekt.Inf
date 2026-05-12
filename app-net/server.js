@@ -66,17 +66,20 @@ validateSensorPayload = (data) => {
 
     // check if temperature and humidity are numbers
     if (isNaN(temperature) || isNaN(humidity)) {
+        console.error("Temperature and humidity must be numbers");
         return null;
     }
 
     // check if timestamp is valid
     const date = new Date(timestamp);
     if (!(date instanceof Date && !isNaN(date.getTime()))) {
+        console.error("Invalid timestamp");
         return null;
     }
 
     // check if temperature and humidity are in valid ranges
-    if (temperature < 0 || temperature > 100 || humidity < 0 || humidity > 100) {
+    if (temperature < 0 || temperature > 100 || humidity < 0 || humidsity > 100) {
+        console.error("Temperature or humidity out of valid range");
         return null;
     }
 
@@ -84,6 +87,7 @@ validateSensorPayload = (data) => {
     const currentDate = new Date();
     const minuteDifference = Math.floor((currentDate - date) / 60000);
     if (minuteDifference < -5 || minuteDifference > 60) {
+        console.error("Timestamp is not up-to-date");
         return null;
     }
 
