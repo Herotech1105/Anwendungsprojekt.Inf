@@ -11,7 +11,8 @@ services:
       - PORT=3000
       - API_KEY=api_key
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -28,7 +29,13 @@ services:
     volumes:
       - /mariadb/db:/var/lib/mysql
       - /mariadb/conf.d:/etc/mysql/conf.d:ro
-      - /mariadb/01_config.sql:/docker-entrypoint-initdb.d/01_config.sql:ro
+      - /mariadb/01_config.sql:/docker-entrypoint-initdb.d/01_config.sql:ro#
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       app-network:
         aliases:
@@ -76,6 +83,7 @@ services:
       - ./sensor-data/ca.crt:/ca.crt
     depends_on:
       - mqtt
+      - webapp
     extra_hosts:
       - "www.lab.local:host-gateway"
     networks:
