@@ -8,7 +8,7 @@ ENV MQTT_TOPIC=sensor/data
 ENV MQTT_CA_FILE=ca.crt
 ENV BACKEND_URL=https://www.lab.local/api/internal/sensordata
 ENV API_KEY=api_key
-ENV MQTT_TLS_INSECURE=true
+ENV MQTT_TLS_INSECURE=false
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
