@@ -77,7 +77,6 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
     networks:
       app-network:
-      sensor-network:
     depends_on:
       - webapp
 
