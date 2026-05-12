@@ -60,17 +60,12 @@ services:
           - mqtt.local
 
   nginx:
-    image: owasp/modsecurity-crs:nginx
+    image: nginx:latest
     container_name: nginx_proxy
     restart: unless-stopped
     ports:
       - "443:443"
       - "80:80"
-    environment:
-      - PARANOIA=1
-      - ANOMALY_INBOUND=5
-      - ANOMALY_OUTBOUND=4
-      - MODSEC_RULE_ENGINE=On
     volumes:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
       - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
