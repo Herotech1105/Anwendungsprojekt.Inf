@@ -80,10 +80,10 @@ services:
     build: sensor-net/
     restart: unless-stopped
     volumes:
-      - ./sensor-data/ca.crt:/ca.crt
+      - ./sensor-data/ca.crt:/ca.crt:ro
     depends_on:
       - mqtt
-      - webapp
+      - nginx
     extra_hosts:
       - "www.lab.local:host-gateway"
     networks:
