@@ -12,6 +12,7 @@ import sys
 import time
 import traceback
 
+
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_KEEPALIVE, API_KEY, BACKEND_URL, log,

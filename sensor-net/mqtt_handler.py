@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
+from lstm_handler import predict_next_value
+
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, MQTT_CA_FILE, MQTT_CLIENT_ID,
@@ -40,6 +42,10 @@ def on_message(client, userdata, msg):
     temperature, humidity = parsed
     # MQTT-Payload enthaelt keinen Timestamp -> beim Empfang setzen (UTC ISO)
     timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+    # Senden an LSTM-Netzwerk
+    prediction = predict_next_value(temperature, humidity)
+
     forward_to_backend(temperature, humidity, timestamp)
 
 
