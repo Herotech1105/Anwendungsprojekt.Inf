@@ -19,6 +19,7 @@ def build_model():
         Dropout(0.2),
         Dense(1),
     ])
+    # regulate learning rate
     model.compile(
         optimizer=Adam(learning_rate=0.001),
         loss="mse",
@@ -43,6 +44,7 @@ def predict_next_value(temperature, humidity):
     # rehshape buffer to (1, SEQ_LEN, FEATURES) for LSTM input
     input_data = np.array(buffer).reshape(1, SEQ_LEN, FEATURES)
     
+    # predict next value
     prediction = model.predict(input_data, verbose=0)
-    
+
     return float(prediction[0][0])
