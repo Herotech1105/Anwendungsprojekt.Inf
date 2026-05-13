@@ -47,4 +47,4 @@ def predict_next_value(temperature, humidity):
     # predict next value
     prediction = model.predict(input_data, verbose=0)
 
-    return float(prediction[0][0])
+    return prediction[0]
