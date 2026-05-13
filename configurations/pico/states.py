@@ -1,13 +1,7 @@
-from picozero import pico_led
-from machine import Pin
-import dht
+import control
 
-sensor = dht.DHT22(Pin(2, Pin.IN, Pin.PULL_UP))
-radiator = Pin(12, Pin.OUT)   # Heizung
-fan = Pin(13, Pin.OUT)        # Lüfter / Kühlung
-
-pico_led.on()
-
+"""State Variablen"""
+#0----States-----
 TEMP_TOO_LOW  = 0
 TEMP_OK       = 1
 TEMP_TOO_HIGH = 2
@@ -22,6 +16,7 @@ TEMP_MIN = 19.5
 TEMP_MAX = 20.5
 HUM_MIN  = 42.0
 HUM_MAX  = 53.0
+#1----States-----
 
 
 def determine_temp_state(temp):
@@ -50,34 +45,34 @@ def apply_state(temp_state, hum_state):
     global current_state
 
     if temp_state == TEMP_TOO_HIGH:
-        radiator.off()
-        fan.on()
+        control.radiator.off()
+        control.fan.on()
         print("STATE: Temp HIGH → Kühlen")
         current_state = "COOLING"
         return
 
     if temp_state == TEMP_TOO_LOW:
-        radiator.on()
-        fan.off()
+        control.radiator.on()
+        control.fan.off()
         print("STATE: Temp LOW → Heizen")
         current_state = "HEATING"
         return
 
     if hum_state == HUM_TOO_HIGH:
-        radiator.on()
-        fan.off()
+        control.radiator.on()
+        control.fan.off()
         print("STATE: Hum HIGH → Trocknen (Heizen)")
         current_state = "DRYING"
         return
 
     if hum_state == HUM_TOO_LOW:
-        radiator.off()
-        fan.on()
+        control.radiator.off()
+        control.fan.on()
         print("STATE: Hum LOW → Befeuchten (Kühlen)")
         current_state = "HUMIDIFYING"
         return
 
-    radiator.off()
-    fan.off()
+    control.radiator.off()
+    control.fan.off()
     print("STATE: Alles OK → Alles AUS")
     current_state = "IDLE"
