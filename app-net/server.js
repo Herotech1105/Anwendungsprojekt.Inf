@@ -78,7 +78,7 @@ validateSensorPayload = (data) => {
     }
 
     // check if temperature and humidity are in valid ranges
-    if (temperature < 0 || temperature > 100 || humidity < 0 || humidity > 100) {
+    if (temperature < 0 || temperature > 60 || humidity < 10 || humidity > 70) {
         console.error("Temperature or humidity out of valid range");
         return null;
     }
