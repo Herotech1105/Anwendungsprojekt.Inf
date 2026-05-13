@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
+from lstm_handler import predict_next_value
+
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, MQTT_CA_FILE, MQTT_CLIENT_ID,
@@ -41,6 +43,31 @@ def on_message(client, userdata, msg):
     # MQTT-Payload enthaelt keinen Timestamp -> beim Empfang setzen (UTC ISO)
     timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
     forward_to_backend(temperature, humidity, timestamp)
+
+    # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
+
+    prediction = predict_next_value(temperature, humidity)
+
+    if prediction is not None:
+        # Berechne Steuerungsentscheidungen basierend auf Vorhersage
+        fan_on = prediction > TEMP_HIGH
+        heater_on = prediction < TEMP_LOW
+        both_off = not fan_on and not heater_on
+
+        # Erstelle Payload
+        control_payload = {
+            "fan_on": fan_on,
+            "heater_on": heater_on,
+            "both_off": both_off
+        }
+
+        # Auf Broker publishen
+        client.publish(
+            "actuator/control",
+            payload=json.dumps(control_payload),
+            qos=1
+        )
+
 
 
 # --- Client-Setup ---------------------------------------------------------
