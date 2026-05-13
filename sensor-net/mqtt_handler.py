@@ -42,8 +42,10 @@ def on_message(client, userdata, msg):
     temperature, humidity = parsed
     # MQTT-Payload enthaelt keinen Timestamp -> beim Empfang setzen (UTC ISO)
     timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    forward_to_backend(temperature, humidity, timestamp)
 
-    # Senden von Temperatur und Feuchtigkeit an LSTM-Netzwerk
+    # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
+
     prediction = predict_next_value(temperature, humidity)
 
     if prediction is not None:
@@ -66,7 +68,6 @@ def on_message(client, userdata, msg):
             qos=1
         )
 
-    forward_to_backend(temperature, humidity, timestamp)
 
 
 # --- Client-Setup ---------------------------------------------------------
