@@ -5,12 +5,12 @@ from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
-from lstm_handler import predict_next_value
+from lstm_handler import predict_next_value, forecast_future
 
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, MQTT_CA_FILE, MQTT_CLIENT_ID,
-    MQTT_TLS_INSECURE, log,
+    MQTT_TLS_INSECURE, TEMP_HIGH, TEMP_LOW, log,
 )
 from validation import parse_and_validate
 from http_client import forward_to_backend
@@ -40,32 +40,36 @@ def on_message(client, userdata, msg):
     if parsed is None:
         return
     temperature, humidity = parsed
-    # MQTT-Payload enthaelt keinen Timestamp -> beim Empfang setzen (UTC ISO)
+    # MQTT-Payload enthält keinen Timestamp -> beim Empfang setzen (UTC ISO)
     timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
     forward_to_backend(temperature, humidity, timestamp)
 
     # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
 
-    prediction = predict_next_value(temperature, humidity)
+    # Buffer mit aktuellem Messwert füllen
+    predict_next_value(temperature, humidity)
 
-    if prediction is not None:
-        # Berechne Steuerungsentscheidungen basierend auf Vorhersage
-        fan_on = prediction > TEMP_HIGH
-        heater_on = prediction < TEMP_LOW
-        both_off = not fan_on and not heater_on
+    # 30-Minuten-Forecast erstellen (Folie 5-35 / 5-41)
+    forecast = forecast_future(minutes=30, alpha=0.2)
 
-        # Erstelle Payload
-        control_payload = {
-            "fan_on": fan_on,
-            "heater_on": heater_on,
-            "both_off": both_off
-        }
+    if forecast is not None:
+        # Proaktive Steuerung: prüfen ob Temperatur im Forecast-Zeitraum
+        # den Bereich [TEMP_LOW, TEMP_HIGH] verlässt
+        max_temp = max(forecast)
+        min_temp = min(forecast)
 
-        # Auf Broker publishen
-        client.publish(
-            "actuator/control",
-            payload=json.dumps(control_payload),
-            qos=1
+        if max_temp > TEMP_HIGH:
+            action = "fan_on"
+        elif min_temp < TEMP_LOW:
+            action = "heater_on"
+        else:
+            action = "both_off"
+
+        # Auf Broker publishen (Folie 5-39: Pico erwartet String-Action)
+        client.publish("actuator/control", payload=action, qos=1)
+        log.info(
+            "Forecast 30min: min=%.2f C, max=%.2f C -> Aktion: %s",
+            min_temp, max_temp, action,
         )
 
 
