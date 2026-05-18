@@ -18,7 +18,7 @@ HUM_MIN  = 42.0
 HUM_MAX  = 53.0
 #1----States-----
 
-
+#0----Muss in den controller.py-----
 def determine_temp_state(temp):
     """Ermittelt Temperaturzustand"""
     if temp < TEMP_MIN:
@@ -37,8 +37,9 @@ def determine_hum_state(hum):
         return HUM_TOO_HIGH
     else:
         return HUM_OK
+#1----Muss in den controller.py-----
 
-
+#0----Apply State-----
 def apply_state(temp_state, hum_state):
     """Regelt zuerst Temperatur, dann Feuchtigkeit"""
 
@@ -76,3 +77,4 @@ def apply_state(temp_state, hum_state):
     control.fan.off()
     print("STATE: Alles OK → Alles AUS")
     current_state = "IDLE"
+#1----Apply State-----
