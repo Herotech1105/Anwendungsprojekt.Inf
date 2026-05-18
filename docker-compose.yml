@@ -68,7 +68,7 @@ services:
       - "80:80"
     environment:
       - PARANOIA=1
-      - BACKEND=https://webapp:3000
+      - BACKEND=http://webapp:3000
       - MSG="ModSecurity Attack Detected"
     volumes:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
