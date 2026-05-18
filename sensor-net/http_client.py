@@ -15,6 +15,7 @@ def forward_to_backend(
         "timestamp": timestamp,
     }
     headers = {
+        "Method": "POST",
         "Content-Type": "application/json",
         "x-api-key": API_KEY,
     }
