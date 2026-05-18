@@ -10,7 +10,8 @@ from lstm_handler import predict_next_value, forecast_future
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, MQTT_CA_FILE, MQTT_CLIENT_ID,
-    MQTT_TLS_INSECURE, TEMP_HIGH, TEMP_LOW, log,
+    MQTT_TLS_INSECURE, TEMP_HIGH, TEMP_LOW,
+    HUM_HIGH, HUM_LOW, log,
 )
 from validation import parse_and_validate
 from http_client import forward_to_backend
@@ -46,31 +47,71 @@ def on_message(client, userdata, msg):
 
     # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
 
-    # Buffer mit aktuellem Messwert füllen
+    # Buffer mit aktuellem Messwert fuellen
     predict_next_value(temperature, humidity)
 
     # 30-Minuten-Forecast erstellen (Folie 5-35 / 5-41)
     forecast = forecast_future(minutes=30, alpha=0.2)
 
     if forecast is not None:
-        # Proaktive Steuerung: prüfen ob Temperatur im Forecast-Zeitraum
-        # den Bereich [TEMP_LOW, TEMP_HIGH] verlässt
         max_temp = max(forecast)
         min_temp = min(forecast)
 
-        if max_temp > TEMP_HIGH:
-            action = "fan_on"
-        elif min_temp < TEMP_LOW:
-            action = "heater_on"
-        else:
-            action = "both_off"
+        # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
+        temp_state = _determine_temp_state(max_temp, min_temp)
+        hum_state = _determine_hum_state(humidity)
 
-        # Auf Broker publishen (Folie 5-39: Pico erwartet String-Action)
+        # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
+        action = _resolve_action(temp_state, hum_state)
+
+        # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
         client.publish("actuator/control", payload=action, qos=1)
         log.info(
-            "Forecast 30min: min=%.2f C, max=%.2f C -> Aktion: %s",
-            min_temp, max_temp, action,
+            "Forecast 30min: min=%.2f C, max=%.2f C, hum=%.1f%% "
+            "-> temp_state=%s, hum_state=%s -> Aktion: %s",
+            min_temp, max_temp, humidity,
+            temp_state, hum_state, action,
         )
+
+
+# --- Zustandserkennung (aus Pico states.py) --------------------------------
+
+def _determine_temp_state(max_temp, min_temp):
+    """Temperaturzustand anhand des Forecasts bestimmen."""
+    if max_temp > TEMP_HIGH:
+        return "TOO_HIGH"
+    elif min_temp < TEMP_LOW:
+        return "TOO_LOW"
+    return "OK"
+
+
+def _determine_hum_state(humidity):
+    """Feuchtigkeitszustand anhand des aktuellen Messwertes bestimmen."""
+    if humidity > HUM_HIGH:
+        return "TOO_HIGH"
+    elif humidity < HUM_LOW:
+        return "TOO_LOW"
+    return "OK"
+
+
+def _resolve_action(temp_state, hum_state):
+    """Prioritaetslogik: Temperatur hat Vorrang vor Humidity.
+
+    Nachrichten passend zum Pico mqtt.py on_message:
+    COOL, HEAT, DRY, HUM
+    """
+    # 1. Temperatur pruefen (hoechste Prioritaet)
+    if temp_state == "TOO_HIGH":
+        return "COOL"
+    if temp_state == "TOO_LOW":
+        return "HEAT"
+    # 2. Humidity pruefen
+    if hum_state == "TOO_HIGH":
+        return "DRY"
+    if hum_state == "TOO_LOW":
+        return "HUM"
+    # 3. Alles im Bereich
+    return "OK"
 
 
 

@@ -32,6 +32,8 @@ HUM_MAX = float(os.getenv("HUM_MAX", "100"))
 # Steuerungsschwellenwerte fuer Aktor-Kontrolle
 TEMP_LOW = float(os.getenv("TEMP_LOW", "19"))
 TEMP_HIGH = float(os.getenv("TEMP_HIGH", "21"))
+HUM_LOW = float(os.getenv("HUM_LOW", "42"))
+HUM_HIGH = float(os.getenv("HUM_HIGH", "53"))
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
