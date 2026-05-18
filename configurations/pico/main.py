@@ -9,13 +9,13 @@ import mqtt
 
 panel = control.lcd
 mqtt.client.set_callback(mqtt.on_message)
-#mqtt.client.subscribe(iot.MQTT_ACTOR_TOPIC)
 
 #0----Interrupt-----
 press_time = 0
 last_reset = 0
 
 def button_pressed(pin):
+    """Reset Button um den Pico neu zu starten"""
     global press_time, last_reset
     now   = ticks_ms()
     value = control.button.value()
@@ -36,6 +36,7 @@ control.button.irq(
 )
 #1----Interrupt-----
 
+"""Verbindung zum WLAN"""
 #0----WLAN-Connection-----
 try:
     wlan = wifi.connect_wifi()
@@ -50,16 +51,18 @@ except OSError as e:
 
 sleep(3)
 
+"""Verbindung zum MQTT-Broker"""
 #0----MQTT-Connection-----
 try:
     mqtt.client.connect()
+    mqtt.client.subscribe(iot.MQTT_ACTOR_TOPIC)
 except OSError as e:
     print("Failed connect mqtt: ", e)
     panel.clear()
     panel.move_to(0, 0)
     panel.putstr("MQTT Error")
     panel.move_to(0, 1)
-    panel.putstr("Press Button")
+    panel.putstr("Reconnecting...")
 #1----MQTT-Connection-----
 
 while True:
@@ -82,12 +85,12 @@ while True:
         mqtt.client.check_msg()
         #1----MQTT-Message-----
 
-        #0----States-----
+        #0----States muss in controller.py-----
         temp_state = states.determine_temp_state(temp)
         hum_state  = states.determine_hum_state(hum)
 
         states.apply_state(temp_state, hum_state)
-        #1----States-----
+        #1----States muss in controller.py-----
 
         #0----Value-Display-----
         panel.clear()
@@ -101,6 +104,7 @@ while True:
 
         #states.lcd.clear()
         #states.scroll_text("Das ist ein sehr langer Text um den Scroll Text zu testen", zeile=0)
+        
     #0----Sensor-Error-----
     except OSError as e:
         print("Failed to read sensor: ", e)
