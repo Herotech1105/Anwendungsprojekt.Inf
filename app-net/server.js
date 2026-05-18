@@ -24,6 +24,7 @@ app.set('trust proxy', true);
 
 // get status of server
 app.get('/api/status', (req, res) => {
+    console.log("Getting Status ...")
     res.json({status: 'online', timestamp: new Date()});
 });
 
@@ -36,6 +37,7 @@ app.listen(PORT, () => {
 // @Post: save sensordata into database
 app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     // validate data
+    console.log("Receiving sensor data ...")
     const {temperature, humidity, timestamp} = validateSensorPayload(req.body);
 
     let conn;
