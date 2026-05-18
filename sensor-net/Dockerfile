@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 WORKDIR /code
 ENV MQTT_HOST=192.168.4.18
 ENV MQTT_PORT=8883
