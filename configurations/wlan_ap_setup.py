@@ -91,6 +91,7 @@ table inet filter {
         iif "lo" accept
         ct state established,related accept
         tcp dport 22 accept 
+        tcp dport 8883 accept 
         ip protocol icmp accept
         iif "wlan0" udp dport { 53, 67 } accept
     }
