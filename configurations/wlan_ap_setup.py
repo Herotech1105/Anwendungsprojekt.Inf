@@ -54,13 +54,14 @@ rsn_pairwise=CCMP
     write_file("/etc/hostapd/hostapd.conf", hostapd_conf)
 
     # 4. Dnsmasq Configuration
-    print("Writing DNSMASQ-Configuration to '/etc/dnsmasq.conf'")
+    print("Writing DNSMASQ-Configuration to '/etc/dnsmasq.conf'\nSetting Backend Pi ip address to '192.168.4.18'")
     dnsmasq_conf = f"""
 interface={wlan_iface}
 bind-interfaces
 dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
 domain=wlan
 address=/gw.wlan/192.168.4.1
+dhcp-host=e4:5f:01:00:bc:ec,192.168.4.18
 """
     write_file("/etc/dnsmasq.conf", dnsmasq_conf)
 
