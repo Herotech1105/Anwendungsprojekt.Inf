@@ -1,4 +1,4 @@
-numpy==2.4.4
+numpy==1.26.4
 paho_mqtt==2.1.0
-Requests==2.34.0
-tensorflow==2.21.0
+Requests==2.34.2
+tensorflow==2.16.2
