@@ -69,6 +69,7 @@ services:
     environment:
       - PARANOIA=1
       - BACKEND=http://webapp:3000
+      - PROXY_SSL=off
       - MSG="ModSecurity Attack Detected"
     volumes:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
