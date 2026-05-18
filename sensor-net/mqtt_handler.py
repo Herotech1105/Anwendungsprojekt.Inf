@@ -55,6 +55,7 @@ def on_message(client, userdata, msg):
 
     if forecast is not None:
         avg_temp = sum(forecast) / len(forecast)
+        print(f"Temperature Prognosis: {avg_temp}\nHumidity: {humidity}")
 
         # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
         temp_state = _determine_temp_state(avg_temp)
@@ -111,7 +112,6 @@ def _resolve_action(temp_state, hum_state):
         return "HUM"
     # 3. Alles im Bereich
     return "OK"
-
 
 
 # --- Client-Setup ---------------------------------------------------------
