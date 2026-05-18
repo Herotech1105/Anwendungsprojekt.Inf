@@ -100,6 +100,8 @@ validateSensorPayload = (data) => {
 
     // return valid data
     return {
-        temperature, humidity, formated_timestamp
+        temperature,
+        humidity,
+        timestamp: formated_timestamp
     };
 }
