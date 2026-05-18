@@ -54,11 +54,10 @@ def on_message(client, userdata, msg):
     forecast = forecast_future(minutes=30, alpha=0.2)
 
     if forecast is not None:
-        max_temp = max(forecast)
-        min_temp = min(forecast)
+        avg_temp = sum(forecast) / len(forecast)
 
         # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
-        temp_state = _determine_temp_state(max_temp, min_temp)
+        temp_state = _determine_temp_state(avg_temp)
         hum_state = _determine_hum_state(humidity)
 
         # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
@@ -67,20 +66,20 @@ def on_message(client, userdata, msg):
         # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
         client.publish("actuator/control", payload=action, qos=1)
         log.info(
-            "Forecast 30min: min=%.2f C, max=%.2f C, hum=%.1f%% "
+            "Forecast 30min: avg=%.2f C, hum=%.1f%% "
             "-> temp_state=%s, hum_state=%s -> Aktion: %s",
-            min_temp, max_temp, humidity,
+            avg_temp, humidity,
             temp_state, hum_state, action,
         )
 
 
 # --- Zustandserkennung (aus Pico states.py) --------------------------------
 
-def _determine_temp_state(max_temp, min_temp):
-    """Temperaturzustand anhand des Forecasts bestimmen."""
-    if max_temp > TEMP_HIGH:
+def _determine_temp_state(avg_temp):
+    """Temperaturzustand anhand des Forecast-Durchschnitts bestimmen."""
+    if avg_temp > TEMP_HIGH:
         return "TOO_HIGH"
-    elif min_temp < TEMP_LOW:
+    elif avg_temp < TEMP_LOW:
         return "TOO_LOW"
     return "OK"
 
