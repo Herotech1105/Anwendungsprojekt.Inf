@@ -22,6 +22,7 @@ def connect_wifi():
     while not wlan.isconnected():
         sleep(1)
         print("...")
+        print(wlan.status())
         panel.clear()
         panel.move_to(0, 0)
         panel.putstr("Versuch WLAN zu")

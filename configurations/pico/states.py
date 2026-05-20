@@ -18,27 +18,6 @@ HUM_MIN  = 42.0
 HUM_MAX  = 53.0
 #1----States-----
 
-#0----Muss in den controller.py-----
-def determine_temp_state(temp):
-    """Ermittelt Temperaturzustand"""
-    if temp < TEMP_MIN:
-        return TEMP_TOO_LOW
-    elif temp > TEMP_MAX:
-        return TEMP_TOO_HIGH
-    else:
-        return TEMP_OK
-
-
-def determine_hum_state(hum):
-    """Ermittelt Feuchtezustand"""
-    if hum < HUM_MIN:
-        return HUM_TOO_LOW
-    elif hum > HUM_MAX:
-        return HUM_TOO_HIGH
-    else:
-        return HUM_OK
-#1----Muss in den controller.py-----
-
 #0----Apply State-----
 def apply_state(temp_state, hum_state):
     """Regelt zuerst Temperatur, dann Feuchtigkeit"""

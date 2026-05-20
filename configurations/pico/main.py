@@ -53,9 +53,15 @@ sleep(3)
 
 """Verbindung zum MQTT-Broker"""
 #0----MQTT-Connection-----
+mqtt_connected = False
+print("Vor MQTT connect")
 try:
     mqtt.client.connect()
+    print("Nach MQTT connect")
     mqtt.client.subscribe(iot.MQTT_ACTOR_TOPIC)
+    print("subscribed")
+    mqtt_connected = True
+    print("MQTT verbunden!")
 except OSError as e:
     print("Failed connect mqtt: ", e)
     panel.clear()
@@ -63,6 +69,13 @@ except OSError as e:
     panel.putstr("MQTT Error")
     panel.move_to(0, 1)
     panel.putstr("Reconnecting...")
+except Exception as e:
+    print("MQTT Exception:", e)
+    panel.clear()
+    panel.move_to(0, 0)
+    panel.putstr("MQTT Error")
+    panel.move_to(0, 1)
+    panel.putstr(str(e)[:16])
 #1----MQTT-Connection-----
 
 while True:
@@ -80,17 +93,12 @@ while True:
           "humidity"   : hum
         })
         
-        mqtt.client.publish(iot.MQTT_SENSOR_TOPIC, payload)
-        sleep(1)
-        mqtt.client.check_msg()
+        if mqtt_connected:
+            mqtt.client.publish(iot.MQTT_SENSOR_TOPIC, payload)
+            print("Published")
+            mqtt.client.check_msg()
+            print("Checked")
         #1----MQTT-Message-----
-
-        #0----States muss in controller.py-----
-        temp_state = states.determine_temp_state(temp)
-        hum_state  = states.determine_hum_state(hum)
-
-        states.apply_state(temp_state, hum_state)
-        #1----States muss in controller.py-----
 
         #0----Value-Display-----
         panel.clear()
@@ -129,3 +137,7 @@ while True:
 # https://docs.micropython.org/en/latest/rp2/quickref.html
 # Zugriff: 24.04.2026
 # RP2 code reference
+
+# https://github.com/micropython/micropython-lib/blob/master/micropython/umqtt.simple/example_sub.py
+# Zugriff: 18.05.2026
+# umqtt reference
