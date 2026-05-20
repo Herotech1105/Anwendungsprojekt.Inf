@@ -20,6 +20,9 @@ MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 BACKEND_URL = os.getenv(
     "BACKEND_URL", "https://www.lab.local/api/internal/sensordata"
 )
+TRAININGURL = os.getenv(
+    "TRAININGURL", "https://www.lab.local/api/internal/trainingdata"
+)
 API_KEY = os.getenv("API_KEY", "")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
 
