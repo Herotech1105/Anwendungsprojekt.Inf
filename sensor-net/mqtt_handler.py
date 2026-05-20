@@ -63,10 +63,12 @@ def on_message(client, userdata, msg):
 
         # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
         action = _resolve_action(temp_state, hum_state)
-        if action == "COOL" or action == "DRY":
+        if action == "COOL" or action == "HUM":
             forward_training_data_to_backend(avg_temp, humidity, timestamp, False, True)
-        elif action == "HEAT" or action == "HUM":
+        elif action == "HEAT" or action == "DRY":
             forward_training_data_to_backend(avg_temp, humidity, timestamp, True, False)
+        else:
+            forward_training_data_to_backend(avg_temp, humidity, timestamp, False, False)
         # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
         client.publish("actuator/control", payload=action, qos=1)
         log.info(
