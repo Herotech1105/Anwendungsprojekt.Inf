@@ -33,6 +33,7 @@ services:
       - /mariadb/02_archive_job.sql:/docker-entrypoint-initdb.d/2.sql:ro
       - /mariadb/03_user.sql:/docker-entrypoint-initdb.d/3.sql:ro
       - /mariadb/04_training_data.sql:/docker-entrypoint-initdb.d/4.sql:ro
+      - /mariadb/05_training_data_privileges.sql:/docker-entrypoint-initdb.d/5.sql:ro
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       start_period: 20s

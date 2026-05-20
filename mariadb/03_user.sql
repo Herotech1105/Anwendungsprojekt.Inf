@@ -4,7 +4,4 @@ IDENTIFIED BY 'pass-0123-iot';
 GRANT SELECT, INSERT ON myapp.sensor_data
 TO 'websrv_write'@'%';
 
-GRANT SELECT, INSERT ON myapp.training_data
-TO 'websrv_write'@'%';
-
 FLUSH PRIVILEGES;
