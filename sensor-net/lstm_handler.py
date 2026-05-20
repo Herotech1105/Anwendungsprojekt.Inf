@@ -1,7 +1,7 @@
 from collections import deque
+import os
 
 import numpy as np
-import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout, Input
 from tensorflow.keras.optimizers import Adam
@@ -11,7 +11,8 @@ FEATURES = 2
 
 input_shape = (SEQ_LEN, FEATURES)
 
-# initialize LSTM model
+# Erstellt das LSTM-Modell mit zwei LSTM-Schichten und einer Ausgabeschicht.
+# Dieses Modell wird für Vorhersagen verwendet.
 def build_model():
     model = Sequential([
         Input(shape=input_shape),
@@ -21,15 +22,30 @@ def build_model():
         Dropout(0.2),
         Dense(1),
     ])
-    # regulate learning rate
-    model.compile(
-        optimizer=Adam(learning_rate=0.001),
-        loss="mse",
-    )
+    model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
     return model
 
 
-model = build_model()
+def get_default_weights_path():
+    """Gibt den Standardpfad für die Gewichtsdatei zurück."""
+    return os.path.join(os.path.dirname(__file__), "weights", "lstm_weights.weights.h5")
+
+
+def load_model_weights(weights_path=None):
+    """Baut das Modell und lädt die Gewichte, falls vorhanden.
+
+    Wenn keine `weights_path` übergeben wird, verwendet die Funktion den
+    Standardpfad aus `get_default_weights_path()`.
+    """
+    model = build_model()
+    if weights_path is None:
+        weights_path = get_default_weights_path()
+    if os.path.exists(weights_path):
+        model.load_weights(weights_path)
+    return model
+
+
+model = load_model_weights()
 
 # save last values in buffer
 buffer = deque(maxlen=SEQ_LEN)
@@ -43,8 +59,8 @@ def predict_next_value(temperature, humidity):
     if len(buffer) < SEQ_LEN:
         return None
 
-    # rehshape buffer to (1, SEQ_LEN, FEATURES) for LSTM input
-    input_data = np.array(buffer).reshape(1, SEQ_LEN, FEATURES)
+    # reshape buffer to (1, SEQ_LEN, FEATURES) for LSTM input
+    input_data = np.array(buffer).reshape((1, SEQ_LEN, FEATURES))
 
     # predict next value
     prediction = model.predict(input_data, verbose=0)
