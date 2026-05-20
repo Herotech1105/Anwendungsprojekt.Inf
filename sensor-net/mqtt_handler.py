@@ -53,30 +53,30 @@ def on_message(client, userdata, msg):
     # 30-Minuten-Forecast erstellen (Folie 5-35 / 5-41)
     forecast = forecast_future(minutes=30, alpha=0.2)
 
-    if forecast is not None:
+    if forecast is None:
+        avg_temp = temperature
+    else:
         avg_temp = (temperature + sum(forecast) / len(forecast)) / 2
-        print(f"Temperature Prognosis: {avg_temp}\nHumidity: {humidity}")
-
-        # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
-        temp_state = _determine_temp_state(avg_temp)
-        hum_state = _determine_hum_state(humidity)
-
-        # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
-        action = _resolve_action(temp_state, hum_state)
-        if action == "COOL" or action == "HUM":
-            forward_training_data_to_backend(avg_temp, humidity, timestamp, False, True)
-        elif action == "HEAT" or action == "DRY":
-            forward_training_data_to_backend(avg_temp, humidity, timestamp, True, False)
-        else:
-            forward_training_data_to_backend(avg_temp, humidity, timestamp, False, False)
-        # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
-        client.publish("actuator/control", payload=action, qos=1)
-        log.info(
-            "Forecast 30min: avg=%.2f C, hum=%.1f%% "
-            "-> temp_state=%s, hum_state=%s -> Aktion: %s",
-            avg_temp, humidity,
-            temp_state, hum_state, action,
-        )
+    print(f"Temperature Prognosis: {avg_temp}\nHumidity: {humidity}")
+    # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
+    temp_state = _determine_temp_state(avg_temp)
+    hum_state = _determine_hum_state(humidity)
+    # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
+    action = _resolve_action(temp_state, hum_state)
+    if action == "COOL" or action == "HUM":
+        forward_training_data_to_backend(avg_temp, humidity, timestamp, False, True)
+    elif action == "HEAT" or action == "DRY":
+        forward_training_data_to_backend(avg_temp, humidity, timestamp, True, False)
+    else:
+        forward_training_data_to_backend(avg_temp, humidity, timestamp, False, False)
+    # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
+    client.publish("actuator/control", payload=action, qos=1)
+    log.info(
+        "Forecast 30min: avg=%.2f C, hum=%.1f%% "
+        "-> temp_state=%s, hum_state=%s -> Aktion: %s",
+        avg_temp, humidity,
+        temp_state, hum_state, action,
+    )
 
 
 # --- Zustandserkennung (aus Pico states.py) --------------------------------
