@@ -11,7 +11,7 @@ let writePool;
 async function getWritePool() {
     if (!writePool) {
         const mariadb = await import('mariadb');
-        pool = mariadb.createPool({
+        writePool = mariadb.createPool({
             host: DB_HOST,
             user: DB_WRITE_USER,
             password: DB_WRITE_PASSWORD,
@@ -25,7 +25,7 @@ async function getWritePool() {
 async function getReadPool() {
     if (!readPool) {
         const mariadb = await import('mariadb');
-        pool = mariadb.createPool({
+        readPool = mariadb.createPool({
             host: DB_HOST,
             user: DB_READ_USER,
             password: DB_READ_PASSWORD,
