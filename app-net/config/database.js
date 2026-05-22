@@ -5,10 +5,11 @@ const DB_WRITE_PASSWORD = process.env.DB_WRITE_PASSWORD
 const DB_READ_USER = process.env.DB_READ_USER
 const DB_READ_PASSWORD = process.env.DB_READ_PASSWORD
 const DB_NAME = process.env.DB_NAME
-let pool;
+let readPool;
+let writePool;
 
 async function getWritePool() {
-    if (!pool) {
+    if (!writePool) {
         const mariadb = await import('mariadb');
         pool = mariadb.createPool({
             host: DB_HOST,
@@ -18,11 +19,11 @@ async function getWritePool() {
             connectionLimit: 5
         });
     }
-    return pool;
+    return writePool;
 }
 
 async function getReadPool() {
-    if (!pool) {
+    if (!readPool) {
         const mariadb = await import('mariadb');
         pool = mariadb.createPool({
             host: DB_HOST,
@@ -32,7 +33,7 @@ async function getReadPool() {
             connectionLimit: 5
         });
     }
-    return pool;
+    return readPool;
 }
 
 module.exports = { getWritePool, getReadPool };
