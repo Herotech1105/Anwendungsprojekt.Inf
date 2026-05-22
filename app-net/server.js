@@ -43,7 +43,7 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     let conn;
     try {
         if (!temperature) throw Error("Denied: ")
-        const pool = await getPool();
+        const pool = await getWritePool();
         conn = await pool.getConnection();
         console.log("Connection to mariaDB established")
 

@@ -1,5 +1,4 @@
 require('dotenv').config(); // use .env file
-const HOST = process.env.PORT || 3000;
 const DB_HOST = process.env.DB_HOST
 const DB_WRITE_USER = process.env.DB_WRITE_USER
 const DB_WRITE_PASSWORD = process.env.DB_WRITE_PASSWORD
