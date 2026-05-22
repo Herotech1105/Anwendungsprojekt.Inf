@@ -1,0 +1,44 @@
+{
+  "realm": "iot",
+  "enabled": true,
+  "sslRequired": "all",
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "dashboard-user" },
+      { "name": "admin-user" },
+      { "name": "controller-ingest" }
+    ]
+  },
+  "users": [
+    {
+      "username": "iotuser01",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "James",
+      "lastName": "Cookie",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["dashboard-user", "admin-user"]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "dashboard-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "https://www.lab.local/*"
+      ]
+    }
+  ]
+}
