@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46667"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   sodipodi:docname="LOGO.svg"
+   inkscape:export-filename="LOGO.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.5162318"
+     inkscape:cx="255.89755"
+     inkscape:cy="255.56779"
+     inkscape:window-width="1920"
+     inkscape:window-height="1111"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient321"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#1c1dff;stop-opacity:1;"
+         offset="0"
+         id="stop322" />
+      <stop
+         style="stop-color:#1c1dff;stop-opacity:0;"
+         offset="1"
+         id="stop323" />
+    </linearGradient>
+    <linearGradient
+       id="swatch67"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop67" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient321"
+       id="radialGradient323"
+       cx="66.403374"
+       cy="67.927345"
+       fx="66.403374"
+       fy="67.927345"
+       r="23.091417"
+       gradientTransform="matrix(1,0,0,0.99251191,0,0.50864586)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#ff00ff;stroke-width:0.264424;stroke-dasharray:none;stroke:none;stroke-opacity:1;fill-opacity:1"
+       id="path1"
+       inkscape:flatsided="false"
+       sodipodi:sides="5"
+       sodipodi:cx="31.759108"
+       sodipodi:cy="30.188601"
+       sodipodi:r1="59.92717"
+       sodipodi:r2="29.963585"
+       sodipodi:arg1="0.93836058"
+       sodipodi:arg2="1.5666791"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 67.182726,78.525263 31.882474,60.151931 -3.2652898,78.815314 3.3004088,39.565108 -25.310779,11.9049 14.047298,6.0202696 31.512375,-29.738061 49.271306,5.8752436 88.676505,11.435587 60.294051,39.33045 Z"
+       inkscape:transform-center-x="0.082431643"
+       inkscape:transform-center-y="-5.9860219"
+       transform="matrix(1.0811365,0,0,1.0594779,33.463733,36.319871)"
+       inkscape:label="SternHinten" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Ebene 2">
+    <path
+       sodipodi:type="star"
+       style="fill:#f1fc00;stroke-width:0.28273992;stroke-dasharray:none;stroke:none;opacity:1;fill-opacity:1"
+       id="path2"
+       inkscape:flatsided="false"
+       sodipodi:sides="5"
+       sodipodi:cx="10.993537"
+       sodipodi:cy="14.309048"
+       sodipodi:r1="33.884583"
+       sodipodi:r2="16.942291"
+       sodipodi:arg1="0.30872198"
+       sodipodi:arg2="0.93704051"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 43.276147,24.604583 21.026345,27.9613 11.177776,48.193129 1.1097816,28.069593 -21.175207,24.955027 -5.1477679,9.1612801 -9.0720792,-12.995457 10.901417,-2.6329931 30.761048,-13.212043 27.077909,8.9860582 Z"
+       inkscape:transform-center-x="-0.10780012"
+       inkscape:transform-center-y="6.0384944"
+       transform="matrix(1.8934675,0,0,1.8980055,46.664954,39.61008)"
+       inkscape:label="SternVorne" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Ebene 3">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64.3856px;font-family:Gigi;-inkscape-font-specification:'Gigi, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;stroke-width:0.358685;stroke-dasharray:none;fill-opacity:1"
+       x="41.582848"
+       y="88.99099"
+       id="text2"
+       transform="scale(1.0058684,0.99416584)"
+       inkscape:label="TextVorne"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64.3856px;font-family:Gigi;-inkscape-font-specification:'Gigi, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke-width:0.358684;fill-opacity:1"
+         x="41.582848"
+         y="88.99099">K</tspan></text>
+  </g>
+</svg>
