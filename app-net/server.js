@@ -1,7 +1,7 @@
 require('dotenv').config(); // use .env file
 const express = require('express');
 const app = express();
-const {getPool} = require('./config/database');
+const {getReadPool, getWritePool} = require('./config/database');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -70,7 +70,7 @@ app.post('/api/internal/trainingdata', authenticateApiKey, async (req, res) => {
     let conn;
     try {
         if (!temperature) throw Error("Denied: ")
-        const pool = await getPool();
+        const pool = await getWritePool();
         conn = await pool.getConnection();
         console.log("Connection to mariaDB established")
 
@@ -93,7 +93,7 @@ app.post('/api/internal/trainingdata', authenticateApiKey, async (req, res) => {
 app.get('/api/internal/sensordata/latest', authenticateApiKey, async (req, res) => {
     let conn;
     try {
-        const pool = await getPool();
+        const pool = await getReadPool();
         conn = await pool.getConnection();
 
         // Fetch the most recent sensor entry
