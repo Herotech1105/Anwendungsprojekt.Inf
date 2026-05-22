@@ -18,7 +18,6 @@ async function getWritePool() {
             connectionLimit: 5
         });
     }
-    console.log(pool);
     return pool;
 }
 
@@ -33,7 +32,6 @@ async function getReadPool() {
             connectionLimit: 5
         });
     }
-    console.log(pool);
     return pool;
 }
 
