@@ -125,4 +125,4 @@ networks:
 
 volumes:
   mariadb-data:
-  
+  keycloak_data:
