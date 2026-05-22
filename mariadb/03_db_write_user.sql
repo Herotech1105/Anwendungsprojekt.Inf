@@ -1,7 +1,7 @@
 CREATE OR REPLACE USER 'websrv_write'@'%'
 IDENTIFIED BY 'pass-0123-iot';
 
-GRANT SELECT, INSERT ON myapp.sensor_data
+GRANT INSERT ON myapp.sensor_data
 TO 'websrv_write'@'%';
 
 FLUSH PRIVILEGES;
