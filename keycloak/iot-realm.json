@@ -39,6 +39,16 @@
       "redirectUris": [
         "https://www.lab.local/*"
       ]
+    },
+    {
+      "clientId": "controller-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "secret": "change-me-please"
     }
   ]
 }
