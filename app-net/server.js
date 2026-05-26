@@ -1,7 +1,7 @@
 require('dotenv').config(); // use .env file
 const express = require('express');
 const app = express();
-const {getPool} = require('./config/database');
+const {getReadPool, getWritePool} = require('./config/database');
 const PORT = process.env.PORT || 3000;
 const https = require('https');
 
