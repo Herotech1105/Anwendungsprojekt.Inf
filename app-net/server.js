@@ -226,6 +226,39 @@ app.get('/api/sensordata', authenticateToken, async (req, res) => {
 });
 
 
+app.get('/api/sensordata/range', authenticateToken, async (req, res) => {
+    const { from, to } = req.query;
+
+    if (!from || !to) {
+        return res.status(400).json({ error: "from and to parameters required" });
+    }
+
+    let conn;
+    try {
+        const pool = await getReadPool();
+        conn = await pool.getConnection();
+
+        const sql = `
+            SELECT timestamp, temperature, humidity
+            FROM sensor_data
+            WHERE timestamp BETWEEN ? AND ?
+            ORDER BY timestamp ASC
+        `;
+        const rows = await conn.query(sql, [from, to]);
+
+        const labels = rows.map(r => r.timestamp);
+        const temperatures = rows.map(r => r.temperature);
+        const humidities = rows.map(r => r.humidity);
+
+        res.json({ labels, temperatures, humidities });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
 
 // @function: validating the payload for the sensor_data table
 validateSensorPayload = (data) => {

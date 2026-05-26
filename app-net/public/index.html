@@ -1,47 +1,54 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8" />
-    <title>IoT Dashboard</title>
-    <link rel="icon" href="../img/LOGO.svg" />
-    <link rel="stylesheet" href="style.css" />
+    <head>
+        <meta charset="UTF-8" />
+        <title>IoT Dashboard</title>
 
-    <!-- Keycloak -->
-    <script src="https://www.lab.local/auth/js/keycloak.js"></script>
-    <script src="chart.js"></script>
-</head>
+        <link rel="icon" href="img/LOGO.svg" />
+        <link rel="stylesheet" href="style.css" />
 
-<body>
-    <header class="topbar">
-        <h1>IoT Dashboard</h1>
-    </header>
+        <!-- Keycloak Adapter -->
+        <script src="https://www.lab.local/auth/js/keycloak.js"></script>
 
-    <main class="container">
-        <section class="card controls">
-            <h2>Zeitraum wählen</h2>
+        <!-- Chart.js -->
+        <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
 
-            <div class="input-row">
-                <label>
-                    Von:
-                    <input type="datetime-local" id="from">
-                </label>
+    <body>
+        <header class="topbar">
+            <h1>IoT Dashboard</h1>
+            <div id="userInfo" class="user-info"></div>
+        </header>
 
-                <label>
-                    Bis:
-                    <input type="datetime-local" id="to">
-                </label>
+        <main class="container">
+            <section class="card controls">
+                <h2>Zeitraum wählen</h2>
 
-                <button id="loadDataBtn">Daten laden</button>
-            </div>
-        </section>
+                <div class="input-row">
+                    <label>
+                        Von:
+                        <input type="datetime-local" id="from">
+                    </label>
 
-        <section class="card chart-card">
-            <h2>Sensordaten</h2>
-            <canvas id="sensorChart"></canvas>
-        </section>
-    </main>
+                    <label>
+                        Bis:
+                        <input type="datetime-local" id="to">
+                    </label>
 
-    <script src="frontend.js"></script>
-</body>
+                    <button id="loadDataBtn">Daten laden</button>
+                </div>
+            </section>
+
+            <section class="card chart-card">
+                <h2>Sensordaten</h2>
+                <div id="chartStatus" style="margin-bottom:10px; font-weight:600;"></div>
+                <canvas id="sensorChart"></canvas>
+            </section>
+        </main>
+
+        <!-- Auth + API -->
+        <script type="module" src="frontend.js"></script>
+        <!-- Chart-Rendering -->
+        <script type="module" src="chart.js"></script>
+    </body>
 </html>
-

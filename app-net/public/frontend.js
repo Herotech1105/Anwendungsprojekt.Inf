@@ -1,100 +1,70 @@
-// frontend.js
 const keycloak = new Keycloak({
-  url: "https://www.lab.local/auth",
-  realm: "iot",
-  clientId: "dashboard-client",
+    url: "https://www.lab.local/auth",
+    realm: "iot",
+    clientId: "dashboard-client"
 });
 
-let accessToken = null;
+async function initAuth() {
+    try {
+        const authenticated = await keycloak.init({
+            onLoad: "login-required",
+            checkLoginIframe: false
+        });
 
-function initKeycloak() {
-  keycloak
-    .init({
-      onLoad: "login-required",
-      checkLoginIframe: false,
-      pkceMethod: "S256",
-    })
-    .then((authenticated) => {
-      if (!authenticated) {
-        console.error("Nicht authentifiziert");
-        keycloak.login();
-      } else {
-        accessToken = keycloak.token;
-        console.log("Eingeloggt als:", keycloak.tokenParsed.preferred_username);
+        if (!authenticated) {
+            console.error("User not authenticated");
+            return;
+        }
 
-        // Token regelmäßig aktualisieren
+        console.log("Logged in as:", keycloak.tokenParsed.preferred_username);
+
+        document.getElementById("userInfo").textContent =
+            "Eingeloggt als: " + keycloak.tokenParsed.preferred_username;
+
         setInterval(() => {
-          keycloak
-            .updateToken(30)
-            .then((refreshed) => {
-              if (refreshed) {
-                accessToken = keycloak.token;
-              }
-            })
-            .catch(() => {
-              console.error("Token-Refresh fehlgeschlagen");
-              keycloak.login();
+            keycloak.updateToken(30).catch(() => {
+                console.error("Token refresh failed");
+                keycloak.login();
             });
-        }, 20000);
+        }, 30000);
 
-        setupUi();
-      }
-    })
-    .catch((err) => {
-      console.error("Keycloak Init Fehler:", err);
-    });
+    } catch (err) {
+        console.error("Keycloak init error:", err);
+    }
 }
 
-function setupUi() {
-  const loadBtn = document.getElementById("loadDataBtn");
-  loadBtn.addEventListener("click", () => {
-    loadSensorData(false);
-  });
+async function apiGet(path) {
+    const url = `https://www.lab.local/api${path}`;
 
-  // Optional: initialer Live-Modus (ohne "to")
-  loadSensorData(true);
-}
-
-async function loadSensorData(liveMode = false) {
-  const fromInput = document.getElementById("from");
-  const toInput = document.getElementById("to");
-
-  const from = fromInput.value;
-  const to = liveMode ? "" : toInput.value;
-
-  if (!from) {
-    alert("Bitte 'from' auswählen");
-    return;
-  }
-
-  const params = new URLSearchParams();
-  params.append("from", new Date(from).toISOString());
-  if (to) {
-    params.append("to", new Date(to).toISOString());
-  }
-
-  try {
-    const res = await fetch(`/api/sensordata?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + keycloak.token
+        }
     });
 
-    if (!res.ok) {
-      console.error("Fehler beim Laden der Daten:", res.status);
-      return;
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
     }
 
-    const data = await res.json();
-    updateChart(data);
-
-    // Live-Modus: minütlich aktualisieren, wenn kein "to" gesetzt
-    if (liveMode || !to) {
-      setTimeout(() => loadSensorData(true), 60000);
-    }
-  } catch (err) {
-    console.error("Fetch-Fehler:", err);
-  }
+    return response.json();
 }
 
-document.addEventListener("DOMContentLoaded", initKeycloak);
+export async function getSensorRange(from, to) {
+    const query = `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    return apiGet(`/sensordata/range${query}`);
+}
+
+document.getElementById("loadDataBtn").addEventListener("click", () => {
+    const from = document.getElementById("from").value;
+    const to = document.getElementById("to").value;
+
+    if (!from || !to) {
+        alert("Bitte Zeitraum auswählen");
+        return;
+    }
+
+    window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
+});
+
+initAuth();

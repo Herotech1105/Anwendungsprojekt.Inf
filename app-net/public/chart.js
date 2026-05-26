@@ -1,51 +1,74 @@
-// chart.js
-let sensorChart = null;
+import { getSensorRange } from "./frontend.js";
 
-function updateChart(data) {
-  const ctx = document.getElementById("sensorChart").getContext("2d");
+let chart = null;
 
-  const labels = data.map((row) =>
-    new Date(row.timestamp).toLocaleString("de-DE")
-  );
-  const values = data.map((row) => row.value);
-
-  if (sensorChart) {
-    sensorChart.data.labels = labels;
-    sensorChart.data.datasets[0].data = values;
-    sensorChart.update();
-    return;
-  }
-
-  sensorChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "Sensorwert",
-          data: values,
-          borderColor: "rgba(75, 192, 192, 1)",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          tension: 0.1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Zeit",
-          },
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Wert",
-          },
-        },
-      },
-    },
-  });
+// Statusmeldung in der Card anzeigen
+function setStatus(message) {
+    const el = document.getElementById("chartStatus");
+    if (el) el.textContent = message;
 }
+
+async function renderRange(from, to) {
+    try {
+        const data = await getSensorRange(from, to);
+
+        // Keine Daten im Zeitraum
+        if (!data.labels || data.labels.length === 0) {
+            if (chart) chart.destroy();
+            setStatus("Keine Daten im gewählten Zeitraum");
+            return;
+        }
+
+        // Wenn Daten vorhanden => Status löschen
+        setStatus("");
+
+        const ctx = document.getElementById("sensorChart").getContext("2d");
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "Temperatur (°C)",
+                        data: data.temperatures,
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: "Luftfeuchtigkeit (%)",
+                        data: data.humidities,
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error("Chart render error:", err);
+        setStatus("Verbindungsproblem, Daten konnten nicht geladen werden");
+    }
+}
+
+window.addEventListener("loadRange", (e) => {
+    const { from, to } = e.detail;
+    renderRange(from, to);
+});

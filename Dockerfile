@@ -5,6 +5,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --production
 
+COPY ./app-net/public ./public
+
 COPY ./app-net .
 
 EXPOSE 3000
