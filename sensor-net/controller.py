@@ -18,8 +18,10 @@ import requests
 
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
-    MQTT_KEEPALIVE, API_KEY, BACKEND_URL, HTTP_TIMEOUT, log,
+    MQTT_KEEPALIVE, API_KEY, BACKEND_URL, HTTP_TIMEOUT,
+    CA_CERT_PATH, log,
 )
+from keycloak_auth import verify_role, auth_header
 from mqtt_handler import build_client
 from lstm_handler import buffer
 
@@ -36,9 +38,10 @@ def warmstart() -> None:
         "Content-Type": "application/json",
         "x-api-key": API_KEY,
     }
+    headers.update(auth_header())
     try:
         resp = requests.get(
-            url, headers=headers, timeout=HTTP_TIMEOUT, verify=False,
+            url, headers=headers, timeout=HTTP_TIMEOUT, verify=CA_CERT_PATH,
         )
     except requests.RequestException as exc:
         log.warning("Warmstart fehlgeschlagen (Netzwerk): %s", exc)
@@ -74,6 +77,13 @@ def main() -> None:
         log.warning("MQTT_PASSWORD env-Variable ist leer")
     if not os.path.isfile(os.getenv("MQTT_CA_FILE", "")):
         log.error("CA-Datei nicht gefunden: %s", os.getenv("MQTT_CA_FILE"))
+
+    # Keycloak AuthN/AuthZ: Token holen und Rolle pruefen
+    try:
+        verify_role()
+    except Exception as exc:
+        log.error("Keycloak-Authentifizierung fehlgeschlagen: %s", exc)
+        sys.exit(1)
 
     # Warmstart: letzte Messwerte aus DB in den LSTM-Buffer laden
     warmstart()

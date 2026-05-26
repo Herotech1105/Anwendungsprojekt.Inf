@@ -25,6 +25,16 @@ TRAININGURL = os.getenv(
 )
 API_KEY = os.getenv("API_KEY", "")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
+CA_CERT_PATH = os.getenv("CA_CERT_PATH", "/ca.crt")
+
+# Keycloak (Client Credentials Flow)
+KC_TOKEN_URL = os.getenv(
+    "KC_TOKEN_URL",
+    "https://www.lab.local/auth/realms/iot/protocol/openid-connect/token",
+)
+KC_CLIENT_ID = os.getenv("KC_CLIENT_ID", "controller-client")
+KC_CLIENT_SECRET = os.getenv("KC_CLIENT_SECRET", "change-me-please")
+KC_REQUIRED_ROLE = os.getenv("KC_REQUIRED_ROLE", "controller-ingest")
 
 # Plausibilitaetsbereiche (decken sich mit validateSensorPayload in server.js)
 TEMP_MIN = float(os.getenv("TEMP_MIN", "0"))

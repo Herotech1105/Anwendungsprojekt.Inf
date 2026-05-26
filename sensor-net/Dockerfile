@@ -9,6 +9,11 @@ ENV MQTT_CA_FILE=ca.crt
 ENV BACKEND_URL=https://www.lab.local/api/internal/sensordata
 ENV API_KEY=api_key
 ENV MQTT_TLS_INSECURE=false
+ENV CA_CERT_PATH=/ca.crt
+ENV KC_TOKEN_URL=https://www.lab.local/auth/realms/iot/protocol/openid-connect/token
+ENV KC_CLIENT_ID=controller-client
+ENV KC_CLIENT_SECRET=change-me-please
+ENV KC_REQUIRED_ROLE=controller-ingest
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .

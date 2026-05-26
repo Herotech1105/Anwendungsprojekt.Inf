@@ -1,9 +1,19 @@
 """HTTP-Weiterleitung der Sensordaten an das Backend."""
 
 import requests
-from tensorflow.python.saved_model.tag_constants import TRAINING
 
-from config import BACKEND_URL, API_KEY, HTTP_TIMEOUT, log, TRAININGURL
+from config import BACKEND_URL, API_KEY, HTTP_TIMEOUT, CA_CERT_PATH, log, TRAININGURL
+from keycloak_auth import auth_header
+
+
+def _build_headers() -> dict:
+    """Erstellt die HTTP-Header mit API-Key und Bearer-Token."""
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY,
+    }
+    headers.update(auth_header())
+    return headers
 
 
 def forward_to_backend(
@@ -15,17 +25,13 @@ def forward_to_backend(
         "humidity": humidity,
         "timestamp": timestamp,
     }
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-    }
     try:
         resp = requests.post(
             BACKEND_URL,
             json=payload,
-            headers=headers,
+            headers=_build_headers(),
             timeout=HTTP_TIMEOUT,
-            verify=False,  # Until nginx Certificate can be verified
+            verify=CA_CERT_PATH,
         )
     except requests.RequestException as exc:
         log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)
@@ -55,17 +61,13 @@ def forward_training_data_to_backend(
         "heater": heater,
         "fan": fan,
     }
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-    }
     try:
         resp = requests.post(
             TRAININGURL,
             json=payload,
-            headers=headers,
+            headers=_build_headers(),
             timeout=HTTP_TIMEOUT,
-            verify=False,  # Until nginx Certificate can be verified
+            verify=CA_CERT_PATH,
         )
         if 200 <= resp.status_code < 300:
             log.info(

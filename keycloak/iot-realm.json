@@ -25,6 +25,12 @@
         }
       ],
       "realmRoles": ["dashboard-user", "admin-user"]
+    },
+    {
+      "username": "service-account-controller-client",
+      "enabled": true,
+      "serviceAccountClientId": "controller-client",
+      "realmRoles": ["controller-ingest"]
     }
   ],
   "clients": [
