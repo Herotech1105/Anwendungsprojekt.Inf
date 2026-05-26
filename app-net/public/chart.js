@@ -1,8 +1,9 @@
 import { getSensorRange } from "./frontend.js";
 
 let chart = null;
+let liveUpdateInterval = null;
 
-// Statusmeldung in der Card anzeigen
+// Statusmeldung anzeigen
 function setStatus(message) {
     const el = document.getElementById("chartStatus");
     if (el) el.textContent = message;
@@ -19,7 +20,7 @@ async function renderRange(from, to) {
             return;
         }
 
-        // Wenn Daten vorhanden => Status löschen
+        // Status löschen, wenn Daten vorhanden sind
         setStatus("");
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
@@ -68,7 +69,27 @@ async function renderRange(from, to) {
     }
 }
 
+// Event vom frontend.js
 window.addEventListener("loadRange", (e) => {
     const { from, to } = e.detail;
-    renderRange(from, to);
+
+    // Falls ein alter Live‑Timer läuft → stoppen
+    if (liveUpdateInterval) {
+        clearInterval(liveUpdateInterval);
+        liveUpdateInterval = null;
+    }
+
+    // Live‑Modus aktivieren, wenn "to" leer ist
+    if (!to) {
+        // Sofort laden
+        renderRange(from, null);
+
+        // Dann jede Minute erneut laden
+        liveUpdateInterval = setInterval(() => {
+            renderRange(from, null);
+        }, 60000); // 60 Sekunden
+    } else {
+        // Statischer Zeitraum → einmalig laden
+        renderRange(from, to);
+    }
 });
