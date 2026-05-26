@@ -109,12 +109,13 @@ const authenticateApiKey = (req, res, next) => {
     next();
 };
 
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 app.set('trust proxy', true);
 
 // get status of server
 app.get('/api/status', (req, res) => {
+    console.log("Getting Status ...")
     res.json({status: 'online', timestamp: new Date()});
 });
 
@@ -127,11 +128,13 @@ app.listen(PORT, () => {
 // @Post: save sensordata into database
 app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     // validate data
+    console.log("Receiving sensor data ...")
     const {temperature, humidity, timestamp} = validateSensorPayload(req.body);
 
     let conn;
     try {
-        const pool = await getPool();
+        if (!temperature) throw Error("Denied: ")
+        const pool = await getWritePool();
         conn = await pool.getConnection();
         console.log("Connection to mariaDB established")
 
@@ -150,10 +153,59 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     }
 });
 
+app.post('/api/internal/trainingdata', authenticateApiKey, async (req, res) => {
+    // validate data
+    console.log("Saving training_data")
+    const {temperature, humidity, timestamp, heater, fan} = validateSensorPayload(req.body);
+
+    let conn;
+    try {
+        if (!temperature) throw Error("Denied: ")
+        const pool = await getWritePool();
+        conn = await pool.getConnection();
+        console.log("Connection to mariaDB established")
+
+        // Prepared Statement
+        const sql = "INSERT INTO training_data (temperature, humidity, timestamp, heater, fan) VALUES (?, ?, ?, ?, ?)";
+        const result = await conn.query(sql, [temperature, humidity, timestamp, heater, fan]);
+
+        console.log("Execution: ", result)
+        res.status(201).json({
+            status: "ok"
+        });
+    } catch (err) {
+        res.status(400).json({error: err.message || "invalid payload"});
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
+// For Controller Warmstart
+app.get('/api/internal/sensordata/latest', authenticateApiKey, async (req, res) => {
+    let conn;
+    try {
+        const pool = await getReadPool();
+        conn = await pool.getConnection();
+
+        // Fetch the most recent sensor entry
+        const sql = "SELECT * FROM sensor_data ORDER BY timestamp DESC LIMIT 1";
+        const rows = await conn.query(sql);
+
+        if (rows.length === 0) {
+            return res.status(200).json({message: "No data available yet."});
+        }
+        res.status(200).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
 
 // @function: validating the payload for the sensor_data table
 validateSensorPayload = (data) => {
-    const {temperature, humidity, timestamp} = data;
+    const {temperature, humidity, timestamp, heater, fan} = data;
 
     // check if temperature and humidity are numbers
     if (isNaN(temperature) || isNaN(humidity)) {
@@ -169,7 +221,7 @@ validateSensorPayload = (data) => {
     }
 
     // check if temperature and humidity are in valid ranges
-    if (temperature < 0 || temperature > 100 || humidity < 0 || humidsity > 100) {
+    if (temperature < 0 || temperature > 60 || humidity < 10 || humidity > 70) {
         console.error("Temperature or humidity out of valid range");
         return null;
     }
@@ -188,6 +240,10 @@ validateSensorPayload = (data) => {
 
     // return valid data
     return {
-        temperature, humidity, formated_timestamp
+        temperature,
+        humidity,
+        timestamp: formated_timestamp,
+        heater,
+        fan
     };
 }

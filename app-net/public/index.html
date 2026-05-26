@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>IoT Dashboard</title>
+    <link rel="icon" href="../img/LOGO.svg" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Keycloak -->
+    <script src="https://www.lab.local/auth/js/keycloak.js"></script>
+    <script src="chart.js"></script>
+</head>
+
+<body>
+    <header class="topbar">
+        <h1>IoT Dashboard</h1>
+    </header>
+
+    <main class="container">
+        <section class="card controls">
+            <h2>Zeitraum wählen</h2>
+
+            <div class="input-row">
+                <label>
+                    Von:
+                    <input type="datetime-local" id="from">
+                </label>
+
+                <label>
+                    Bis:
+                    <input type="datetime-local" id="to">
+                </label>
+
+                <button id="loadDataBtn">Daten laden</button>
+            </div>
+        </section>
+
+        <section class="card chart-card">
+            <h2>Sensordaten</h2>
+            <canvas id="sensorChart"></canvas>
+        </section>
+    </main>
+
+    <script src="frontend.js"></script>
+</body>
+</html>
+
