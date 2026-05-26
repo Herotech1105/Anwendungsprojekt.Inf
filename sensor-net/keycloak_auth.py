@@ -34,7 +34,7 @@ def request_token() -> str:
         KC_TOKEN_URL,
         data=data,
         timeout=HTTP_TIMEOUT,
-        verify=CA_CERT_PATH,
+        verify=False,
     )
     resp.raise_for_status()
     body = resp.json()
