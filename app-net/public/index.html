@@ -1,32 +1,47 @@
 <!DOCTYPE html>
 <html lang="de">
-    <head>
-        <meta charset="UTF-8" />
-        <title>IoT Dashboard</title>
-        <link rel="icon" href="../img/LOGO.svg" />
-        <link rel="stylesheet" href="style.css" />
-        <!-- Keycloak JS -->
-        <script src="https://www.lab.local/auth/js/keycloak.js"></script>
-        <!-- Chart.js (oder eigene chart.js-Logik) -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <title>IoT Dashboard</title>
+    <link rel="icon" href="../img/LOGO.svg" />
+    <link rel="stylesheet" href="style.css" />
 
-    <body>
+    <!-- Keycloak -->
+    <script src="https://www.lab.local/auth/js/keycloak.js"></script>
+    <script src="chart.js"></script>
+</head>
+
+<body>
+    <header class="topbar">
         <h1>IoT Dashboard</h1>
+    </header>
 
-        <div class="controls">
-            <label>From:
-            <input type="datetime-local" id="from" />
-            </label>
-            <label>To:
-            <input type="datetime-local" id="to" />
-            </label>
-            <button id="loadDataBtn">Daten laden</button>
-        </div>
+    <main class="container">
+        <section class="card controls">
+            <h2>Zeitraum wählen</h2>
 
-        <canvas id="sensorChart"></canvas>
+            <div class="input-row">
+                <label>
+                    Von:
+                    <input type="datetime-local" id="from">
+                </label>
 
-        <script src="frontend.js"></script>
-        <script src="chart.js"></script>
-    </body>
+                <label>
+                    Bis:
+                    <input type="datetime-local" id="to">
+                </label>
+
+                <button id="loadDataBtn">Daten laden</button>
+            </div>
+        </section>
+
+        <section class="card chart-card">
+            <h2>Sensordaten</h2>
+            <canvas id="sensorChart"></canvas>
+        </section>
+    </main>
+
+    <script src="frontend.js"></script>
+</body>
 </html>
+
