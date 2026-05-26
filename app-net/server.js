@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 const {getReadPool, getWritePool} = require('./config/database');
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = process.env.PUBLIC_DIR || 'public';
 app.use(express.json());
 
 
@@ -18,7 +17,7 @@ const authenticateApiKey = (req, res, next) => {
     next();
 };
 
-app.use(express.static(PUBLIC_DIR));
+app.use(express.static("public"));
 
 app.set('trust proxy', true);
 

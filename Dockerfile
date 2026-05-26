@@ -5,8 +5,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --production
 
-COPY . .
+COPY ./app-net .
 
 EXPOSE 3000
 
-CMD [ "node", "app-net/server.js" ]
+CMD [ "node", "server.js" ]
