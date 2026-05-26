@@ -203,6 +203,30 @@ app.get('/api/internal/sensordata/latest', authenticateApiKey, async (req, res) 
 });
 
 
+// For Dashboard chart
+app.get('/api/sensordata', authenticateToken, async (req, res) => {
+    let conn;
+    try {
+        const pool = await getReadPool();
+        conn = await pool.getConnection();
+
+        // Fetch the most recent sensor entry
+        const sql = "SELECT * FROM sensor_data ORDER BY timestamp DESC";
+        const rows = await conn.query(sql);
+
+        if (rows.length === 0) {
+            return res.status(200).json({message: "No data available."});
+        }
+        res.status(200).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
+
+
 // @function: validating the payload for the sensor_data table
 validateSensorPayload = (data) => {
     const {temperature, humidity, timestamp, heater, fan} = data;
