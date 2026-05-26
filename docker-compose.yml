@@ -99,6 +99,8 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HTTP_RELATIVE_PATH: /auth
+      KC_BASE_URL: http://localhost:8443/auth
+      KC_JWKS_URI: http://localhost:8443/auth/realms/iot/protocol/openid-connect/certs
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/iot-realm.json:/opt/keycloak/data/import/iot-realm.json:ro
