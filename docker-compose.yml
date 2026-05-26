@@ -12,6 +12,7 @@ services:
       - DB_NAME=myapp
       - PORT=3000
       - API_KEY=api_key
+      - PUBLIC_DIR=app_net/public
     depends_on:
       db:
         condition: service_healthy
