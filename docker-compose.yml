@@ -97,16 +97,12 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/iot-realm.json:/opt/keycloak/data/import/iot-realm.json:ro
-    command: >
-      start-dev
-      --http-port=8080
-      --http-relative-path=/auth
-      --import-realm
+    command: start-dev --import-realm
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/auth/health/ready || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
       start_period: 40s
     ports:
       - "8080:8080"
