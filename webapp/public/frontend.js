@@ -1,7 +1,7 @@
 const Keycloak = window.Keycloak;
 
 const keycloak = new Keycloak({
-    url: "https://www.lab.local/auth",
+    url: "https://192.168.4.18/auth",
     realm: "iot",
     clientId: "dashboard-client"
 });
