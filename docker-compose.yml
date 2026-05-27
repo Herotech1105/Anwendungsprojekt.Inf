@@ -1,6 +1,6 @@
 services:
   webapp:
-    build: .
+    build: webapp
     container_name: backend
     restart: always
     environment:
