@@ -43,7 +43,8 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "redirectUris": [
-        "https://www.lab.local/*"
+        "https://www.lab.local/*",
+        "https://192.168.4.18/*"
       ]
     },
     {
