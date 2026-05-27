@@ -4,24 +4,24 @@ let chart = null;
 let liveUpdateInterval = null;
 
 // Statusmeldung anzeigen
-function setStatus(message) {
+function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
-    if (el) el.textContent = message;
+    if (!el) return;
+
+    el.textContent = message;
+    el.className = "";
+    el.classList.add(`status-${type}`);
 }
 
 async function renderRange(from, to) {
     try {
         const data = await getSensorRange(from, to);
 
-        // Keine Daten im Zeitraum
         if (!data.labels || data.labels.length === 0) {
             if (chart) chart.destroy();
-            setStatus("Keine Daten im gewählten Zeitraum");
+            setStatus("Keine Daten im gewählten Zeitraum", "error");
             return;
         }
-
-        // Status löschen, wenn Daten vorhanden sind
-        setStatus("");
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
@@ -35,18 +35,20 @@ async function renderRange(from, to) {
                     {
                         label: "Temperatur (°C)",
                         data: data.temperatures,
-                        borderColor: "rgba(255, 99, 132, 1)",
+                        borderColor: "#ef4444",
+                        backgroundColor: "rgba(239,68,68,0.15)",
                         borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
+                        fill: true,
+                        tension: 0.25
                     },
                     {
                         label: "Luftfeuchtigkeit (%)",
                         data: data.humidities,
-                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderColor: "#3b82f6",
+                        backgroundColor: "rgba(59,130,246,0.15)",
                         borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
+                        fill: true,
+                        tension: 0.25
                     }
                 ]
             },
@@ -63,33 +65,35 @@ async function renderRange(from, to) {
             }
         });
 
+        if (to) {
+            setStatus(`Statischer Zeitraum geladen, ${data.labels.length} Rohdatensätze`, "success");
+        }
+
     } catch (err) {
         console.error("Chart render error:", err);
-        setStatus("Verbindungsproblem, Daten konnten nicht geladen werden");
+        setStatus("Verbindungsproblem, Daten konnten nicht geladen werden", "error");
     }
 }
 
-// Event vom frontend.js
 window.addEventListener("loadRange", (e) => {
     const { from, to } = e.detail;
 
-    // Falls ein alter Live‑Timer läuft → stoppen
     if (liveUpdateInterval) {
         clearInterval(liveUpdateInterval);
         liveUpdateInterval = null;
     }
 
-    // Live‑Modus aktivieren, wenn "to" leer ist
     if (!to) {
-        // Sofort laden
+        setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
+
         renderRange(from, null);
 
-        // Dann jede Minute erneut laden
         liveUpdateInterval = setInterval(() => {
             renderRange(from, null);
-        }, 60000); // 60 Sekunden
+            setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
+        }, 60000);
+
     } else {
-        // Statischer Zeitraum → einmalig laden
         renderRange(from, to);
     }
 });

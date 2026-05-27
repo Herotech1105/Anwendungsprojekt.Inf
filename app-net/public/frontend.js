@@ -16,8 +16,6 @@ async function initAuth() {
             return;
         }
 
-        console.log("Logged in as:", keycloak.tokenParsed.preferred_username);
-
         document.getElementById("userInfo").textContent =
             "Eingeloggt als: " + keycloak.tokenParsed.preferred_username;
 
@@ -59,12 +57,28 @@ document.getElementById("loadDataBtn").addEventListener("click", () => {
     const from = document.getElementById("from").value;
     const to = document.getElementById("to").value;
 
-    if (!from || !to) {
-        alert("Bitte Zeitraum auswählen");
+    if (!from) {
+        alert("Bitte Startzeit auswählen");
         return;
     }
 
     window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
+});
+
+// --- Dark Mode Toggle (ohne Speicherung) ---
+const themeToggle = document.getElementById("themeToggle");
+
+themeToggle.addEventListener("change", () => {
+    if (themeToggle.checked) {
+        document.body.classList.add("dark");
+    } else {
+        document.body.classList.remove("dark");
+    }
+});
+
+// --- Logout Button ---
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    keycloak.logout();
 });
 
 initAuth();
