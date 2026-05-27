@@ -1,3 +1,5 @@
+import Keycloak from 'keycloak-js';
+
 const keycloak = new Keycloak({
     url: "https://www.lab.local/auth",
     realm: "iot",
