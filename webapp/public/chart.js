@@ -1,5 +1,6 @@
-import Chart from "https://cdn.jsdelivr.net/npm/chart.js/dist/chart.esm.js";
 import { getSensorRange } from "./frontend.js";
+
+const Chart = window.Chart;
 
 let chart = null;
 let liveUpdateInterval = null;

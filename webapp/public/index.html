@@ -1,63 +1,61 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8" />
-    <title>IoT Dashboard</title>
+    <head>
+        <meta charset="UTF-8" />
+        <title>IoT Dashboard</title>
 
-    <link rel="icon" href="img/LOGO.svg" />
-    <link rel="stylesheet" href="style.css" />
+        <link rel="icon" href="img/LOGO.svg" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
 
-    <script src="https://www.lab.local/auth/js/keycloak.js"></script>
-    <script>
-    window.KeycloakGlobal = Keycloak;
-    </script>
-</head>
+    <body>
+        <header class="topbar">
+            <h1>IoT Dashboard</h1>
 
-<body>
-    <header class="topbar">
-        <h1>IoT Dashboard</h1>
+            <div class="topbar-right">
+                <div id="userInfo" class="user-info"></div>
 
-        <div class="topbar-right">
-            <div id="userInfo" class="user-info"></div>
-
-            <div class="darkmode-wrapper">
-                <span class="darkmode-label">Dark Mode</span>
-                <label class="switch">
-                    <input type="checkbox" id="themeToggle">
-                    <span class="slider"></span>
-                </label>
+                <div class="darkmode-wrapper">
+                    <span class="darkmode-label">Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="container">
-        <section class="card controls">
-            <h2>Zeitraum wählen</h2>
+        <main class="container">
+            <section class="card controls">
+                <h2>Zeitraum wählen</h2>
 
-            <div class="input-row horizontal">
-                <label>
-                    Von:
-                    <input type="datetime-local" id="from">
-                </label>
+                <div class="input-row horizontal">
+                    <label>
+                        Von:
+                        <input type="datetime-local" id="from">
+                    </label>
 
-                <label>
-                    Bis:
-                    <input type="datetime-local" id="to">
-                </label>
+                    <label>
+                        Bis:
+                        <input type="datetime-local" id="to">
+                    </label>
 
-                <button id="loadDataBtn">Daten laden</button>
-                <button id="logoutBtn" class="logout-btn">Logout</button>
-            </div>
-        </section>
+                    <button id="loadDataBtn">Daten laden</button>
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                </div>
+            </section>
 
-        <section class="card chart-card">
-            <h2>Sensordaten</h2>
-            <div id="chartStatus"></div>
-            <canvas id="sensorChart"></canvas>
-        </section>
-    </main>
+            <section class="card chart-card">
+                <h2>Sensordaten</h2>
+                <div id="chartStatus"></div>
+                <canvas id="sensorChart"></canvas>
+            </section>
+        </main>
 
-    <script type="module" src="frontend.js"></script>
-    <script type="module" src="chart.js"></script>
-</body>
+        <script src="https://www.lab.local/auth/js/keycloak.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script type="module" src="frontend.js"></script>
+        <script type="module" src="chart.js"></script>
+    </body>
 </html>
