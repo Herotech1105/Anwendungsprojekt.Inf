@@ -126,7 +126,7 @@ services:
       - mqtt
       - nginx
     extra_hosts:
-      - "www.lab.local:host-gateway"
+      - "www.lab.local:192.168.4.18"
     networks:
       sensor-network:
 
