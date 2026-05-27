@@ -1,4 +1,4 @@
-import Keycloak from 'keycloak-js';
+const Keycloak = window.KeycloakGlobal;
 
 const keycloak = new Keycloak({
     url: "https://www.lab.local/auth",

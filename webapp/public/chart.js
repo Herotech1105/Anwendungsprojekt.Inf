@@ -1,3 +1,4 @@
+import Chart from "https://cdn.jsdelivr.net/npm/chart.js/dist/chart.esm.js";
 import { getSensorRange } from "./frontend.js";
 
 let chart = null;

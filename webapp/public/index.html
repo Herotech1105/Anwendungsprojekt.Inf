@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="style.css" />
 
     <script src="https://www.lab.local/auth/js/keycloak.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    window.KeycloakGlobal = Keycloak;
+    </script>
 </head>
 
 <body>
