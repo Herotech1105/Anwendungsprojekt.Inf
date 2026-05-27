@@ -102,7 +102,7 @@ services:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/auth/health/ready || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 15
       start_period: 40s
     ports:
       - "8080:8080"
