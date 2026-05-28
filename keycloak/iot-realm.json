@@ -46,7 +46,9 @@
         "https://www.lab.local/*",
         "https://local.kleber.data/*",
         "https://192.168.4.18/*",
-        "http://192.168.4.18/*"
+        "http://192.168.4.18/*",
+        "http://www.lab.local/*",
+        "http://local.kleber.data/*"
       ],
       "webOrigins": [
         "+"
