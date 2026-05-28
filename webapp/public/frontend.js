@@ -1,7 +1,7 @@
 const Keycloak = window.Keycloak;
 
 const keycloak = new Keycloak({
-    url: "https://local.kleber.data/auth",
+    url: "https://www.lab.local/auth",
     realm: "iot",
     clientId: "dashboard-client"
 });
@@ -34,7 +34,7 @@ async function initAuth() {
 }
 
 async function apiGet(path) {
-    const url = `https://www.lab.local/api${path}`;
+    const url = `https://local.kleber.data/api${path}`;
 
     const response = await fetch(url, {
         method: "GET",
