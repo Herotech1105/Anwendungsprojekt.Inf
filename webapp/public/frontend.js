@@ -1,7 +1,7 @@
 const Keycloak = window.Keycloak;
 
 const keycloak = new Keycloak({
-    url: "https://192.168.4.18/auth",
+    url: "https://local.kleber.data/auth",
     realm: "iot",
     clientId: "dashboard-client"
 });
