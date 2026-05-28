@@ -72,6 +72,7 @@ services:
       - PARANOIA=1
       - PROXY_SSL=off
       - MSG="ModSecurity Attack Detected"
+      - SECURITY_MODENGINE=DetectionOnly
     volumes:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
       - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
@@ -88,6 +89,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
       KC_HTTP_RELATIVE_PATH: /auth
       KC_HEALTH_ENABLED: "true"
       KC_HOSTNAME: local.kleber.data
