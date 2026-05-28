@@ -85,7 +85,6 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
     networks:
       app-network:
-    depends_on:
 
   keycloak_web:
     image: quay.io/keycloak/keycloak:23.0.7
