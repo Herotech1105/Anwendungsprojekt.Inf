@@ -70,7 +70,7 @@ services:
       - "80:80"
     environment:
       - PARANOIA=1
-      - PROXY_SSL=on
+      - PROXY_SSL=off
       - MSG="ModSecurity Attack Detected"
       - SECURITY_MODENGINE=DetectionOnly
     volumes:
