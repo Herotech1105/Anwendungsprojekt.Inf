@@ -1,3 +1,5 @@
+USE myapp;
+
 DELIMITER $$
 
 CREATE EVENT IF NOT EXISTS archive_old_sensor_data
