@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const KC_JWKS_URI = process.env.KC_JWKS_URI;
 const KC_BASE_URL = process.env.KC_BASE_URL;
 const https = require('https');
+const fs = require('fs');
 
 const client = jwksClient({
     jwksUri: KC_JWKS_URI,
