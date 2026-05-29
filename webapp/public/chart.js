@@ -88,10 +88,10 @@ window.addEventListener("loadRange", (e) => {
     if (!to) {
         setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
 
-        renderRange(from, null);
+        renderRange(from, new Date().toISOString());
 
         liveUpdateInterval = setInterval(() => {
-            renderRange(from, null);
+            renderRange(from, new Date().toISOString());
             setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
         }, 60000);
 

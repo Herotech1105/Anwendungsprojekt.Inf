@@ -109,7 +109,7 @@ app.get('/api/sensordata', authenticateToken("dashboard-audience", "dashboard-us
 });
 
 
-app.get('/api/sensordata/range', authenticateToken, async (req, res) => {
+app.get('/api/sensordata/range', authenticateToken("dashboard-audience", "dashboard-user"), async (req, res) => {
     const { from, to } = req.query;
 
     if (!from || !to) {
