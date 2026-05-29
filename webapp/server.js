@@ -117,9 +117,14 @@ app.get('/api/status', (req, res) => {
     res.json({status: 'online', timestamp: new Date()});
 });
 
-app.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`);
-});
+const fs = require('fs');
+
+const privateKey = fs.readFileSync('certs/server.key');
+const certificate = fs.readFileSync('certs/server.crt');
+
+const credentials = {key: privateKey, cert: certificate};
+
+https.createServer(credentials, app).listen(PORT)
 
 //SQL Statements // ------------------------------------------------------------- //
 

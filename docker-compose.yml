@@ -5,8 +5,8 @@ services:
     restart: always
     env_file: environment/webapp.env
     volumes:
-      - ./nginx/certs/www_cert.cert:/certs/www_cert.cert:ro
-      - ./nginx/certs/www_key.key:/certs/www_key.key:ro 
+      - ./nginx/certs/www_cert.cert:/usr/src/app/certs/server.crt:ro
+      - ./nginx/certs/www_key.key:/usr/src/app/certs/server.key:ro
     depends_on:
       db:
         condition: service_healthy
