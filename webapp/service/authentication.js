@@ -27,7 +27,6 @@ const getKey = (header, callback) => {
 };
 
 
-
 // middleware - authenticate token
 const authenticateToken = (expectedAudience, requiredRole) => {
     return (req, res, next) => {
