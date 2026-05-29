@@ -156,33 +156,6 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
     }
 });
 
-app.post('/api/internal/trainingdata', authenticateApiKey, async (req, res) => {
-    // validate data
-    console.log("Saving training_data")
-    const {temperature, humidity, timestamp, heater, fan} = validateSensorPayload(req.body);
-
-    let conn;
-    try {
-        if (!temperature) throw Error("Denied: ")
-        const pool = await getWritePool();
-        conn = await pool.getConnection();
-        console.log("Connection to mariaDB established")
-
-        // Prepared Statement
-        const sql = "INSERT INTO training_data (temperature, humidity, timestamp, heater, fan) VALUES (?, ?, ?, ?, ?)";
-        const result = await conn.query(sql, [temperature, humidity, timestamp, heater, fan]);
-
-        console.log("Execution: ", result)
-        res.status(201).json({
-            status: "ok"
-        });
-    } catch (err) {
-        res.status(400).json({error: err.message || "invalid payload"});
-    } finally {
-        if (conn) conn.release();
-    }
-});
-
 // For Controller Warmstart
 app.get('/api/internal/sensordata/latest', 
     authenticateApiKey, 
@@ -271,7 +244,7 @@ app.get('/api/sensordata/range', authenticateToken, async (req, res) => {
 
 // @function: validating the payload for the sensor_data table
 validateSensorPayload = (data) => {
-    const {temperature, humidity, timestamp, heater, fan} = data;
+    const {temperature, humidity, timestamp} = data;
 
     // check if temperature and humidity are numbers
     if (isNaN(temperature) || isNaN(humidity)) {
@@ -308,8 +281,6 @@ validateSensorPayload = (data) => {
     return {
         temperature,
         humidity,
-        timestamp: formated_timestamp,
-        heater,
-        fan
+        timestamp: formated_timestamp
     };
 }
