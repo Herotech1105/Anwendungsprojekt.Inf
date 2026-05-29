@@ -83,6 +83,11 @@ services:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
       - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
+    healthcheck:
+      test: ["CMD", "service", "nginx", "status"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
     networks:
       app-network:
 
