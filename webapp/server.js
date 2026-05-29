@@ -239,6 +239,9 @@ app.get('/api/sensordata/range', authenticateToken, async (req, res) => {
         return res.status(400).json({ error: "from and to parameters required" });
     }
 
+    const fromStamp = new Date(from).toISOString().slice(0, 19).replace('T', ' ')
+    const toStamp = new Date(to).toISOString().slice(0, 19).replace('T', ' ')
+
     let conn;
     try {
         const pool = await getReadPool();
@@ -250,7 +253,7 @@ app.get('/api/sensordata/range', authenticateToken, async (req, res) => {
             WHERE timestamp BETWEEN ? AND ?
             ORDER BY timestamp ASC
         `;
-        const rows = await conn.query(sql, [from, to]);
+        const rows = await conn.query(sql, [fromStamp, toStamp]);
 
         const labels = rows.map(r => r.timestamp);
         const temperatures = rows.map(r => r.temperature);
