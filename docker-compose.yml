@@ -5,6 +5,7 @@ services:
     restart: always
     env_file: environment/webapp.env
     volumes:
+      - ./nginx/certs/ca.crt:/usr/src/app/certs/ca.crt:ro
       - ./nginx/certs/www_cert.cert:/usr/src/app/certs/server.crt:ro
       - ./nginx/certs/www_key.key:/usr/src/app/certs/server.key:ro
     depends_on:

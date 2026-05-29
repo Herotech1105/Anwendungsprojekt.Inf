@@ -5,10 +5,11 @@ const jwt = require('jsonwebtoken');
 const KC_JWKS_URI = process.env.KC_JWKS_URI;
 const KC_BASE_URL = process.env.KC_BASE_URL;
 const https = require('https');
+
 const client = jwksClient({
     jwksUri: KC_JWKS_URI,
     requestAgent: new https.Agent({
-        ca: undefined, // to do: add CA certificate
+        ca: fs.readFileSync("certs/ca.crt"),
         rejectUnauthorized: true,
     }),
 });
