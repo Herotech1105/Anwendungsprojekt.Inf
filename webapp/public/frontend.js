@@ -6,6 +6,8 @@ const keycloak = new Keycloak({
     clientId: "dashboard-client"
 });
 
+window.keycloak = keycloak;
+
 async function initAuth() {
     try {
         const authenticated = await keycloak.init({
