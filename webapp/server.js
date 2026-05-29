@@ -7,6 +7,16 @@ const https = require('https');
 
 app.use(express.json());
 
+const cors = require("cors");
+
+app.use(cors({
+    origin: [
+        "https://192.168.4.18",
+        "https://www.lab.local",
+        "https://local.kleber.data"
+    ],
+    credentials: true
+}));
 
 const {authenticateToken, authenticateApiKey} = require("./service/authentication")
 
