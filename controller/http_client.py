@@ -48,38 +48,3 @@ def forward_to_backend(
             resp.status_code, resp.text[:200],
         )
 
-
-def forward_training_data_to_backend(
-    temperature: float, humidity: float, timestamp: str, heater: bool, fan: bool
-) -> None:
-    """POSTet die Sensordaten an den Webserver. Wirft keine Exception."""
-    print('Posting training data to Backend...')
-    payload = {
-        "temperature": temperature,
-        "humidity": humidity,
-        "timestamp": timestamp,
-        "heater": heater,
-        "fan": fan,
-    }
-    try:
-        resp = requests.post(
-            TRAININGURL,
-            json=payload,
-            headers=_build_headers(),
-            timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_PATH,
-        )
-        if 200 <= resp.status_code < 300:
-            log.info(
-                "An Backend weitergeleitet: %s (status %s)",
-                payload, resp.status_code,
-            )
-        else:
-            log.warning(
-                "Backend hat Payload abgelehnt: status=%s body=%s",
-                resp.status_code, resp.text[:200],
-            )
-    except requests.RequestException as exc:
-        log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)
-        return
-

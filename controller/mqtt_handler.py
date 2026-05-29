@@ -14,7 +14,7 @@ from config import (
     HUM_HIGH, HUM_LOW, log,
 )
 from validation import parse_and_validate
-from http_client import forward_to_backend, forward_training_data_to_backend
+from http_client import forward_to_backend
 
 
 # --- MQTT-Callbacks (paho-mqtt v2 API) -----------------------------------
@@ -63,12 +63,6 @@ def on_message(client, userdata, msg):
     hum_state = _determine_hum_state(humidity)
     # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
     action = _resolve_action(temp_state, hum_state)
-    if action == "COOL" or action == "HUM":
-        forward_training_data_to_backend(temperature, humidity, timestamp, False, True)
-    elif action == "HEAT" or action == "DRY":
-        forward_training_data_to_backend(temperature, humidity, timestamp, True, False)
-    else:
-        forward_training_data_to_backend(temperature, humidity, timestamp, False, False)
     # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
     client.publish("actuator/control", payload=action, qos=1)
     log.info(
