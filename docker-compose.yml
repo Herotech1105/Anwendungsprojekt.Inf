@@ -86,8 +86,8 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8443 && echo -e 'GET /auth/health HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep '200 OK' || exit 1" ]
       interval: 10s
-      timeout: 5s
-      retries: 20
+      timeout: 9s
+      retries: 30
       start_period: 40s
     networks:
       - app-network
