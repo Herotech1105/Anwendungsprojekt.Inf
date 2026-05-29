@@ -12,8 +12,6 @@ services:
         condition: service_healthy
       keycloak_web:
         condition: service_healthy
-      nginx:
-        condition: service_healthy
     networks:
       - app-network
 
@@ -69,11 +67,8 @@ services:
       - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
       - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
-    healthcheck:
-      test: ["CMD", "service", "nginx", "status"]
-      interval: 1m
-      timeout: 5s
-      retries: 3
+    depends_on:
+      - webapp
     networks:
       app-network:
 
