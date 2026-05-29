@@ -97,7 +97,7 @@ app.get('/api/internal/sensordata/latest',
 
 
 // For Dashboard chart
-app.get('/api/sensordata', authenticateToken("dashboard-audience", "dashboard-user"), async (req, res) => {
+app.get('/api/sensordata', authenticateToken("dashboard-client", "dashboard-user"), async (req, res) => {
     let conn;
     try {
         const pool = await getReadPool();
@@ -119,7 +119,7 @@ app.get('/api/sensordata', authenticateToken("dashboard-audience", "dashboard-us
 });
 
 
-app.get('/api/sensordata/range', authenticateToken("dashboard-audience", "dashboard-user"), async (req, res) => {
+app.get('/api/sensordata/range', authenticateToken("dashboard-client", "dashboard-user"), async (req, res) => {
     const { from, to } = req.query;
 
     if (!from || !to) {
