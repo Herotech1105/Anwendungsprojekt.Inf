@@ -18,54 +18,11 @@ import requests
 
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
-    MQTT_KEEPALIVE, API_KEY, BACKEND_URL, HTTP_TIMEOUT,
-    CA_CERT_PATH, log,
+    MQTT_KEEPALIVE, API_KEY, BACKEND_URL, log,
 )
-from keycloak_auth import verify_role, auth_header
+from keycloak_auth import verify_role
 from mqtt_handler import build_client
-from lstm_handler import buffer
 
-
-# ---------------------------------------------------------------------------
-# Warmstart: Buffer mit letzten Temperaturwerten aus der Datenbank füllen,
-# damit nach einem Neustart sofort Forecasts möglich sind
-# ---------------------------------------------------------------------------
-
-def warmstart() -> None:
-    """Laedt die aktuellsten Temperaturwerte vom Backend in den Buffer."""
-    url = BACKEND_URL.rsplit("/", 1)[0] + "/sensordata/latest"
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-    }
-    headers.update(auth_header())
-    try:
-        resp = requests.get(
-            url, headers=headers, timeout=HTTP_TIMEOUT, verify=CA_CERT_PATH,
-        )
-    except requests.RequestException as exc:
-        log.warning("Warmstart fehlgeschlagen (Netzwerk): %s", exc)
-        return
-
-    if resp.status_code != 200:
-        log.warning(
-            "Warmstart: Backend antwortete mit Status %s", resp.status_code,
-        )
-        return
-
-    try:
-        data = resp.json()
-        # Backend liefert Liste von {temperature, humidity, ...}
-        records = data if isinstance(data, list) else data.get("data", [])
-        for record in records:
-            temp = float(record["temperature"])
-            hum = float(record["humidity"])
-            buffer.append([temp, hum])
-        log.info(
-            "Warmstart: %d Werte aus Backend in Buffer geladen", len(records),
-        )
-    except (KeyError, TypeError, ValueError) as exc:
-        log.warning("Warmstart: Antwort konnte nicht verarbeitet werden: %s", exc)
 
 
 def main() -> None:
@@ -85,8 +42,6 @@ def main() -> None:
         log.error("Keycloak-Authentifizierung fehlgeschlagen: %s", exc)
         sys.exit(1)
 
-    # Warmstart: letzte Messwerte aus DB in den LSTM-Buffer laden
-    warmstart()
 
     client = build_client()
 
