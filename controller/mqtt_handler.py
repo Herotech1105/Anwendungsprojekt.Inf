@@ -57,7 +57,6 @@ def on_message(client, userdata, msg):
         avg_temp = temperature
     else:
         avg_temp = (temperature + sum(forecast) / len(forecast)) / 2
-    print(f"Temperature Prognosis: {avg_temp}\nHumidity: {humidity}")
     # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
     temp_state = _determine_temp_state(avg_temp)
     hum_state = _determine_hum_state(humidity)
