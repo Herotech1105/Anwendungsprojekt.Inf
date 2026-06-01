@@ -31,7 +31,7 @@ def forward_to_backend(
             json=payload,
             headers=_build_headers(),
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_PATH,
+            verify=False,
         )
     except requests.RequestException as exc:
         log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)
