@@ -5,9 +5,9 @@ services:
     restart: always
     env_file: environment/webapp.env
     volumes:
-      - ./nginx/certs/ca.crt:/usr/src/app/certs/ca.crt:ro
-      - ./nginx/certs/www_cert.cert:/usr/src/app/certs/server.crt:ro
-      - ./nginx/certs/www_key.key:/usr/src/app/certs/server.key:ro
+      - ./CA/ca.crt:/usr/src/app/certs/ca.crt:ro
+      - ./CA/www_cert.cert:/usr/src/app/certs/server.crt:ro
+      - ./CA/www_key.key:/usr/src/app/certs/server.key:ro
     depends_on:
       db:
         condition: service_healthy
@@ -45,6 +45,9 @@ services:
       - "8883:8883"
     volumes:
       - ./mosquitto/config:/mosquitto/config:rw
+      - ./CA/ca.crt:/mosquitto/config/ca.crt:rw
+      - ./CA/mqtt.crt:/mosquitto/config/mqtt.crt:rw
+      - ./CA/mqtt.key:/mosquitto/config/mqtt.key:rw
       - ./mosquitto/data:/mosquitto/data:rw
       - ./mosquitto/log:/mosquitto/log:rw
       - ./mosquitto/secure:/mosquitto/secure:ro
@@ -65,8 +68,8 @@ services:
       - "80:80"
     env_file: environment/nginx.env
     volumes:
-      - ./nginx/certs/www_key.key:/etc/nginx/certs/www_key.key:ro
-      - ./nginx/certs/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
+      - ./CA/www_key.key:/etc/nginx/certs/www_key.key:ro
+      - ./CA/www_cert.cert:/etc/nginx/certs/www_cert.cert:ro
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
     depends_on:
       - webapp
@@ -80,8 +83,8 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/iot-realm.json:/opt/keycloak/data/import/iot-realm.json:ro
-      - ./nginx/certs/www_cert.cert:/opt/keycloak/certs/www_cert.cert:ro
-      - ./nginx/certs/www_key.key:/opt/keycloak/certs/www_key.key:ro 
+      - ./CA/www_cert.cert:/opt/keycloak/certs/www_cert.cert:ro
+      - ./CA/www_key.key:/opt/keycloak/certs/www_key.key:ro
     command: >
       start  --import-realm
     healthcheck:
@@ -98,9 +101,9 @@ services:
     restart: unless-stopped
     env_file: environment/controller.env
     volumes:
-      - ./nginx/certs/ca.crt:/code/nginx.ca.crt:ro
-      - ./mosquitto/config/certs/ca.crt:/code/mqtt.ca.crt:ro
-      - ./nginx/certs/www_cert.cert:/code/keycloak.cert:ro
+      - ./CA/ca.crt:/code/nginx.ca.crt:ro
+      - ./CA/ca.crt:/code/mqtt.ca.crt:ro
+      - ./CA/www_cert.cert:/code/keycloak.cert:ro
     depends_on:
       - mqtt
       - nginx

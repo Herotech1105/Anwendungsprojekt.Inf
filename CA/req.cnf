@@ -1,0 +1,22 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = DE
+ST = Baden-Wuerttemberg
+L = Friedrichshafen
+O = DHBW
+OU = TIA25
+CN = local.kleber.data
+
+[v3_req]
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = local.kleber.data
+DNS.2 = *.local.kleber.data
+IP.1 = 192.168.4.18
