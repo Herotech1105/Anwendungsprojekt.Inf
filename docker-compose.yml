@@ -98,7 +98,8 @@ services:
     restart: unless-stopped
     env_file: environment/controller.env
     volumes:
-      - ./nginx/certs/ca.crt:/ca.crt:ro
+      - ./nginx/certs/ca.crt:/nginx.ca.crt:ro
+      - ./mosquitto/config/certs/ca.crt:/mqtt.ca.crt:ro
     depends_on:
       - mqtt
       - nginx

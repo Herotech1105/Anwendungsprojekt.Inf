@@ -8,7 +8,7 @@ import requests
 
 from config import (
     KC_TOKEN_URL, KC_CLIENT_ID, KC_CLIENT_SECRET,
-    KC_REQUIRED_ROLE, CA_CERT_PATH, HTTP_TIMEOUT, log,
+    KC_REQUIRED_ROLE, HTTP_TIMEOUT, log,
 )
 
 _cached_token: str | None = None
