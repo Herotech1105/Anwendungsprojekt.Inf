@@ -14,7 +14,7 @@ from config import (
     HUM_HIGH, HUM_LOW, log,
 )
 from validation import parse_and_validate
-from http_client import forward_to_backend
+from https_client import forward_to_backend
 
 
 # --- MQTT-Callbacks (paho-mqtt v2 API) -----------------------------------
