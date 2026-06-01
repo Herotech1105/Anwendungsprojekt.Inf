@@ -45,9 +45,9 @@ services:
       - "8883:8883"
     volumes:
       - ./mosquitto/config:/mosquitto/config:rw
-      - ./CA/ca.crt:/mosquitto/config/ca.crt:rw
-      - ./CA/mqtt.crt:/mosquitto/config/mqtt.crt:rw
-      - ./CA/mqtt.key:/mosquitto/config/mqtt.key:rw
+      - ./CA/ca.crt:/mosquitto/config/certs/ca.crt:rw
+      - ./CA/mqtt.crt:/mosquitto/config/certs/mqtt.crt:rw
+      - ./CA/mqtt.key:/mosquitto/config/certs/mqtt.key:rw
       - ./mosquitto/data:/mosquitto/data:rw
       - ./mosquitto/log:/mosquitto/log:rw
       - ./mosquitto/secure:/mosquitto/secure:ro
