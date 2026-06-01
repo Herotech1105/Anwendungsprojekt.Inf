@@ -25,7 +25,7 @@ TRAININGURL = os.getenv(
 )
 API_KEY = os.getenv("API_KEY", "")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
-CA_CERT_PATH = os.getenv("CA_CERT_PATH", "/ca.crt")
+NGINX_CERT_FILE = os.getenv("CA_CERT_PATH", "/ca.crt")
 
 # Keycloak (Client Credentials Flow)
 KC_TOKEN_URL = os.getenv(
