@@ -47,70 +47,28 @@ def on_message(client, userdata, msg):
 
     # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
 
-    # Buffer mit aktuellem Messwert fuellen
-    predict_next_value(temperature, humidity)
+    # Vorgersage erhalten
+    data = predict_next_value(temperature, humidity)
 
-    # 30-Minuten-Forecast erstellen (Folie 5-35 / 5-41)
-    forecast = forecast_future(minutes=30, alpha=0.2)
-
-    if forecast is None:
-        avg_temp = temperature
+    topic = "actuator/control"
+    payload_string = json.dumps(control_data)
+    
+    # Nachricht absenden
+    result = client.publish(topic, payload=payload_string, qos=1)
+    
+    # 4. LOGGEN NACH DEM ABSENDEN
+    if result.rc == 0:
+        log.info(
+            "MQTT publish successful on '%s'. Predicted Temp: %.2f°C | Fan: %s | Heater: %s | Both Off: %s",
+            topic,
+            control_data["predicted_temp"],
+            control_data["fan_on"],
+            control_data["heater_on"],
+            control_data["both_off"]
+        )
     else:
-        avg_temp = (temperature + sum(forecast) / len(forecast)) / 2
-    # Zustand bestimmen (states.py: determine_temp_state / determine_hum_state)
-    temp_state = _determine_temp_state(avg_temp)
-    hum_state = _determine_hum_state(humidity)
-    # Prioritaetslogik (states.py: apply_state) — Temperatur vor Humidity
-    action = _resolve_action(temp_state, hum_state)
-    # Auf Broker publishen (Pico mqtt.py erwartet: COOL, HEAT, DRY, HUM)
-    client.publish("actuator/control", payload=action, qos=1)
-    log.info(
-        "Forecast 30min: avg=%.2f C, hum=%.1f%% "
-        "-> temp_state=%s, hum_state=%s -> Aktion: %s",
-        avg_temp, humidity,
-        temp_state, hum_state, action,
-    )
-
-
-# --- Zustandserkennung (aus Pico states.py) --------------------------------
-
-def _determine_temp_state(avg_temp):
-    """Temperaturzustand anhand des Forecast-Durchschnitts bestimmen."""
-    if avg_temp > TEMP_HIGH:
-        return "TOO_HIGH"
-    elif avg_temp < TEMP_LOW:
-        return "TOO_LOW"
-    return "OK"
-
-
-def _determine_hum_state(humidity):
-    """Feuchtigkeitszustand anhand des aktuellen Messwertes bestimmen."""
-    if humidity > HUM_HIGH:
-        return "TOO_HIGH"
-    elif humidity < HUM_LOW:
-        return "TOO_LOW"
-    return "OK"
-
-
-def _resolve_action(temp_state, hum_state):
-    """Prioritaetslogik: Temperatur hat Vorrang vor Humidity.
-
-    Nachrichten passend zum Pico mqtt.py on_message:
-    COOL, HEAT, DRY, HUM
-    """
-    # 1. Temperatur pruefen (hoechste Prioritaet)
-    if temp_state == "TOO_HIGH":
-        return "COOL"
-    if temp_state == "TOO_LOW":
-        return "HEAT"
-    # 2. Humidity pruefen
-    if hum_state == "TOO_HIGH":
-        return "DRY"
-    if hum_state == "TOO_LOW":
-        return "HUM"
-    # 3. Alles im Bereich
-    return "OK"
-
+        log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
+        
 
 # --- Client-Setup ---------------------------------------------------------
 
