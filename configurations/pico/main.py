@@ -7,8 +7,10 @@ import states
 import control
 import mqtt
 
+
 panel = control.lcd
 mqtt.client.set_callback(mqtt.on_message)
+
 
 #0----Interrupt-----
 press_time = 0
@@ -36,6 +38,7 @@ control.button.irq(
 )
 #1----Interrupt-----
 
+
 """Verbindung zum WLAN"""
 #0----WLAN-Connection-----
 try:
@@ -49,7 +52,9 @@ except OSError as e:
     panel.putstr("Reconnecting...")
 #1----WLAN-Connection-----
 
+
 sleep(3)
+
 
 """Verbindung zum MQTT-Broker"""
 #0----MQTT-Connection-----
@@ -78,6 +83,7 @@ except Exception as e:
     panel.putstr(str(e)[:16])
 #1----MQTT-Connection-----
 
+
 while True:
     """Haupt-Loop"""
     try:
@@ -87,32 +93,43 @@ while True:
         hum  = round(control.sensor.humidity(), 1)
         #1----Sensor-Measuring-----
 
+
         #0----MQTT-Message-----
         payload = ujson.dumps({
           "temperature": temp,
           "humidity"   : hum
         })
-        
+
         if mqtt_connected:
             mqtt.client.publish(iot.MQTT_SENSOR_TOPIC, payload)
             print("Published")
-            mqtt.client.check_msg()
-            print("Checked")
+
+        wait_start = ticks_ms()
+        while ticks_diff(ticks_ms(), wait_start) < 10000:
+            if mqtt_connected:
+                mqtt.client.check_msg()
+                if mqtt.process_last():
+                    
+                    
+                    #0----Value-Display-----
+                    panel.clear()
+                    panel.move_to(0, 0)
+                    panel.putstr("{:.1f}C".format(temp))
+                    panel.putstr(" ")
+                    panel.putstr("{:.1f}%".format(hum))
+                    panel.move_to(0, 1)
+                    panel.putstr(str(states.current_state))
+                    #1----Value-Display-----
+            
+            
+            sleep_ms(1000)
         #1----MQTT-Message-----
 
-        #0----Value-Display-----
-        panel.clear()
-        panel.move_to(0, 0)
-        panel.putstr("{:.1f}C".format(temp))
-        panel.putstr(" ")
-        panel.putstr("{:.1f}%".format(hum))
-        panel.move_to(0, 1)
-        panel.putstr(str(states.current_state))
-        #1----Value-Display-----
 
         #states.lcd.clear()
         #states.scroll_text("Das ist ein sehr langer Text um den Scroll Text zu testen", zeile=0)
-        
+
+
     #0----Sensor-Error-----
     except OSError as e:
         print("Failed to read sensor: ", e)
@@ -123,7 +140,6 @@ while True:
         panel.putstr("Can't read")
     #1----Sensor-Error-----
 
-    sleep(5)
 
 
 # https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3

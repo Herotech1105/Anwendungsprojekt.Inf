@@ -3,11 +3,13 @@ import network
 import iot_config as iot
 import control
 
+
 panel = control.lcd
 
 """WLAN Parameter für den Aufbau einer Verbindung"""
 SSID 	 = iot.WIFI_SSID
 PASSWORD = iot.WIFI_PASSWORD
+
 
 def connect_wifi():
     """Verbindung zum WLAN"""

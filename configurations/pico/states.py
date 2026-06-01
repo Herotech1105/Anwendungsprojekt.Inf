@@ -1,5 +1,6 @@
 import control
 
+
 """State Variablen"""
 #0----States-----
 TEMP_TOO_LOW  = 0
@@ -18,6 +19,7 @@ HUM_MIN  = 42.0
 HUM_MAX  = 53.0
 #1----States-----
 
+
 #0----Apply State-----
 def apply_state(temp_state, hum_state):
     """Regelt zuerst Temperatur, dann Feuchtigkeit"""
@@ -27,6 +29,7 @@ def apply_state(temp_state, hum_state):
     if temp_state == TEMP_TOO_HIGH:
         control.radiator.off()
         control.fan.on()
+        control.peltier.on()
         print("STATE: Temp HIGH → Kühlen")
         current_state = "COOLING"
         return
@@ -34,6 +37,7 @@ def apply_state(temp_state, hum_state):
     if temp_state == TEMP_TOO_LOW:
         control.radiator.on()
         control.fan.off()
+        control.peltier.off()
         print("STATE: Temp LOW → Heizen")
         current_state = "HEATING"
         return
@@ -41,6 +45,7 @@ def apply_state(temp_state, hum_state):
     if hum_state == HUM_TOO_HIGH:
         control.radiator.on()
         control.fan.off()
+        control.peltier.off()
         print("STATE: Hum HIGH → Trocknen (Heizen)")
         current_state = "DRYING"
         return
@@ -48,12 +53,14 @@ def apply_state(temp_state, hum_state):
     if hum_state == HUM_TOO_LOW:
         control.radiator.off()
         control.fan.on()
+        control.peltier.off()
         print("STATE: Hum LOW → Befeuchten (Kühlen)")
         current_state = "HUMIDIFYING"
         return
 
     control.radiator.off()
     control.fan.off()
+    control.peltier.off()
     print("STATE: Alles OK → Alles AUS")
-    current_state = "IDLE"
+    current_state = "OK"
 #1----Apply State-----
