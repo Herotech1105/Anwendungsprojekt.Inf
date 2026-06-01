@@ -8,7 +8,7 @@ import requests
 
 from config import (
     KC_TOKEN_URL, KC_CLIENT_ID, KC_CLIENT_SECRET,
-    KC_REQUIRED_ROLE, HTTP_TIMEOUT, log, NGINX_CERT_FILE
+    KC_REQUIRED_ROLE, HTTP_TIMEOUT, log, KEYCLOAK_CERT
 )
 
 _cached_token: str | None = None
@@ -34,7 +34,7 @@ def request_token() -> str:
         KC_TOKEN_URL,
         data=data,
         timeout=HTTP_TIMEOUT,
-        verify=NGINX_CERT_FILE,
+        verify=KEYCLOAK_CERT,
     )
     resp.raise_for_status()
     body = resp.json()
