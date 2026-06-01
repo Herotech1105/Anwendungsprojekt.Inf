@@ -9,7 +9,7 @@ from lstm_handler import predict_next_value, forecast_future
 
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
-    MQTT_TOPIC, MQTT_CA_FILE, MQTT_CLIENT_ID,
+    MQTT_TOPIC, CA_CERT_FILE, MQTT_CLIENT_ID,
     MQTT_TLS_INSECURE, TEMP_HIGH, TEMP_LOW,
     HUM_HIGH, HUM_LOW, log,
 )
@@ -125,7 +125,7 @@ def build_client() -> mqtt.Client:
         client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
 
     # TLS-Kontext: Server-Zertifikat gegen die Projekt-CA verifizieren
-    ssl_ctx = ssl.create_default_context(cafile=MQTT_CA_FILE)
+    ssl_ctx = ssl.create_default_context(cafile=CA_CERT_FILE)
     if MQTT_TLS_INSECURE:
         ssl_ctx.check_hostname = False
         ssl_ctx.verify_mode = ssl.CERT_NONE

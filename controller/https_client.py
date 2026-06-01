@@ -2,7 +2,7 @@
 
 import requests
 
-from config import BACKEND_URL, API_KEY, HTTP_TIMEOUT, NGINX_CERT_FILE, log
+from config import BACKEND_URL, API_KEY, HTTP_TIMEOUT, CA_CERT_FILE, log
 from keycloak_auth import auth_header
 
 
@@ -31,7 +31,7 @@ def forward_to_backend(
             json=payload,
             headers=_build_headers(),
             timeout=HTTP_TIMEOUT,
-            verify=NGINX_CERT_FILE,
+            verify=CA_CERT_FILE,
         )
     except requests.RequestException as exc:
         log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)

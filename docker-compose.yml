@@ -101,9 +101,7 @@ services:
     restart: unless-stopped
     env_file: environment/controller.env
     volumes:
-      - ./CA/ca.crt:/code/nginx.ca.crt:ro
-      - ./CA/ca.crt:/code/mqtt.ca.crt:ro
-      - ./CA/www_cert.cert:/code/keycloak.cert:ro
+      - ./CA/ca.crt:/code/ca.crt:ro
     depends_on:
       - mqtt
       - nginx

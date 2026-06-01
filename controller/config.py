@@ -9,7 +9,6 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", "8883"))
 MQTT_USER = os.getenv("MQTT_USER", "testuser")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "sensor/data")
-MQTT_CA_FILE = os.getenv("MQTT_CA_FILE")
 MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", "controller")
 MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", "60"))
 # Wenn das Server-Zertifikat keinen passenden SAN/CN fuer den Docker-DNS-Namen
@@ -20,13 +19,9 @@ MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 BACKEND_URL = os.getenv(
     "BACKEND_URL", "https://www.lab.local/api/internal/sensordata"
 )
-TRAININGURL = os.getenv(
-    "TRAININGURL", "https://www.lab.local/api/internal/trainingdata"
-)
 API_KEY = os.getenv("API_KEY", "")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "5"))
-NGINX_CERT_FILE = os.getenv("CA_CERT_PATH", "/ca.crt")
-KEYCLOAK_CERT = os.getenv("KEYCLOAK_CERT", "")
+CA_CERT_FILE = os.getenv("CA_CERT_PATH", "/ca.crt")
 
 # Keycloak (Client Credentials Flow)
 KC_TOKEN_URL = os.getenv(
