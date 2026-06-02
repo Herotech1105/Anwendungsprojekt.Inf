@@ -65,7 +65,7 @@ def on_message(client, userdata, msg):
         # 4. LOGGEN NACH DEM ABSENDEN
         if result.rc == 0:
             log.info(
-                f"Published {action} on {topic}\Temp: {predicted_temp}\Humidity: {predicted_hum}"
+                f"Published {action} on {topic}\nTemp: {predicted_temp}\nHumidity: {predicted_hum}"
             )
         else:
             log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
