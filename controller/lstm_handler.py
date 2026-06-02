@@ -30,7 +30,6 @@ def predict_next_value(temperature, humidity):
     prediction = model.predict(input_data, verbose=0)
 
     predicted_temp = float(prediction[0][0])
-    predicted_hum = float(prediction[0][1])
     
     # set fan and heater states based on the predicted temperature
     fan_on = predicted_temp > TEMP_HIGH

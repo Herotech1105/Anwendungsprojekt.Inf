@@ -1,17 +1,16 @@
 """MQTT-Client-Aufbau und Callbacks."""
-
+import json
 import ssl
 from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
-from lstm_handler import predict_next_value, forecast_future
+from lstm_handler import predict_next_value
 
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, CA_CERT_FILE, MQTT_CLIENT_ID,
-    MQTT_TLS_INSECURE, TEMP_HIGH, TEMP_LOW,
-    HUM_HIGH, HUM_LOW, log,
+    MQTT_TLS_INSECURE, log,
 )
 from validation import parse_and_validate
 from https_client import forward_to_backend
@@ -51,7 +50,7 @@ def on_message(client, userdata, msg):
     data = predict_next_value(temperature, humidity)
 
     topic = "actuator/control"
-    payload_string = json.dumps(control_data)
+    payload_string = json.dumps(data)
     
     # Nachricht absenden
     result = client.publish(topic, payload=payload_string, qos=1)
@@ -61,10 +60,10 @@ def on_message(client, userdata, msg):
         log.info(
             "MQTT publish successful on '%s'. Predicted Temp: %.2f°C | Fan: %s | Heater: %s | Both Off: %s",
             topic,
-            control_data["predicted_temp"],
-            control_data["fan_on"],
-            control_data["heater_on"],
-            control_data["both_off"]
+            data["predicted_temp"],
+            data["fan_on"],
+            data["heater_on"],
+            data["both_off"]
         )
     else:
         log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
