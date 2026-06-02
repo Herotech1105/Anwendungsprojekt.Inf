@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 # 1. Load your CSV data
 # Assuming the file is named 'weather_data.csv'
-df = pd.read_csv('Messdaten2.csv')
+df = pd.read_csv('weather_data.csv')
 
 # Extract only the target features (ignoring the timestamp string)
 data = df[['temperature', 'humidity']].values
