@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from collections import deque
+from config import TEMP_HIGH, TEMP_LOW
 
 # config
 SEQ_LEN = 10 
@@ -12,8 +13,6 @@ model = tf.keras.models.load_model(MODEL_PATH)
 buffer = deque(maxlen=SEQ_LEN)
 
 # values for controlling fan and heater
-TEMP_HIGH = 28.0 
-TEMP_LOW = 18.0 
 
 def predict_next_value(temperature, humidity):
 

@@ -46,28 +46,25 @@ def on_message(client, userdata, msg):
 
     # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
 
-    # Vorgersage erhalten
-    data = predict_next_value(temperature, humidity)
+    # Vorhersage erhalten
+    try:
+        data = predict_next_value(temperature, humidity)
 
-    topic = "actuator/control"
-    payload_string = json.dumps(data)
-    
-    # Nachricht absenden
-    result = client.publish(topic, payload=payload_string, qos=1)
-    
-    # 4. LOGGEN NACH DEM ABSENDEN
-    if result.rc == 0:
-        log.info(
-            "MQTT publish successful on '%s'. Predicted Temp: %.2f°C | Fan: %s | Heater: %s | Both Off: %s",
-            topic,
-            data["predicted_temp"],
-            data["fan_on"],
-            data["heater_on"],
-            data["both_off"]
-        )
-    else:
-        log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
-        
+        topic = "actuator/control"
+        payload_string = json.dumps(data)
+
+        # Nachricht absenden
+        result = client.publish(topic, payload=payload_string, qos=1)
+
+        # 4. LOGGEN NACH DEM ABSENDEN
+        if result.rc == 0:
+            log.info(
+                f"Published {payload_string} on {topic}"
+            )
+        else:
+            log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
+    except Exception as e:
+        log.error("Failed to publish to MQTT broker:", e)
 
 # --- Client-Setup ---------------------------------------------------------
 
