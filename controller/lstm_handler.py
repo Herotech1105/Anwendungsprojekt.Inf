@@ -23,7 +23,7 @@ def predict_next_value(temperature, humidity):
         return None
     
     # transform the buffer into the right shape for prediction (1, SEQ_LEN, FEATURES)
-    input_data = np.array(buffer).reshape(1, SEQ_LEN, FEATURES)
+    input_data = np.array(buffer).reshape(1, SEQ_LEN, 1)
     
     # get the prediction from the model
     prediction = model.predict(input_data, verbose=0)
