@@ -17,7 +17,7 @@ buffer = deque(maxlen=SEQ_LEN)
 def predict_next_value(temperature, humidity):
 
     # put data into the buffer
-    buffer.append([temperature / 100, humidity / 100])
+    buffer.append(temperature / 100)
     
     if len(buffer) < SEQ_LEN:
         return None
