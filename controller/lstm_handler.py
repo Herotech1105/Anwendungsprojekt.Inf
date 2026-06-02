@@ -17,7 +17,7 @@ buffer = deque(maxlen=SEQ_LEN)
 def predict_next_value(temperature, humidity):
 
     # put data into the buffer
-    buffer.append([temperature, humidity])
+    buffer.append([temperature / 100, humidity / 100])
     
     if len(buffer) < SEQ_LEN:
         return None
@@ -29,16 +29,10 @@ def predict_next_value(temperature, humidity):
     prediction = model.predict(input_data, verbose=0)
 
     predicted_temp = float(prediction[0][0])
-    
-    # set fan and heater states based on the predicted temperature
-    fan_on = predicted_temp > TEMP_HIGH
-    heater_on = predicted_temp < TEMP_LOW
-    both_off = not fan_on and not heater_on
+    predicted_humidity = float(prediction[0][1])
     
     # return dictionary with the results
     return {
-        "predicted_temp": round(predicted_temp, 2),
-        "fan_on": fan_on,
-        "heater_on": heater_on,
-        "both_off": both_off
+        "predicted_temp": round(predicted_temp, 3) * 100,
+        "predicted_hum": round(predicted_humidity, 3) * 100,
     }

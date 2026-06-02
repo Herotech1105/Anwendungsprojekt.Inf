@@ -10,7 +10,7 @@ from lstm_handler import predict_next_value
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_TOPIC, CA_CERT_FILE, MQTT_CLIENT_ID,
-    MQTT_TLS_INSECURE, log,
+    MQTT_TLS_INSECURE, log, HUM_HIGH, HUM_LOW, TEMP_HIGH, TEMP_LOW,
 )
 from validation import parse_and_validate
 from https_client import forward_to_backend
@@ -48,10 +48,15 @@ def on_message(client, userdata, msg):
 
     # Vorhersage erhalten
     try:
-        data = predict_next_value(temperature, humidity)
-
+        prediction = predict_next_value(temperature, humidity)
+        predicted_temp = prediction["predicted_temp"]
+        predicted_hum = prediction["predicted_hum"]
         topic = "actuator/control"
-        payload_string = json.dumps(data)
+
+        temp_state = _determine_temp_state(predicted_temp)
+        hum_state = _determine_hum_state(predicted_hum)
+
+        payload_string = json.dumps(_resolve_action(temp_state, hum_state))
 
         # Nachricht absenden
         result = client.publish(topic, payload=payload_string, qos=1)
@@ -65,6 +70,41 @@ def on_message(client, userdata, msg):
             log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
     except Exception as e:
         log.error("Failed to publish to MQTT broker:", e)
+
+def _determine_temp_state(avg_temp):
+    """Temperaturzustand anhand des Forecast-Durchschnitts bestimmen."""
+    if avg_temp > TEMP_HIGH:
+        return "TOO_HIGH"
+    elif avg_temp < TEMP_LOW:
+        return "TOO_LOW"
+    return "OK"
+
+
+def _determine_hum_state(humidity):
+    """Feuchtigkeitszustand anhand des aktuellen Messwertes bestimmen."""
+    if humidity > HUM_HIGH:
+        return "TOO_HIGH"
+    elif humidity < HUM_LOW:
+        return "TOO_LOW"
+    return "OK"
+
+def _resolve_action(temp_state, hum_state):
+    """Prioritaetslogik: Temperatur hat Vorrang vor Humidity.
+    Nachrichten passend zum Pico mqtt.py on_message:
+    COOL, HEAT, DRY, HUM
+    """
+    # 1. Temperatur pruefen (hoechste Prioritaet)
+    if temp_state == "TOO_HIGH":
+        return "COOL"
+    if temp_state == "TOO_LOW":
+        return "HEAT"
+    # 2. Humidity pruefen
+    if hum_state == "TOO_HIGH":
+        return "DRY"
+    if hum_state == "TOO_LOW":
+        return "HUM"
+    # 3. Alles im Bereich
+    return "OK"
 
 # --- Client-Setup ---------------------------------------------------------
 
