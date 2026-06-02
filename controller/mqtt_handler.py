@@ -57,21 +57,21 @@ def on_message(client, userdata, msg):
 
         temp_state = _determine_temp_state(predicted_temp)
         hum_state = _determine_hum_state(predicted_hum)
-
-        payload_string = json.dumps(_resolve_action(temp_state, hum_state))
+        action = _resolve_action(temp_state, hum_state)
 
         # Nachricht absenden
-        result = client.publish(topic, payload=payload_string, qos=1)
+        result = client.publish(topic, payload=action, qos=1)
 
         # 4. LOGGEN NACH DEM ABSENDEN
         if result.rc == 0:
             log.info(
-                f"Published {payload_string} on {topic}"
+                f"Published {action} on {topic}\Temp: {predicted_temp}\Humidity: {predicted_hum}"
             )
         else:
             log.error("Failed to publish to MQTT broker. Return code: %s", result.rc)
     except Exception as e:
         log.error("Failed to publish to MQTT broker:", e)
+
 
 def _determine_temp_state(avg_temp):
     """Temperaturzustand anhand des Forecast-Durchschnitts bestimmen."""
@@ -90,6 +90,7 @@ def _determine_hum_state(humidity):
         return "TOO_LOW"
     return "OK"
 
+
 def _resolve_action(temp_state, hum_state):
     """Prioritaetslogik: Temperatur hat Vorrang vor Humidity.
     Nachrichten passend zum Pico mqtt.py on_message:
@@ -107,6 +108,7 @@ def _resolve_action(temp_state, hum_state):
         return "HUM"
     # 3. Alles im Bereich
     return "OK"
+
 
 # --- Client-Setup ---------------------------------------------------------
 
