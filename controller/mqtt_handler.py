@@ -49,6 +49,8 @@ def on_message(client, userdata, msg):
     # Vorhersage erhalten
     try:
         prediction = predict_next_value(temperature, humidity)
+        if prediction is None:
+            return
         predicted_temp = prediction["predicted_temp"]
         predicted_hum = prediction["predicted_hum"]
         topic = "actuator/control"

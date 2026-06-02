@@ -29,10 +29,9 @@ def predict_next_value(temperature, humidity):
     prediction = model.predict(input_data, verbose=0)
 
     predicted_temp = float(prediction[0][0])
-    predicted_humidity = float(prediction[0][1])
     
     # return dictionary with the results
     return {
         "predicted_temp": round(predicted_temp, 3) * 100,
-        "predicted_hum": round(predicted_humidity, 3) * 100,
+        "predicted_hum": humidity,
     }
