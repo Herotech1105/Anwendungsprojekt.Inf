@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 from collections import deque
-from config import TEMP_HIGH, TEMP_LOW
 
 # config
 SEQ_LEN = 10 

@@ -2,13 +2,30 @@ import argparse
 import csv
 import os
 
-import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.callbacks import EarlyStopping
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Input
+from tensorflow.keras.optimizers import Adam
 
-from lstm_handler import SEQ_LEN, build_model
+from lstm_handler import SEQ_LEN, FEATURES
 
 DEFAULT_WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "weights", "lstm_weights.weights.h5")
 
+input_shape = (SEQ_LEN, FEATURES)
+
+def build_model():
+    model = Sequential([
+        Input(shape=input_shape),
+        LSTM(64, return_sequences=True),
+        Dropout(0.2),
+        LSTM(64),
+        Dropout(0.2),
+        Dense(1),
+    ])
+    model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
+    return model
 
 def load_csv_data(csv_file, temp_col=0, humidity_col=1, skip_header=False):
     if not os.path.exists(csv_file):
@@ -44,7 +61,19 @@ def build_sequences(data):
 
 def train_model(csv_file, weights_file, temp_col, humidity_col, skip_header, epochs, batch_size, validation_split):
     data = load_csv_data(csv_file, temp_col=temp_col, humidity_col=humidity_col, skip_header=skip_header)
-    X, y = build_sequences(data)
+
+    # Data Scaling
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler.data_min_ = np.array([0.0, 0.0])   # Min for [temp, humidity]
+    scaler.data_max_ = np.array([100.0, 100.0]) # Max for [temp, humidity]
+    scaler.data_range_ = scaler.data_max_ - scaler.data_min_
+    scaler.scale_ = 1.0 / scaler.data_range_
+    scaler.min_ = -scaler.data_min_ * scaler.scale_
+
+    scaled_data = scaler.transform(data)
+
+    # Pass the scaled data into your sequence builder
+    X, y = build_sequences(scaled_data)
 
     split = int(len(X) * (1 - validation_split))
     if split < 1:
