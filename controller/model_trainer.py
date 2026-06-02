@@ -1,132 +1,52 @@
-import argparse
-import csv
-import os
-
-from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.callbacks import EarlyStopping
+import pandas as pd
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Input
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import LSTM, Dense
+from sklearn.preprocessing import MinMaxScaler
 
-from lstm_handler import SEQ_LEN, FEATURES
+# 1. Load your CSV data
+# Assuming the file is named 'weather_data.csv'
+df = pd.read_csv('Messdaten2.csv')
 
-DEFAULT_WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "weights", "lstm_weights.weights.h5")
+# Extract only the target features (ignoring the timestamp string)
+data = df[['temperature', 'humidity']].values
 
-input_shape = (SEQ_LEN, FEATURES)
+# 2. Define manual scaler parameters to match inference setup
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaler.data_min_ = np.array([0.0, 0.0])
+scaler.data_max_ = np.array([100.0, 100.0])
+scaler.data_range_ = scaler.data_max_ - scaler.data_min_
+scaler.scale_ = 1.0 / scaler.data_range_
+scaler.min_ = -scaler.data_min_ * scaler.scale_
 
-def build_model():
-    model = Sequential([
-        Input(shape=input_shape),
-        LSTM(64, return_sequences=True),
-        Dropout(0.2),
-        LSTM(64),
-        Dropout(0.2),
-        Dense(1),
-    ])
-    model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
-    return model
+# Scale the dataset
+scaled_data = scaler.transform(data)
 
-def load_csv_data(csv_file, temp_col=0, humidity_col=1, skip_header=False):
-    if not os.path.exists(csv_file):
-        raise FileNotFoundError(f"CSV-Datei nicht gefunden: {csv_file}")
-    rows = []
-    with open(csv_file, newline="", encoding="utf-8", errors="replace") as f:
-        reader = csv.reader(f)
-        if skip_header:
-            next(reader, None)
-        for line_no, row in enumerate(reader, start=2 if skip_header else 1):
-            if len(row) <= max(temp_col, humidity_col):
-                if len(row) == 0 or all(not cell.strip() for cell in row):
-                    continue
-                raise ValueError(f"Zeile {line_no} hat zu wenige Spalten: {len(row)}")
-            try:
-                temp = float(row[temp_col])
-                humidity = float(row[humidity_col])
-            except ValueError:
-                continue
-            rows.append((temp, humidity))
-    if not rows:
-        raise ValueError("Keine verwertbaren Messdaten in der CSV-Datei gefunden.")
-    return np.array(rows, dtype=np.float32)
+# 3. Create sliding windows
+SEQ_LEN = 10
 
+X, y = [], []
+for i in range(len(scaled_data) - SEQ_LEN):
+    X.append(scaled_data[i:(i + SEQ_LEN), :])  # Input: Past 10 timesteps
+    y.append(scaled_data[i + SEQ_LEN, :])      # Target: Next 1 timestep [Temp, Hum]
 
-def build_sequences(data):
-    if len(data) <= SEQ_LEN:
-        raise ValueError(f"Mindestens {SEQ_LEN + 1} Zeilen erforderlich, aber nur {len(data)} gefunden.")
-    X = [data[i : i + SEQ_LEN] for i in range(len(data) - SEQ_LEN)]
-    y = [data[i + SEQ_LEN, 0] for i in range(len(data) - SEQ_LEN)]
-    return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32).reshape(-1, 1)
+X = np.array(X)
+y = np.array(y)
 
+# 4. Build and train the LSTM
+model = Sequential([
+    # Input shape: (10 timesteps, 2 features)
+    LSTM(64, activation='tanh', input_shape=(SEQ_LEN, 2), return_sequences=False),
+    Dense(32, activation='relu'),
+    Dense(2)  # Outputs 2 features: [predicted_temp, predicted_hum]
+])
 
-def train_model(csv_file, weights_file, temp_col, humidity_col, skip_header, epochs, batch_size, validation_split):
-    data = load_csv_data(csv_file, temp_col=temp_col, humidity_col=humidity_col, skip_header=skip_header)
+model.compile(optimizer='adam', loss='mse')
 
-    # Data Scaling
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaler.data_min_ = np.array([0.0, 0.0])   # Min for [temp, humidity]
-    scaler.data_max_ = np.array([100.0, 100.0]) # Max for [temp, humidity]
-    scaler.data_range_ = scaler.data_max_ - scaler.data_min_
-    scaler.scale_ = 1.0 / scaler.data_range_
-    scaler.min_ = -scaler.data_min_ * scaler.scale_
+# Train model
+model.fit(X, y, epochs=15, batch_size=32, verbose=1)
 
-    scaled_data = scaler.transform(data)
-
-    # Pass the scaled data into your sequence builder
-    X, y = build_sequences(scaled_data)
-
-    split = int(len(X) * (1 - validation_split))
-    if split < 1:
-        raise ValueError("Zu wenig Daten für die gewählte Validierungsgröße.")
-
-    X_train, X_val = X[:split], X[split:]
-    y_train, y_val = y[:split], y[split:]
-
-    model = build_model()
-
-    print(f"Trainingsdaten: {X_train.shape}, Validierungsdaten: {X_val.shape}")
-
-    callbacks = [EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True)]
-
-    history = model.fit(
-        X_train,
-        y_train,
-        epochs=epochs,
-        batch_size=batch_size,
-        validation_data=(X_val, y_val),
-        callbacks=callbacks,
-        verbose=2,
-    )
-
-    model.save_weights(weights_file)
-    print(f"Gewichte gespeichert in: {weights_file}")
-    return history
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Trainiere das LSTM-Modell auf CSV-Daten.")
-    parser.add_argument("csv_file", help="Pfad zur Eingabe-CSV.")
-    parser.add_argument("--weights-file", default=DEFAULT_WEIGHTS_PATH, help="Gewichtsdatei.")
-    parser.add_argument("--temp-col", type=int, default=0, help="Temperatur-Spalte.")
-    parser.add_argument("--humidity-col", type=int, default=1, help="Feuchte-Spalte.")
-    parser.add_argument("--skip-header", action="store_true", help="Header überspringen.")
-    parser.add_argument("--epochs", type=int, default=50, help="Epochen.")
-    parser.add_argument("--batch-size", type=int, default=32, help="Batch-Größe.")
-    parser.add_argument("--validation-split", type=float, default=0.2, help="Validierungsanteil.")
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    # Hauptskript: Argumente parsen und Training starten.
-    args = parse_args()
-    os.makedirs(os.path.dirname(args.weights_file), exist_ok=True)
-    train_model(
-        args.csv_file,
-        args.weights_file,
-        temp_col=args.temp_col,
-        humidity_col=args.humidity_col,
-        skip_header=args.skip_header,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        validation_split=args.validation_split,
-    )
+# Save the model exactly where your inference script looks for it
+model.save("train.keras")
+print("Model saved successfully as train.keras!")

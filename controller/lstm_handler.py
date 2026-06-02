@@ -4,7 +4,7 @@ from collections import deque
 from sklearn.preprocessing import MinMaxScaler
 
 # config
-SEQ_LEN = 10 
+SEQ_LEN = 10
 FEATURES = 2
 MODEL_PATH = "train.keras"
 
@@ -31,26 +31,24 @@ def predict_next_value(temperature, humidity):
     # Convert buffer to numpy array -> Shape: (SEQ_LEN, 2)
     recent_data = np.array(buffer)
 
-    # Fix 2: Scale the data using the training scaler
+    # Scale the data using the training scaler
     scaled_input = scaler.transform(recent_data)  # Shape: (SEQ_LEN, 2)
 
-    # Fix 3: Reshape for Keras expectations -> Shape: (1, SEQ_LEN, 2)
+    # Reshape for Keras expectations -> Shape: (1, SEQ_LEN, 2)
     scaled_input = np.expand_dims(scaled_input, axis=0)
 
-    # Get the RAW scaled prediction from the model
+    # Get the RAW scaled prediction from the model -> Shape: (1, 2)
     prediction = model.predict(scaled_input, verbose=0)
-    raw_predicted_temp = float(prediction[0][0])
 
-    # Fix 4: Inverse transform to bring back to actual degrees Celsius
-    # Create a dummy row matching the feature shape (2 features) to decode
-    dummy_array = np.zeros((1, 2))
-    dummy_array[0, 0] = raw_predicted_temp  # Put temperature prediction in col 0
+    # FIX: Inverse transform the full prediction array directly
+    # prediction[0] contains [scaled_predicted_temp, scaled_predicted_hum]
+    unscaled_result = scaler.inverse_transform(prediction)
 
-    unscaled_result = scaler.inverse_transform(dummy_array)
     actual_temp_prediction = unscaled_result[0, 0]
+    actual_hum_prediction = unscaled_result[0, 1]
 
-    # Return dictionary with the results
+    # Return dictionary with BOTH model predictions
     return {
-        "predicted_temp": round(actual_temp_prediction, 2),
-        "predicted_hum": humidity,  # Keeping your default return choice
+        "predicted_temp": round(float(actual_temp_prediction), 2),
+        "predicted_hum": round(float(actual_hum_prediction), 2),
     }
