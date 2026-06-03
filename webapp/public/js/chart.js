@@ -3,7 +3,7 @@ import { getChartColors } from "./chart-colors.js";
 import { getAxesConfig } from "./chart-axes.js";
 import { getDatasets } from "./chart-datasets.js";
 import { targetRangePlugin } from "./chart-target-plugin.js";
-import { formatTimestampParts } from "./chart-utils.js";
+import { formatTimestampParts, getTickIntervalMs } from "./chart-utils.js";
 
 const Chart = window.Chart;
 
@@ -11,6 +11,9 @@ let chart = null;
 let liveUpdateInterval = null;
 let lastFrom = null;
 let lastTo = null;
+let lastRangeHours = null;
+
+const rangeButtons = document.getElementById("rangeButtons");
 
 function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
@@ -21,10 +24,33 @@ function setStatus(message, type = "info") {
     el.classList.add(`status-${type}`);
 }
 
-export async function renderRange(from, to) {
+/* ---------------------------------------------------
+   RANGE BUTTON LOGIK (1h / 10h / 24h)
+--------------------------------------------------- */
+
+if (rangeButtons) {
+    rangeButtons.addEventListener("click", (e) => {
+        if (!e.target.dataset.range) return;
+
+        const hours = Number(e.target.dataset.range);
+        lastRangeHours = hours;
+
+        const to = new Date().toISOString();
+        const from = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+
+        renderRange(from, to, hours);
+    });
+}
+
+/* ---------------------------------------------------
+   CHART RENDERING
+--------------------------------------------------- */
+
+export async function renderRange(from, to, rangeHours = null) {
     try {
         lastFrom = from;
         lastTo = to;
+        lastRangeHours = rangeHours;
 
         const data = await getSensorRange(from, to);
 
@@ -34,7 +60,9 @@ export async function renderRange(from, to) {
             return;
         }
 
-        // Zeitstempel formatieren → zweizeilig (Datum oben, Uhrzeit unten)
+        /* -------------------------------
+           ZEITSTEMPEL ZWEIZEILIG FORMATIEREN
+        -------------------------------- */
         const formattedLabels = data.labels.map(ts => {
             const { date, time } = formatTimestampParts(ts);
             return [date, time]; // Chart.js interpretiert Arrays als Zeilen
@@ -44,6 +72,14 @@ export async function renderRange(from, to) {
 
         if (chart) chart.destroy();
 
+        /* -------------------------------
+           TICK-INTERVALL BERECHNEN
+        -------------------------------- */
+        const tickIntervalMs = rangeHours ? getTickIntervalMs(rangeHours) : null;
+
+        /* -------------------------------
+           CHART INITIALISIEREN
+        -------------------------------- */
         chart = new Chart(ctx, {
             type: "line",
             data: {
@@ -52,15 +88,12 @@ export async function renderRange(from, to) {
             },
             options: {
                 responsive: true,
-                scales: getAxesConfig(),
+                scales: getAxesConfig(tickIntervalMs),
                 plugins: {
                     legend: {
                         labels: {
                             color: getChartColors().text,
-                            font: {
-                                weight: "600",
-                                size: 14
-                            }
+                            font: { weight: "600", size: 14 }
                         }
                     }
                 }
@@ -69,32 +102,51 @@ export async function renderRange(from, to) {
         });
 
         if (to) {
-            setStatus(`Statischer Zeitraum geladen, ${data.labels.length} Rohdatensätze`, "success");
+            setStatus(`Zeitraum geladen (${data.labels.length} Werte)`, "success");
         }
 
     } catch (err) {
         console.error("Chart render error:", err);
-        setStatus("Verbindungsproblem, Daten konnten nicht geladen werden", "error");
+        setStatus("Verbindungsproblem", "error");
     }
 }
 
+/* ---------------------------------------------------
+   DARK/LIGHT MODE REBUILD
+--------------------------------------------------- */
+
 export function rebuildChart() {
     if (!chart || !lastFrom) return;
-    renderRange(lastFrom, lastTo || new Date().toISOString());
+
+    renderRange(lastFrom, lastTo || new Date().toISOString(), lastRangeHours);
 }
+
+/* ---------------------------------------------------
+   LOAD RANGE EVENT (FROM / FROM–TO)
+--------------------------------------------------- */
 
 window.addEventListener("loadRange", (e) => {
     const { from, to } = e.detail;
 
+    // Buttons nur anzeigen, wenn NUR FROM gewählt wurde
+    if (!to) {
+        rangeButtons.style.display = "flex";
+    } else {
+        rangeButtons.style.display = "none";
+    }
+
+    // Live-Modus stoppen
     if (liveUpdateInterval) {
         clearInterval(liveUpdateInterval);
         liveUpdateInterval = null;
     }
 
+    // LIVE-MODUS
     if (!to) {
         setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
 
-        renderRange(from, new Date().toISOString());
+        const now = new Date().toISOString();
+        renderRange(from, now);
 
         liveUpdateInterval = setInterval(() => {
             renderRange(from, new Date().toISOString());
@@ -102,6 +154,7 @@ window.addEventListener("loadRange", (e) => {
         }, 60000);
 
     } else {
+        // FROM–TO → statischer Bereich
         renderRange(from, to);
     }
 });
