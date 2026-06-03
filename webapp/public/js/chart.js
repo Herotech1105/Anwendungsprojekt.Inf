@@ -1,4 +1,8 @@
 import { getSensorRange } from "./api.js";
+import { getChartColors } from "./chart-colors.js";
+import { getAxesConfig } from "./chart-axes.js";
+import { getDatasets } from "./chart-datasets.js";
+import { targetRangePlugin } from "./chart-target-plugin.js";
 
 const Chart = window.Chart;
 
@@ -7,7 +11,6 @@ let liveUpdateInterval = null;
 let lastFrom = null;
 let lastTo = null;
 
-// Statusmeldung anzeigen
 function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
     if (!el) return;
@@ -17,20 +20,7 @@ function setStatus(message, type = "info") {
     el.classList.add(`status-${type}`);
 }
 
-// Farben abhängig vom Theme
-function getChartColors() {
-    const dark = document.body.classList.contains("dark");
-
-    return {
-        text: dark ? "#e5e7eb" : "#111",
-        tempLine: dark ? "#f87171" : "#ef4444",
-        tempFill: dark ? "rgba(248,113,113,0.2)" : "rgba(239,68,68,0.15)",
-        humLine: dark ? "#60a5fa" : "#3b82f6",
-        humFill: dark ? "rgba(96,165,250,0.2)" : "rgba(59,130,246,0.15)"
-    };
-}
-
-async function renderRange(from, to) {
+export async function renderRange(from, to) {
     try {
         lastFrom = from;
         lastTo = to;
@@ -47,68 +37,24 @@ async function renderRange(from, to) {
 
         if (chart) chart.destroy();
 
-        const c = getChartColors();
-
         chart = new Chart(ctx, {
             type: "line",
             data: {
                 labels: data.labels,
-                datasets: [
-                    {
-                        label: "Temperatur (°C)",
-                        data: data.temperatures,
-                        borderColor: c.tempLine,
-                        backgroundColor: c.tempFill,
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.25
-                    },
-                    {
-                        label: "Luftfeuchtigkeit (%)",
-                        data: data.humidities,
-                        borderColor: c.humLine,
-                        backgroundColor: c.humFill,
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.25
-                    }
-                ]
+                datasets: getDatasets(data)
             },
             options: {
                 responsive: true,
-                scales: {
-                    x: {
-                        ticks: {
-                            maxRotation: 45,
-                            minRotation: 45,
-                            color: c.text
-                        },
-                        grid: {
-                            color: c.text + "33"
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: c.text
-                        },
-                        grid: {
-                            color: c.text + "33"
-                        }
-                    }
-                },
+                scales: getAxesConfig(),
                 plugins: {
                     legend: {
                         labels: {
-                            color: c.text
+                            color: getChartColors().text
                         }
-                    },
-                    tooltip: {
-                        backgroundColor: "rgba(0,0,0,0.8)",
-                        titleColor: "#fff",
-                        bodyColor: "#fff"
                     }
                 }
-            }
+            },
+            plugins: [targetRangePlugin]
         });
 
         if (to) {
@@ -121,10 +67,8 @@ async function renderRange(from, to) {
     }
 }
 
-// Chart neu aufbauen (Dark Mode)
 export function rebuildChart() {
     if (!chart || !lastFrom) return;
-
     renderRange(lastFrom, lastTo || new Date().toISOString());
 }
 
