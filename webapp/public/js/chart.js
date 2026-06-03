@@ -62,6 +62,16 @@ async function renderRange(from, to) {
                             minRotation: 45
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#fff",
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
                 }
             }
         });
