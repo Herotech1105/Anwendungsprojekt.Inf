@@ -1,3 +1,5 @@
+import { rebuildChart } from "./chart.js";
+
 export function initThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
 
@@ -7,5 +9,8 @@ export function initThemeToggle() {
         } else {
             document.body.classList.remove("dark");
         }
+
+        // Chart neu aufbauen
+        rebuildChart();
     });
 }
