@@ -8,7 +8,11 @@ export function getAxesConfig() {
             ticks: {
                 color: c.text,
                 autoSkip: true,
-                maxTicksLimit: 8
+                maxTicksLimit: 8,
+                font: {
+                    weight: "600",   // modern & leicht fett
+                    size: 12
+                }
             },
             grid: {
                 color: c.text + "33"
@@ -19,9 +23,19 @@ export function getAxesConfig() {
             title: {
                 display: true,
                 text: "Temperatur (°C)",
-                color: c.text
+                color: c.text,
+                font: {
+                    weight: "600",
+                    size: 14
+                }
             },
-            ticks: { color: c.text },
+            ticks: {
+                color: c.text,
+                font: {
+                    weight: "600",
+                    size: 12
+                }
+            },
             grid: { color: c.text + "33" }
         },
         y1: {
@@ -29,9 +43,19 @@ export function getAxesConfig() {
             title: {
                 display: true,
                 text: "Luftfeuchtigkeit (%)",
-                color: c.text
+                color: c.text,
+                font: {
+                    weight: "600",
+                    size: 14
+                }
             },
-            ticks: { color: c.text },
+            ticks: {
+                color: c.text,
+                font: {
+                    weight: "600",
+                    size: 12
+                }
+            },
             grid: { display: false }
         }
     };

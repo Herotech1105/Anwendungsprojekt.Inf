@@ -3,7 +3,7 @@ import { getChartColors } from "./chart-colors.js";
 import { getAxesConfig } from "./chart-axes.js";
 import { getDatasets } from "./chart-datasets.js";
 import { targetRangePlugin } from "./chart-target-plugin.js";
-import { formatTimestamp } from "./chart-utils.js";
+import { formatTimestampParts } from "./chart-utils.js";
 
 const Chart = window.Chart;
 
@@ -34,8 +34,11 @@ export async function renderRange(from, to) {
             return;
         }
 
-        // Zeitstempel formatieren
-        const formattedLabels = data.labels.map(ts => formatTimestamp(ts));
+        // Zeitstempel formatieren → zweizeilig (Datum oben, Uhrzeit unten)
+        const formattedLabels = data.labels.map(ts => {
+            const { date, time } = formatTimestampParts(ts);
+            return [date, time]; // Chart.js interpretiert Arrays als Zeilen
+        });
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
@@ -53,7 +56,11 @@ export async function renderRange(from, to) {
                 plugins: {
                     legend: {
                         labels: {
-                            color: getChartColors().text
+                            color: getChartColors().text,
+                            font: {
+                                weight: "600",
+                                size: 14
+                            }
                         }
                     }
                 }

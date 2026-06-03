@@ -1,4 +1,4 @@
-export function formatTimestamp(ts) {
+export function formatTimestampParts(ts) {
     const d = new Date(ts);
 
     const day = String(d.getDate()).padStart(2, "0");
@@ -8,5 +8,8 @@ export function formatTimestamp(ts) {
     const hours = String(d.getHours()).padStart(2, "0");
     const minutes = String(d.getMinutes()).padStart(2, "0");
 
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
+    return {
+        date: `${day}.${month}.${year}`,
+        time: `${hours}:${minutes}`
+    };
 }
