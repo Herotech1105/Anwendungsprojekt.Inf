@@ -7,8 +7,8 @@ export function getAxesConfig() {
         x: {
             ticks: {
                 color: c.text,
-                maxRotation: 45,
-                minRotation: 45
+                autoSkip: true,
+                maxTicksLimit: 8
             },
             grid: {
                 color: c.text + "33"
@@ -16,11 +16,21 @@ export function getAxesConfig() {
         },
         y: {
             position: "left",
+            title: {
+                display: true,
+                text: "Temperatur (°C)",
+                color: c.text
+            },
             ticks: { color: c.text },
             grid: { color: c.text + "33" }
         },
         y1: {
             position: "right",
+            title: {
+                display: true,
+                text: "Luftfeuchtigkeit (%)",
+                color: c.text
+            },
             ticks: { color: c.text },
             grid: { display: false }
         }

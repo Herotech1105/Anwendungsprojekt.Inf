@@ -4,10 +4,11 @@ export function getChartColors() {
     return {
         text: dark ? "#e5e7eb" : "#111",
 
-        tempLine: dark ? "#f87171" : "#ef4444",
-        humLine: dark ? "#60a5fa" : "#3b82f6",
+        tempLine: dark ? "#fca5a5" : "#ef4444",
+        humLine: dark ? "#93c5fd" : "#3b82f6",
 
-        tempTargetFill: dark ? "rgba(34,197,94,0.15)" : "rgba(34,197,94,0.25)",
-        humTargetFill: dark ? "rgba(234,179,8,0.15)" : "rgba(234,179,8,0.25)"
+        // Zielbereiche
+        tempTargetFill: dark ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.25)",   // ROT
+        humTargetFill: dark ? "rgba(59,130,246,0.15)" : "rgba(59,130,246,0.25)"  // BLAU
     };
 }
