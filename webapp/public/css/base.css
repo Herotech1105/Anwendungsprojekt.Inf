@@ -1,0 +1,8 @@
+/* --- Grundlayout --- */
+body {
+    margin: 0;
+    font-family: "Inter", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+    transition: background 0.3s ease, color 0.3s ease;
+}

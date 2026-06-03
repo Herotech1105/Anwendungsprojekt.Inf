@@ -1,0 +1,40 @@
+/* --- DARK MODE --- */
+body.dark {
+    background: #111827;
+    color: #e5e7eb;
+}
+
+body.dark .topbar {
+    background: #0f172a;
+}
+
+body.dark .card {
+    background: #1e293b;
+    color: #e5e7eb;
+}
+
+body.dark input[type="datetime-local"] {
+    background: #0f172a;
+    color: #e5e7eb;
+    border: 1px solid #475569;
+}
+
+body.dark button {
+    background: #3b82f6;
+}
+
+body.dark button:hover {
+    background: #2563eb;
+}
+
+body.dark .logout-btn {
+    background: #4b5563;
+}
+
+body.dark .logout-btn:hover {
+    background: #374151;
+}
+
+body.dark .darkmode-label {
+    color: #e5e7eb;
+}

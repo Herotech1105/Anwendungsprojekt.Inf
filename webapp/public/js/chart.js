@@ -1,11 +1,10 @@
-import { getSensorRange } from "./frontend.js";
+import { getSensorRange } from "./api.js";
 
 const Chart = window.Chart;
 
 let chart = null;
 let liveUpdateInterval = null;
 
-// Statusmeldung anzeigen
 function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
     if (!el) return;
@@ -77,25 +76,27 @@ async function renderRange(from, to) {
     }
 }
 
-window.addEventListener("loadRange", (e) => {
-    const { from, to } = e.detail;
+export function initChartEvents() {
+    window.addEventListener("loadRange", (e) => {
+        const { from, to } = e.detail;
 
-    if (liveUpdateInterval) {
-        clearInterval(liveUpdateInterval);
-        liveUpdateInterval = null;
-    }
+        if (liveUpdateInterval) {
+            clearInterval(liveUpdateInterval);
+            liveUpdateInterval = null;
+        }
 
-    if (!to) {
-        setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
+        if (!to) {
+            setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
 
-        renderRange(from, new Date().toISOString());
-
-        liveUpdateInterval = setInterval(() => {
             renderRange(from, new Date().toISOString());
-            setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
-        }, 60000);
 
-    } else {
-        renderRange(from, to);
-    }
-});
+            liveUpdateInterval = setInterval(() => {
+                renderRange(from, new Date().toISOString());
+                setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
+            }, 60000);
+
+        } else {
+            renderRange(from, to);
+        }
+    });
+}
