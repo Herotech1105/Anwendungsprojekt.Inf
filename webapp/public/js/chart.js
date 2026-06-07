@@ -25,7 +25,7 @@ function setStatus(message, type = "info") {
 }
 
 /* ---------------------------------------------------
-   RANGE BUTTON LOGIK (1h / 10h / 24h)
+   RANGE BUTTON LOGIC (1h / 10h / 24h)
 --------------------------------------------------- */
 
 if (rangeButtons) {
@@ -61,11 +61,11 @@ export async function renderRange(from, to, rangeHours = null) {
         }
 
         /* -------------------------------
-           ZEITSTEMPEL ZWEIZEILIG FORMATIEREN
+           CALCULATE TIMESTAMP FORMAT
         -------------------------------- */
         const formattedLabels = data.labels.map(ts => {
             const { date, time } = formatTimestampParts(ts);
-            return [date, time]; // Chart.js interpretiert Arrays als Zeilen
+            return [date, time];
         });
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
@@ -73,12 +73,12 @@ export async function renderRange(from, to, rangeHours = null) {
         if (chart) chart.destroy();
 
         /* -------------------------------
-           TICK-INTERVALL BERECHNEN
+           CALCULATE TICK-INTERVALL
         -------------------------------- */
         const tickIntervalMs = rangeHours ? getTickIntervalMs(rangeHours) : null;
 
         /* -------------------------------
-           CHART INITIALISIEREN
+           CHART INITIALIZATION
         -------------------------------- */
         chart = new Chart(ctx, {
             type: "line",
@@ -128,20 +128,17 @@ export function rebuildChart() {
 window.addEventListener("loadRange", (e) => {
     const { from, to } = e.detail;
 
-    // Buttons nur anzeigen, wenn NUR FROM gewählt wurde
     if (!to) {
         rangeButtons.style.display = "flex";
     } else {
         rangeButtons.style.display = "none";
     }
 
-    // Live-Modus stoppen
     if (liveUpdateInterval) {
         clearInterval(liveUpdateInterval);
         liveUpdateInterval = null;
     }
 
-    // LIVE-MODUS
     if (!to) {
         setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
 
@@ -154,7 +151,6 @@ window.addEventListener("loadRange", (e) => {
         }, 60000);
 
     } else {
-        // FROM–TO → statischer Bereich
         renderRange(from, to);
     }
 });

@@ -5,42 +5,28 @@ export function getAxesConfig(tickIntervalMs) {
 
     return {
         x: {
-            type: "time",
-            time: {
-                tooltipFormat: "dd.MM.yyyy HH:mm",
-                displayFormats: {
-                    minute: "HH:mm",
-                    hour: "HH:mm",
-                    day: "dd.MM"
-                }
-            },
+            type: "category",
 
             ticks: {
                 color: c.text,
                 maxRotation: 0,
-                autoSkip: true,
-                autoSkipPadding: 20,
-                maxTicksLimit: tickIntervalMs ? undefined : 8,
+                autoSkip: false,
+                font: {
+                    weight: "600",
+                    size: 12
+                },
 
                 callback: function(value, index, ticks) {
-                    const ts = ticks[index].value;
-
-                    // Wenn kein Intervall → Chart.js entscheidet selbst
+                    // If no interval -> shows all Labels
                     if (!tickIntervalMs) {
-                        const d = new Date(ts);
-                        return [
-                            d.toLocaleDateString("de-DE"),
-                            d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
-                        ];
+                        return this.getLabelForValue(value);
                     }
 
-                    // Nur Ticks anzeigen, die exakt auf das Intervall fallen
-                    if (ts % tickIntervalMs === 0) {
-                        const d = new Date(ts);
-                        return [
-                            d.toLocaleDateString("de-DE"),
-                            d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
-                        ];
+                    // Shows max 8 Ticks
+                    const interval = Math.ceil(ticks.length / 8);
+
+                    if (index % interval === 0) {
+                        return this.getLabelForValue(value);
                     }
 
                     return "";
