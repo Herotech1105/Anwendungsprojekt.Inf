@@ -17,14 +17,22 @@ export function getAxesConfig(tickIntervalMs) {
                 },
 
                 callback: function(value, index, ticks) {
-                    // If no interval -> shows all Labels
+
+                    // -----------------------------
+                    // 1) FROM–TO → automatisch filtern
+                    // -----------------------------
                     if (!tickIntervalMs) {
-                        return this.getLabelForValue(value);
+                        const interval = Math.ceil(ticks.length / 8);
+                        if (index % interval === 0) {
+                            return this.getLabelForValue(value);
+                        }
+                        return "";
                     }
 
-                    // Shows max 8 Ticks
+                    // -----------------------------
+                    // 2) Range‑Buttons → Intervall nutzen
+                    // -----------------------------
                     const interval = Math.ceil(ticks.length / 8);
-
                     if (index % interval === 0) {
                         return this.getLabelForValue(value);
                     }
