@@ -46,7 +46,16 @@
             </section>
 
             <section class="card chart-card">
-                <h2>Sensordaten</h2>
+                <div class="chart-header">
+                    <h2>Sensordaten</h2>
+
+                    <div id="rangeButtons" class="range-buttons" style="display:none;">
+                        <button class="range-btn" data-range="1">1 Stunde</button>
+                        <button class="range-btn" data-range="10">10 Stunden</button>
+                        <button class="range-btn" data-range="24">24 Stunden</button>
+                    </div>
+                </div>
+
                 <div id="chartStatus"></div>
                 <canvas id="sensorChart"></canvas>
             </section>

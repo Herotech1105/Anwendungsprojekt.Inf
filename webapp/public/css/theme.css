@@ -38,3 +38,11 @@ body.dark .logout-btn:hover {
 body.dark .darkmode-label {
     color: #e5e7eb;
 }
+
+body.dark .range-btn {
+    background: #3b82f6;
+}
+
+body.dark .range-btn:hover {
+    background: #2563eb;
+}

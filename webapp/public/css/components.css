@@ -88,3 +88,37 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(24px);
 }
+
+/* --- Chart Header (Title + Buttons right) --- */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* --- Range Buttons Container --- */
+.range-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- Range Buttons (smaller than Standard-Buttons) --- */
+.range-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    background: #2563eb;
+    border-radius: 6px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.range-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.range-btn:active {
+    transform: translateY(0);
+}
