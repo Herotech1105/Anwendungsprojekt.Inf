@@ -66,7 +66,7 @@ GANT-Diagramm:
 
 Datum:  
 Problemstellung:  
-Verantwortlicher:  
+Verantwortlicher:
 GANT-Diagramm:
 
 | Datei | Änderung | Erklärung |
@@ -74,13 +74,35 @@ GANT-Diagramm:
 
 ### Phase 6:
 
-Datum:  
-Problemstellung:  
-Verantwortlicher:  
+Datum:  2026-05-22 bis 28
+Problemstellung:  Sichere Web-Applikation (AuthN/AuthZ mit Keycloak)
+Verantwortlicher:  Barnabas Steiner
 GANT-Diagramm:
 
 | Datei | Änderung | Erklärung |
 |-------|----------|-----------|
+| docker-compose.yml | Service `keycloak_web` + Volume `keycloak_data` ergänzt, DB-Credentials in read/write getrennt, Healthchecks & `depends_on` | Integriert Keycloak als OIDC-Provider, hält dessen Daten persistent und sorgt für geordneten Startup der abhängigen Services |
+| keycloak/iot-realm.json | Realm `iot` mit Rollen (`dashboard-user`, `admin-user`, `controller-ingest`), Benutzern und Clients angelegt | Definiert die Sicherheitsdomäne: `dashboard-client` (Browser, PKCE) und `controller-client` (Maschine, Client-Credentials) |
+| nginx/nginx.conf | Route `/auth` auf Keycloak (Port 8443) + TLS-Zertifikatsprüfung, Trailing-Slash-Fix | Macht Keycloak über den Reverse Proxy erreichbar und verschleiert das interne System |
+| mariadb/03_db_write_user.sql | Aus `03_user.sql` umbenannt; Schreib-User `websrv_write` (INSERT, UPDATE) | Trennt schreibende DB-Zugriffe vom Lesen (Least Privilege) |
+| mariadb/06_db_read_user.sql | Neuer Lese-User `websrv_read` mit `SELECT` auf `sensor_data` | Lese-APIs erhalten ausschließlich Leserechte |
+| mariadb/05_training_data_privileges.sql | Privilegien an die Read/Write-Trennung angepasst | Konsistente Rechtevergabe nach der User-Aufteilung |
+| webapp/config/database.js | `getReadPool()` / `getWritePool()` statt einem `getPool()` | Jeder Pool meldet sich mit eigenem DB-User an → Least Privilege auf Verbindungsebene |
+| webapp/server.js | JWKS-Client + Middleware `authenticateToken`; neuer Endpoint `GET /api/sensordata` | Prüft das JWT (Signatur, Audience, Rolle `dashboard-user`); liefert Dashboard-Daten per JWT statt API-Key |
+| webapp/package.json / package-lock.json | Dependencies `jwks-rsa` und `jsonwebtoken` ergänzt | Bibliotheken zur serverseitigen Token-Validierung |
+| webapp/public/index.html | Keycloak-Login-Redirect + Einbindung lokaler `keycloak.js` | Leitet nicht angemeldete Nutzer zur Keycloak-Loginseite weiter |
+| webapp/public/keycloak.js | Neue lokale Kopie der Keycloak-JS-Bibliothek | Auslieferung über die eigene App statt über eine externe Quelle |
+| webapp/public/frontend.js | Keycloak-Init + Sensordaten-Abruf per `fetch()` mit `Bearer`-Token | Initiiert AuthN/AuthZ und lädt Daten vom geschützten Endpoint |
+| webapp/public/chart.js | Diagramm-Rendering + Live-Update implementiert | Visualisiert Temperatur/Luftfeuchte, minütliche Aktualisierung |
+| webapp/public/style.css | Styling-/Layout-Anpassungen | Optische Gestaltung des Dashboards |
+| webapp/Dockerfile | Aus Root-`Dockerfile` nach `webapp/` verschoben | Trennt den Web-App-Build vom Projekt-Root |
+| sensor-net/keycloak_auth.py | Neu: Client-Credentials-Flow, Token-Cache, Rollenprüfung, Bearer-Header | Controller authentifiziert sich maschinell an Keycloak statt nur per API-Key |
+| sensor-net/http_client.py | `_build_headers()` (API-Key + Bearer); `verify=False` → `verify=CA_CERT_PATH` | Zentrale Header-Erzeugung inkl. Token; echte TLS-Zertifikatsprüfung |
+| sensor-net/controller.py | `verify_role()` vor `warmstart()`; TLS-Verify aktiviert | Beendet den Controller, wenn die geforderte Keycloak-Rolle fehlt |
+| sensor-net/config.py | `KC_*`-Variablen (Token-URL, Client-ID/-Secret, Rolle) + `CA_CERT_PATH` ergänzt | Konfigurierbare Keycloak-Parameter für den Controller |
+| sensor-net/Dockerfile | ENV-Defaults für die Keycloak-Variablen | Standardwerte für den Containerbetrieb |
+| sensor-net/mqtt_handler.py | Sendet Temperatur statt Prognose an `training_data` | Korrigiert den an die Trainingsdaten übermittelten Wert |
+| configurations/wlan_ap_setup.py | Backend unter eigenem Hostnamen im Produktions-WLAN | Namensauflösung für den Zugriff auf das Backend |
 
 ### Endspurt:
 
