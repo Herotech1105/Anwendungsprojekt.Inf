@@ -60,7 +60,7 @@ export async function renderRange(from, to, rangeHours = null) {
             return;
         }
 
-        // Labels unverändert übernehmen
+        // Labels unverändert übernehmen (API should return ISO Z strings)
         const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");

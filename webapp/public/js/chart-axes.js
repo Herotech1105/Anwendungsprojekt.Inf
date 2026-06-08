@@ -1,5 +1,11 @@
 import { getChartColors } from "./chart-colors.js";
 
+/**
+ * Axes configuration for Chart.js (category x-axis).
+ * Tick callback reads the actual label via this.getLabelForValue(value)
+ * and formats it using UTC getters so the chart displays the exact UTC time
+ * that was passed in (no local timezone conversion).
+ */
 export function getAxesConfig(tickIntervalMs) {
     const c = getChartColors();
 
@@ -17,25 +23,27 @@ export function getAxesConfig(tickIntervalMs) {
                 },
 
                 callback: function(value, index, ticks) {
-                    // WICHTIG: echtes Label holen, nicht den Index
+                    // Get the real label (not the numeric index)
                     const rawLabel = this.getLabelForValue(value);
-                    // rawLabel ist z.B. "2024-06-03T14:00:00.000Z"
+                    if (!rawLabel) return "";
+
                     const d = new Date(rawLabel);
+                    if (isNaN(d.getTime())) return "";
 
-                    if (isNaN(d.getTime())) {
-                        // Falls mal was Komisches kommt, lieber leer
-                        return "";
-                    }
+                    // Format date/time using UTC getters so we show the exact UTC clock time
+                    const date =
+                        String(d.getUTCDate()).padStart(2, "0") + "." +
+                        String(d.getUTCMonth() + 1).padStart(2, "0") + "." +
+                        d.getUTCFullYear();
 
-                    const date = d.toLocaleDateString("de-DE");
-                    const time = d.toLocaleTimeString("de-DE", {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    });
+                    const time =
+                        String(d.getUTCHours()).padStart(2, "0") + ":" +
+                        String(d.getUTCMinutes()).padStart(2, "0");
 
-                    const interval = Math.ceil(ticks.length / 8);
+                    // Limit number of visible ticks (approx. 8)
+                    const interval = Math.max(1, Math.ceil(ticks.length / 8));
                     if (index % interval === 0) {
-                        return [date, time]; // zweizeilig
+                        return [date, time]; // two-line label: date / time (UTC)
                     }
 
                     return "";
