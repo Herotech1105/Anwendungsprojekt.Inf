@@ -17,8 +17,15 @@ export function getAxesConfig(tickIntervalMs) {
                 },
 
                 callback: function(value, index, ticks) {
-                    const ts = ticks[index].value;
-                    const d = new Date(ts);
+                    // WICHTIG: echtes Label holen, nicht den Index
+                    const rawLabel = this.getLabelForValue(value);
+                    // rawLabel ist z.B. "2024-06-03T14:00:00.000Z"
+                    const d = new Date(rawLabel);
+
+                    if (isNaN(d.getTime())) {
+                        // Falls mal was Komisches kommt, lieber leer
+                        return "";
+                    }
 
                     const date = d.toLocaleDateString("de-DE");
                     const time = d.toLocaleTimeString("de-DE", {
@@ -26,11 +33,9 @@ export function getAxesConfig(tickIntervalMs) {
                         minute: "2-digit"
                     });
 
-                    // Maximal 8 Ticks anzeigen
                     const interval = Math.ceil(ticks.length / 8);
-
                     if (index % interval === 0) {
-                        return [date, time];
+                        return [date, time]; // zweizeilig
                     }
 
                     return "";
