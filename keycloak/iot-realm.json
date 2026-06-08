@@ -14,9 +14,6 @@
     {
       "username": "iotuser01",
       "enabled": true,
-      "emailVerified": true,
-      "firstName": "James",
-      "lastName": "Cookie",
       "credentials": [
         {
           "type": "password",
@@ -24,22 +21,11 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["dashboard-user", "admin-user"]
-    },
-    {
-      "username": "service-account-controller-client",
-      "enabled": true,
-      "serviceAccountClientId": "controller-client",
-      "realmRoles": [
-        "controller-ingest"
-      ]
-    },
+      "realmRoles": ["dashboard-user"]
+    },    
     {
       "username": "admin",
       "enabled": true,
-      "emailVerified": true,
-      "firstName": "James",
-      "lastName": "Cookie",
       "credentials": [
         {
           "type": "password",
@@ -48,6 +34,14 @@
         }
       ],
       "realmRoles": ["admin-user"]
+    },
+    {
+      "username": "service-account-controller-client",
+      "enabled": true,
+      "serviceAccountClientId": "controller-client",
+      "realmRoles": [
+        "controller-ingest"
+      ]
     }
   ],
   "clients": [
