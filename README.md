@@ -17,6 +17,7 @@
  
 * Connect to the other Pi using ssh or pi.connect.
 * Change the backend_mac_address in line 4 in `/conficuration/wlan_ap_setup.py` to the backends mac address. 
+* Run `sudo apt install hostapd dnsmasq`
 * Now copy the script to your users root directory on the WLAN Pi. 
 * Run that script using `sudo python3 wlan_ap_setup.py`.
 

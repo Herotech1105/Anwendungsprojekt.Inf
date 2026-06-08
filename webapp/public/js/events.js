@@ -1,19 +1,64 @@
+// events.js
 import { logout } from "./auth.js";
 
+/**
+ * Liefert lokale ISO ohne Zeitzone (YYYY-MM-DDTHH:mm:ss)
+ */
+function localInputToLocalIso(inputValue) {
+    if (!inputValue) return null;
+    const [datePart, timePartRaw] = inputValue.split("T");
+    if (!datePart || !timePartRaw) return null;
+    const timePart = timePartRaw.length === 5 ? `${timePartRaw}:00` : timePartRaw;
+    return `${datePart}T${timePart}`;
+}
+
+/**
+ * Konvertiert datetime-local in epoch ms (interpretiert als lokale Zeit)
+ */
+function localInputToMs(inputValue) {
+    if (!inputValue) return null;
+    const d = new Date(inputValue); // interpretiert als lokale Zeit
+    if (isNaN(d.getTime())) return null;
+    return d.getTime();
+}
+
 export function initEvents() {
-    document.getElementById("loadDataBtn").addEventListener("click", () => {
-        const from = document.getElementById("from").value;
-        const to = document.getElementById("to").value;
+    const loadBtn = document.getElementById("loadDataBtn");
+    if (loadBtn) {
+        loadBtn.addEventListener("click", () => {
+            const fromLocal = document.getElementById("from").value;
+            const toLocal = document.getElementById("to").value;
 
-        if (!from) {
-            alert("Bitte Startzeit auswählen");
-            return;
-        }
+            if (!fromLocal) {
+                alert("Bitte Startzeit auswählen");
+                return;
+            }
 
-        window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
-    });
+            // ms (bevorzugt)
+            const fromMs = localInputToMs(fromLocal);
+            // Wenn kein "to" gewählt wurde, setze toMs auf jetzt (sonst 400 vom Server)
+            const toMs = toLocal ? localInputToMs(toLocal) : Date.now();
 
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        logout();
-    });
+            // ISO local fallback (falls Backend Strings erwartet)
+            const fromIsoLocal = localInputToLocalIso(fromLocal);
+            const toIsoLocal = toLocal ? localInputToLocalIso(toLocal) : localInputToLocalIso(new Date().toISOString().slice(0,19));
+
+            console.debug("[events] user selected", {
+                fromLocal, toLocal, fromMs, toMs, fromIsoLocal, toIsoLocal
+            });
+
+            window.dispatchEvent(new CustomEvent("loadRange", {
+                detail: { fromMs, toMs, fromIsoLocal, toIsoLocal }
+            }));
+        });
+    } else {
+        console.warn("[events] loadDataBtn not found");
+    }
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            logout();
+        });
+    }
 }

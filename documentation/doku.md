@@ -44,26 +44,26 @@ GANT-Diagramm:
 Datum: 06.05.2026 - 12.05.2026  
 Problemstellung: Sichere Übermittlung der Sensordaten und Speicherung in der Datenbank  
 Verantwortlicher: Lennart Esch  
-GANT-Diagramm: [GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
+GANT-Diagramm: ![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
-| Datei                        | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|------------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| controller/config.py         | Neu                                              | Liest Environment Variablen aus der Dockerfile                                                                                                                                                                                                                                                                                                                                                                                        |
-| controller/controller.py     | Neu                                              | Main Datei des controllers                                                                                                                                                                                                                                                                                                                                                                                                            |
-| controller/Dockerfile        | Neu                                              | Dockerfile, um aus dem Controller ein Image zu bauen, enthält die definierten Environment Variablen                                                                                                                                                                                                                                                                                                                                   |
-| controller/https_client.py   | Neu                                              | Verwendet die Request Library um https requests zu schicken; wird verwendet für das Weiterleiten der Daten an nginx                                                                                                                                                                                                                                                                                                                   |
-| controller/mqtt_handler.py   | Neu                                              | Verwendet die paho_mqtt Library um beim mqtt-Broker zu subscriben, definiert ein Event, das ausgelöst wird wenn eine Nachricht vom Broker eingeht                                                                                                                                                                                                                                                                                     |
-| controller/validation.py     | Neu                                              | Kontrolliert, ob die vom Broker erhaltene Nachricht valides JSON ist und prüft, ob die Werte plausibel sind (wird relevant, wenn der Pico angesteurt werden soll)                                                                                                                                                                                                                                                                     |
-| nginx/nginx.conf             | Neu                                              | Konfiguration von nginx, reverse Proxy von https local.data.kleber zum webapp server und redirect von http auf https                                                                                                                                                                                                                                                                                                                  |
-| webapp/Dockerfile            | Neu                                              | Dockerfile zum Bau eines Images für den webserver                                                                                                                                                                                                                                                                                                                                                                                     |
-| webapp/package.json          | Neu                                              | Node Standard-Konfigurationsdatei für den webserver                                                                                                                                                                                                                                                                                                                                                                                   |
-| webapp/package-lock.json     | Neu                                              | Node Standard-Konfigurationsdatei für den webserver                                                                                                                                                                                                                                                                                                                                                                                   |
-| webapp/server.js             | Neu                                              | Controller + Service-Layer für den webserver, enthält POST-Endpunkt zum Empfangen von neuen Messdaten und anlegen neuer Messwerte in der Datenbank                                                                                                                                                                                                                                                                                    |
-| webapp/config/database.js    | Neu                                              | Erzeugt einen Connection-Pool für den Datenbank Zugriff, der von ´server.js´ verwendet wird                                                                                                                                                                                                                                                                                                                                           |
-| mariadb/01_tables.sql        | Neu                                              | Initialscript für die Datenbank; legt die Tabellen für Messwerte und Messwertarchiv an                                                                                                                                                                                                                                                                                                                                                |
-| mariadb/02_archive_job.sql   | Neu                                              | Initialscript für die Datenbank; legt den Archivierungsjob an; es werden täglich alle Daten, die älter als eine Woche sind von `sensor-data` zum `sensor-data-archive` verschoben                                                                                                                                                                                                                                                     |
-| mariadb/03_db_write_user.sql | Neu                                              | Initialscript für die Datenbank; legt einen Nutzer mit Schreibrechten für `sensor-data` an                                                                                                                                                                                                                                                                                                                                            |
-| docker-compose.yml           | Konfiguration für die neuen Services hinzugefügt | Datenbank Konfiguration mit Health-Check und Verweiß auf die Entry Point Skripte hinzugefügt<br/>Nginx Configuration basierend auf dem OWASP Image hinzugefügt, enthält bereits Schutzmaßnahmen gegen Cross-Site-Scripting, SQL-Injektion und Directory Traversal<br/>Webapp Konfiguration basierend auf dem Image aus der Dockerfile hinzugefügt<br/>Controller Konfiguration basierend auf dem Image aus der Dockerfile hinzugefügt |
+| Datei                      | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|----------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| controller/config.py       | Neu                                              | Liest Environment Variablen aus der Dockerfile                                                                                                                                                                                                                                                                                                                                                                                        |
+| controller/controller.py   | Neu                                              | Main Datei des controllers                                                                                                                                                                                                                                                                                                                                                                                                            |
+| controller/Dockerfile      | Neu                                              | Dockerfile, um aus dem Controller ein Image zu bauen, enthält die definierten Environment Variablen                                                                                                                                                                                                                                                                                                                                   |
+| controller/https_client.py | Neu                                              | Verwendet die Request Library um https requests zu schicken; wird verwendet für das Weiterleiten der Daten an nginx                                                                                                                                                                                                                                                                                                                   |
+| controller/mqtt_handler.py | Neu                                              | Verwendet die paho_mqtt Library um beim mqtt-Broker zu subscriben, definiert ein Event, das ausgelöst wird wenn eine Nachricht vom Broker eingeht                                                                                                                                                                                                                                                                                     |
+| controller/validation.py   | Neu                                              | Kontrolliert, ob die vom Broker erhaltene Nachricht valides JSON ist und prüft, ob die Werte plausibel sind (wird relevant, wenn der Pico angesteurt werden soll)                                                                                                                                                                                                                                                                     |
+| nginx/nginx.conf           | Neu                                              | Konfiguration von nginx, reverse Proxy von https local.data.kleber zum webapp server und redirect von http auf https                                                                                                                                                                                                                                                                                                                  |
+| webapp/Dockerfile          | Neu                                              | Dockerfile zum Bau eines Images für den webserver                                                                                                                                                                                                                                                                                                                                                                                     |
+| webapp/package.json        | Neu                                              | Node Standard-Konfigurationsdatei für den webserver                                                                                                                                                                                                                                                                                                                                                                                   |
+| webapp/package-lock.json   | Neu                                              | Node Standard-Konfigurationsdatei für den webserver                                                                                                                                                                                                                                                                                                                                                                                   |
+| webapp/server.js           | Neu                                              | Controller + Service-Layer für den webserver, enthält POST-Endpunkt zum Empfangen von neuen Messdaten und anlegen neuer Messwerte in der Datenbank                                                                                                                                                                                                                                                                                    |
+| webapp/config/database.js  | Neu                                              | Erzeugt einen Connection-Pool für den Datenbank Zugriff, der von ´server.js´ verwendet wird                                                                                                                                                                                                                                                                                                                                           |
+| mariadb/01_tables.sql      | Neu                                              | Initialscript für die Datenbank; legt die Tabellen für Messwerte und Messwertarchiv an                                                                                                                                                                                                                                                                                                                                                |
+| mariadb/02_archive_job.sql | Neu                                              | Initialscript für die Datenbank; legt den Archivierungsjob an; es werden täglich alle Daten, die älter als eine Woche sind von `sensor-data` zum `sensor-data-archive` verschoben                                                                                                                                                                                                                                                     |
+| mariadb/03_user.sql        | Neu                                              | Initialscript für die Datenbank; legt einen Nutzer mit Schreibrechten für `sensor-data` an                                                                                                                                                                                                                                                                                                                                            |
+| docker-compose.yml         | Konfiguration für die neuen Services hinzugefügt | Datenbank Konfiguration mit Health-Check und Verweiß auf die Entry Point Skripte hinzugefügt<br/>Nginx Configuration basierend auf dem OWASP Image hinzugefügt, enthält bereits Schutzmaßnahmen gegen Cross-Site-Scripting, SQL-Injektion und Directory Traversal<br/>Webapp Konfiguration basierend auf dem Image aus der Dockerfile hinzugefügt<br/>Controller Konfiguration basierend auf dem Image aus der Dockerfile hinzugefügt |
 
 ### Phase 5:
 
@@ -72,18 +72,18 @@ Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz
 Verantwortlicher: Tim Dorozynski  
 GANT-Diagramm: [GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
 
-| Datei                              | Änderung                                                     | Erklärung                                                                                                                                                                                                                                                       |
-|-----------------------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| controller/lstm_handler.py         | Neu                                                          | Lädt das trainierte LSTM-Modell und stellt Funktionen zur Verfügung, um Vorhersagen zu treffen; wird verwendet, um den optimalen Aktor-Wert basierend auf Sensor-Eingaben zu berechnen                                                                               |
-| controller/train.keras             | Neu                                                          | Trainiertes Keras/TensorFlow LSTM-Modell; Gewichte und Architektur für die Vorhersage des optimalen Regelwertes                                                                                                                                                 |
-| controller/train.py                | Neu                                                          | Trainingsscript für das LSTM-Modell; verwendet historische Messdaten um das Netz zu trainieren                                                                                                                                                                   |
-| controller/model_trainer.py        | Neu                                                          | Modulare Trainingsfunktionen für das LSTM-Modell; ermöglicht automatisches Retraining basierend auf neuen Daten                                                                                                                                                   |
-| controller/data_generation.py      | Neu                                                          | Generiert Trainingsdaten aus historischen Sensor-Messwerten; bereitet Daten für das LSTM-Training auf                                                                                                                                                           |
-| controller/lstm_weights.weights.h5 | Neu                                                          | Exportierte Gewichte des trainierten LSTM-Modells; ermöglicht schnelleres Laden des Modells ohne Retraining                                                                                                                                                     |
-| configurations/pico/control.py     | Neu                                                          | Stellt Funktionen zur Ansteuerung des physischen Aktors (z.B. Heizung/Lüfter) bereit; implementiert PWM-Steuerung oder digitale Schaltausgänge                                                                                                                   |
-| configurations/pico/states.py      | Neu                                                          | Verwaltet die Zustände des Systems und des Aktors; definiert die möglichen Aktor-Positionen und deren Bedeutung                                                                                                                                                  |
-| docker-compose.yml                 | LSTM-Umgebungsvariablen im Controller-Service hinzugefügt     | Ermöglicht Konfiguration des LSTM-Modells und Trainingparameter über Umgebungsvariablen; aktiviert LSTM-Vorhersagen im Controller                                                                                                                                |
-| controller/Dockerfile              | TensorFlow/Keras Dependencies hinzugefügt                    | Integriert erforderliche Python-Libraries (tensorflow, keras, numpy, scikit-learn) für LSTM-Modellverarbeitung im Container                                                                                                                                    |
+| Datei                              | Änderung                                                  | Erklärung                                                                                                                                                                              |
+|------------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| controller/lstm_handler.py         | Neu                                                       | Lädt das trainierte LSTM-Modell und stellt Funktionen zur Verfügung, um Vorhersagen zu treffen; wird verwendet, um den optimalen Aktor-Wert basierend auf Sensor-Eingaben zu berechnen |
+| controller/train.keras             | Neu                                                       | Trainiertes Keras/TensorFlow LSTM-Modell; Gewichte und Architektur für die Vorhersage des optimalen Regelwertes                                                                        |
+| controller/train.py                | Neu                                                       | Trainingsscript für das LSTM-Modell; verwendet historische Messdaten um das Netz zu trainieren                                                                                         |
+| controller/model_trainer.py        | Neu                                                       | Modulare Trainingsfunktionen für das LSTM-Modell; ermöglicht automatisches Retraining basierend auf neuen Daten                                                                        |
+| controller/data_generation.py      | Neu                                                       | Generiert Trainingsdaten aus historischen Sensor-Messwerten; bereitet Daten für das LSTM-Training auf                                                                                  |
+| controller/lstm_weights.weights.h5 | Neu                                                       | Exportierte Gewichte des trainierten LSTM-Modells; ermöglicht schnelleres Laden des Modells ohne Retraining                                                                            |
+| configurations/pico/control.py     | Neu                                                       | Stellt Funktionen zur Ansteuerung des physischen Aktors (z.B. Heizung/Lüfter) bereit; implementiert PWM-Steuerung oder digitale Schaltausgänge                                         |
+| configurations/pico/states.py      | Neu                                                       | Verwaltet die Zustände des Systems und des Aktors; definiert die möglichen Aktor-Positionen und deren Bedeutung                                                                        |
+| docker-compose.yml                 | LSTM-Umgebungsvariablen im Controller-Service hinzugefügt | Ermöglicht Konfiguration des LSTM-Modells und Trainingparameter über Umgebungsvariablen; aktiviert LSTM-Vorhersagen im Controller                                                      |
+| controller/Dockerfile              | TensorFlow/Keras Dependencies hinzugefügt                 | Integriert erforderliche Python-Libraries (tensorflow, keras, numpy, scikit-learn) für LSTM-Modellverarbeitung im Container                                                            |
 
 ### Phase 6:
 
@@ -121,18 +121,206 @@ GANT-Diagramm:
 
 Liste mit übrigen Aufgaben
 
-| Datei | Änderung | Erklärung |
-|-------|----------|-----------|
+| Datei         | Änderung                                                                                                                                             | Erklärung                                                                                                                                            |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CA/*          | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt                                                                     | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis                       |
+| environment/* | Environment Variablen wurden von der docker-compose und den Dockerfiles in dieses Verzeichnis nach dem Namensschema [container_name].env ausgelagert | Die Environment Dateien sind jetzt an einem Ort gebündelt und müssen bei Installation der Software angepasst werden, was hierdurch vereinfacht wurde |
 
 ## Projektstruktur
 
-`
-Verzeichnismodell
-`
+Erstellt mit MS-DOS `tree`
 
-Beschreibung
+    Anwendungsprojekt.Inf
+    │   docker-compose.yml
+    │   README.md
+    │
+    ├───CA
+    │       ca.crt
+    │       ca.der
+    │       ca.key
+    │       ca.srl
+    │       mqtt.crt
+    │       mqtt.csr
+    │       mqtt.key
+    │       req.cnf
+    │       www_cert.cert
+    │       www_cert.csr
+    │       www_key.key
+    │
+    ├───configurations
+    │   │   wlan_ap_setup.py
+    │   │
+    │   ├───commands
+    │   │       commands.txt
+    │   │       san.cnf
+    │   │
+    │   └───pico
+    │           control.py
+    │           iot_config.py
+    │           main.py
+    │           mqtt.py
+    │           states.py
+    │           wifi.py
+    │
+    ├───controller
+    │   │   config.py
+    │   │   controller.py
+    │   │   data_generation.py
+    │   │   Dockerfile
+    │   │   https_client.py
+    │   │   keycloak_auth.py
+    │   │   lstm_handler.py
+    │   │   Messdaten.csv
+    │   │   Messdaten2.csv
+    │   │   model_trainer.py
+    │   │   mqtt_handler.py
+    │   │   requirements.txt
+    │   │   train.keras
+    │   │   train.py
+    │   │   validation.py
+    │   │   weather_data.csv
+    │   │
+    │   └───weights
+    │          lstm_weights.weights.h5
+    │   
+    │
+    ├───documentation
+    │   │   doku.md
+    │   │
+    │   ├───Phase 1
+    │   ├───Phase_1
+    │   │       6Phasen.png
+    │   │       AnwendungInfoEli.pdf
+    │   │       Gantt_Phase1.pdf
+    │   │       Machbarkeitstudie1.pdf
+    │   │       Phase1.png
+    │   │       Phase1_Praesentation.pdf
+    │   │
+    │   └───Phase_4
+    │           API_Phase_4_Lennart_Esch.pdf
+    │           API_Phase_4_Lennart_Esch.pptx
+    │           Phase_4_GANT.png
+    │           Phase_4_web_app_datenfluss.drawio.png
+    │
+    ├───environment
+    │       controller.env
+    │       db.env
+    │       keycloak.env
+    │       nginx.env
+    │       webapp.env
+    │
+    ├───keycloak
+    │   │   iot-realm.json
+    │   │
+    │   └───logs
+    │           27.05.2026;13;00;00
+    │
+    ├───mariadb
+    │       01_tables.sql
+    │       02_archive_job.sql
+    │       03_db_write_user.sql
+    │       04_db_read_user.sql
+    │       05_db_admin_user.sql
+    │
+    ├───mosquitto
+    │   ├───config
+    │   │       mosquitto.conf
+    │   │
+    │   ├───log
+    │   │       mosquitto.log
+    │   │
+    │   └───secure
+    │           acl
+    │           pwfile
+    │
+    ├───nginx
+    │       nginx.conf
+    │
+    ├───web-dashboard
+    │   └───grafana
+    │           dashboard.json
+    │           prometheus.yml
+    │
+    └───webapp
+    │   Dockerfile
+    │   package-lock.json
+    │   package.json
+    │   server.js
+    │
+    ├───config
+    │       database.js
+    │
+    ├───node_modules
+    │
+    ├───public
+    │   │   index.html
+    │   │   test.html
+    │   │
+    │   ├───css
+    │   │       base.css
+    │   │       components.css
+    │   │       layout.css
+    │   │       main.css
+    │   │       status.css
+    │   │       theme.css
+    │   │
+    │   ├───external
+    │   │       chart.umd.js
+    │   │       keycloak.js
+    │   │
+    │   ├───img
+    │   │       LOGO.svg
+    │   │
+    │   └───js
+    │           api.js
+    │           auth.js
+    │           chart-axes.js
+    │           chart-colors.js
+    │           chart-datasets.js
+    │           chart-target-plugin.js
+    │           chart-utils.js
+    │           chart.js
+    │           events.js
+    │           main.js
+    │           theme.js
+    │
+    └───service
+            authentication.js
+            validateSensorPayload.js
 
 ### Beschreibung der Komponenten (jeweils)
+
+### CA
+
+CA steht für Certificate authority. In diesem Verzeichnis liegen alle verwendeten Zertifikate. Alle verwendeten
+Zertifikate sind selbstsigniert.
+
+* `ca.crt`: Öffentliche Zertifikatsdatei, um die Zertifikate der Services zu verifizieren.
+* `ca.der`: Öffentliche Zertifikatsdatei für den Pico in binärcode
+* `ca.key`: Privater Schlüssel der CA zum signieren weiterer Zertifikate
+* `ca.srl`: Serialisierungsnummer der `ca.crt`
+* `commands.txt`: Befehle für das Generieren neuer Zertifikate
+* `mqtt.crt`: Öffentliches Zertifikat für den mqtt-broker
+* `mqtt.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für den mqtt-broker zu signieren
+* `mqtt.key`: Privater Schlüssel für den mqtt-broker
+* `req.cnf`: Konfigurationsdatei für das Generieren und Signieren neuer Zertifikate
+* `www_cert.cert`: Öffentliches Zertifikat für Nginx, Webserver und Keycloak
+* `www_cert.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für Nginx, Webserver und Keycloak zu
+  signieren
+* `www_key.key`: Privater Schlüssel für Nginx, Webserver und Keycloak
+
+### configurations
+
+Unter configurations sind alle Dateien abgelegt, die nicht für das Backend benötigt werden.  
+Hier liegen das Script für den WLAN-Access-Point und unter pico die Dateien des Pico.
+
+#### pico
+
+#### wlan_ap_setup.py
+
+### controller
+
+Hier liegen alle Dateien für den Controller.
 
 ## Installation und Inbetriebnahme
 

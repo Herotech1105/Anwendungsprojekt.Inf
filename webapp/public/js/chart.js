@@ -1,3 +1,4 @@
+// chart.js
 import { getSensorRange } from "./api.js";
 import { getChartColors } from "./chart-colors.js";
 import { getAxesConfig } from "./chart-axes.js";
@@ -18,56 +19,59 @@ const rangeButtons = document.getElementById("rangeButtons");
 function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
     if (!el) return;
-
     el.textContent = message;
     el.className = "";
     el.classList.add(`status-${type}`);
 }
 
-/* ---------------------------------------------------
-   RANGE BUTTON LOGIK (1h / 10h / 24h)
---------------------------------------------------- */
-
 if (rangeButtons) {
     rangeButtons.addEventListener("click", (e) => {
         if (!e.target.dataset.range) return;
-
         const hours = Number(e.target.dataset.range);
         lastRangeHours = hours;
-
-        const to = new Date().toISOString();
-        const from = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
-
-        renderRange(from, to, hours);
+        const toMs = Date.now();
+        const fromMs = Date.now() - hours * 60 * 60 * 1000;
+        console.debug("[chart] range button clicked", { hours, fromMs, toMs });
+        renderRange({ fromMs, toMs }, hours);
     });
 }
 
-/* ---------------------------------------------------
-   CHART RENDERING
---------------------------------------------------- */
+function parseLabelToDate(label) {
+    if (label == null) return null;
+    if (typeof label === "number" || (/^\d+$/.test(String(label)) && String(label).length > 9)) {
+        const d = new Date(Number(label));
+        if (!isNaN(d.getTime())) return d;
+    }
+    if (typeof label === "string") {
+        const d = new Date(label);
+        if (!isNaN(d.getTime())) return d;
+    }
+    return null;
+}
 
-export async function renderRange(from, to, rangeHours = null) {
+export async function renderRange(params, rangeHours = null) {
     try {
-        lastFrom = from;
-        lastTo = to;
+        lastFrom = params.fromMs ?? params.from;
+        lastTo = params.toMs ?? params.to;
         lastRangeHours = rangeHours;
 
-        const data = await getSensorRange(from, to);
+        console.debug("[chart] renderRange called with params", params, "rangeHours", rangeHours);
 
-        if (!data.labels || data.labels.length === 0) {
+        const data = await getSensorRange(params);
+
+        if (!data || !Array.isArray(data.labels) || data.labels.length === 0) {
             if (chart) chart.destroy();
             setStatus("Keine Daten im gewählten Zeitraum", "error");
+            console.warn("[chart] no data returned from API");
             return;
         }
 
-        /* ---------------------------------------------------
-           LABELS: WICHTIG → ISO‑Strings NICHT verändern!
-           Category‑Scale braucht die Originalwerte.
-        --------------------------------------------------- */
+        // Debug-Log: erstes Label und wie es geparst wird
+        console.debug("[chart] API first label", data.labels[0], "parsed", parseLabelToDate(data.labels[0]));
+
         const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
-
         if (chart) chart.destroy();
 
         const tickIntervalMs = rangeHours ? getTickIntervalMs(rangeHours) : null;
@@ -81,7 +85,6 @@ export async function renderRange(from, to, rangeHours = null) {
             options: {
                 responsive: true,
                 scales: getAxesConfig(tickIntervalMs),
-
                 plugins: {
                     legend: {
                         labels: {
@@ -89,24 +92,13 @@ export async function renderRange(from, to, rangeHours = null) {
                             font: { weight: "600", size: 14 }
                         }
                     },
-
                     tooltip: {
                         callbacks: {
                             title: (items) => {
                                 const rawLabel = items[0].label;
-                                const d = new Date(rawLabel);
-
-                                // ---------- UTC FORMAT ----------
-                                const date =
-                                    String(d.getUTCDate()).padStart(2, "0") + "." +
-                                    String(d.getUTCMonth() + 1).padStart(2, "0") + "." +
-                                    d.getUTCFullYear();
-
-                                const time =
-                                    String(d.getUTCHours()).padStart(2, "0") + ":" +
-                                    String(d.getUTCMinutes()).padStart(2, "0");
-
-                                return `${date} ${time} UTC`;
+                                const d = parseLabelToDate(rawLabel);
+                                if (!d) return rawLabel;
+                                return d.toLocaleString("de-DE");
                             }
                         }
                     }
@@ -115,7 +107,7 @@ export async function renderRange(from, to, rangeHours = null) {
             plugins: [targetRangePlugin]
         });
 
-        if (to) {
+        if (params.toMs || params.to) {
             setStatus(`Zeitraum geladen (${data.labels.length} Werte)`, "success");
         }
 
@@ -125,27 +117,29 @@ export async function renderRange(from, to, rangeHours = null) {
     }
 }
 
-/* ---------------------------------------------------
-   DARK/LIGHT MODE REBUILD
---------------------------------------------------- */
-
 export function rebuildChart() {
     if (!chart || !lastFrom) return;
-
-    renderRange(lastFrom, lastTo || new Date().toISOString(), lastRangeHours);
+    console.debug("[chart] rebuildChart called", { lastFrom, lastTo, lastRangeHours });
+    renderRange({ fromMs: lastFrom, toMs: lastTo ?? Date.now() }, lastRangeHours);
 }
 
-/* ---------------------------------------------------
-   LOAD RANGE EVENT (FROM / FROM–TO)
---------------------------------------------------- */
-
 window.addEventListener("loadRange", (e) => {
-    const { from, to } = e.detail;
+    const detail = e.detail || {};
+    const params = {};
+    if (detail.fromMs != null) params.fromMs = detail.fromMs;
+    else if (detail.from != null) params.from = detail.from;
 
-    if (!to) {
-        rangeButtons.style.display = "flex";
-    } else {
-        rangeButtons.style.display = "none";
+    if (detail.toMs != null) params.toMs = detail.toMs;
+    else if (detail.to != null) params.to = detail.to;
+
+    console.debug("[chart] loadRange event received", params);
+
+    if (rangeButtons) {
+        if (!params.to && !params.toMs) {
+            rangeButtons.style.display = "flex";
+        } else {
+            rangeButtons.style.display = "none";
+        }
     }
 
     if (liveUpdateInterval) {
@@ -153,18 +147,15 @@ window.addEventListener("loadRange", (e) => {
         liveUpdateInterval = null;
     }
 
-    if (!to) {
+    if (!params.to && !params.toMs) {
         setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
-
-        const now = new Date().toISOString();
-        renderRange(from, now);
-
+        const nowMs = Date.now();
+        renderRange({ fromMs: params.fromMs, toMs: nowMs });
         liveUpdateInterval = setInterval(() => {
-            renderRange(from, new Date().toISOString());
+            renderRange({ fromMs: params.fromMs, toMs: Date.now() });
             setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
         }, 60000);
-
     } else {
-        renderRange(from, to);
+        renderRange(params);
     }
 });
