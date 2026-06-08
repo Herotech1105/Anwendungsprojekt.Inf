@@ -60,8 +60,11 @@ export async function renderRange(from, to, rangeHours = null) {
             return;
         }
 
-        // Labels = echte Timestamps
-        const formattedLabels = data.labels.map(ts => new Date(ts).getTime());
+        /* ---------------------------------------------------
+           LABELS: Chart.js Time‑Axis akzeptiert ISO & Unix
+           → wir geben die Werte 1:1 weiter
+        --------------------------------------------------- */
+        const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
@@ -77,7 +80,13 @@ export async function renderRange(from, to, rangeHours = null) {
             },
             options: {
                 responsive: true,
+
+                /* ---------------------------------------------------
+                   TIME‑AXIS OHNE DATE‑ADAPTER
+                   → Chart.js nutzt Browser‑Date‑Parsing
+                --------------------------------------------------- */
                 scales: getAxesConfig(tickIntervalMs),
+
                 plugins: {
                     legend: {
                         labels: {
@@ -85,10 +94,11 @@ export async function renderRange(from, to, rangeHours = null) {
                             font: { weight: "600", size: 14 }
                         }
                     },
+
                     tooltip: {
                         callbacks: {
                             title: (items) => {
-                                const ts = items[0].label;
+                                const ts = items[0].parsed.x;
                                 const d = new Date(ts);
                                 return d.toLocaleString("de-DE");
                             }
