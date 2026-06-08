@@ -61,7 +61,7 @@ export async function renderRange(from, to, rangeHours = null) {
         }
 
         // Labels = echte Timestamps
-        const formattedLabels = data.labels.map(ts => ts);
+        const formattedLabels = data.labels.map(ts => Number(ts));
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
