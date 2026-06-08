@@ -1,6 +1,10 @@
 import os
 import subprocess
-
+# Configuration Parameters
+backend_mac_address = "e4:5f:01:00:bc:ec"
+ssid = "Production"
+password = "Production-01"
+wlan_iface = "wlan0"
 
 def write_file(path, content):
     """Writes to file and handles errors"""
@@ -21,12 +25,8 @@ def run_cmd(cmd):
 
 def configure_ap():
     """Creates Configuration"""
-    # 1. Configuration Parameters
-    wlan_iface = "wlan0"
-    eth_iface = "eth0"
-    ssid = "Production"
-    password = "Production-01"
-    run_cmd("nmcli device set wlan0 managed no")
+    # 1. Starting configuration on wlan_iface
+    run_cmd(f"nmcli device set {wlan_iface} managed no")
 
     print(f"--- Starting Configuration on {wlan_iface} ---")
 
@@ -62,7 +62,7 @@ dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
 domain=wlan
 address=/gw.wlan/192.168.4.1
 address=/local.kleber.data/192.168.4.18
-dhcp-host=e4:5f:01:00:bc:ec,backend,192.168.4.18
+dhcp-host={backend_mac_address},backend,192.168.4.18
 """
     write_file("/etc/dnsmasq.conf", dnsmasq_conf)
 
