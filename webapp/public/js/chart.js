@@ -95,7 +95,18 @@ export async function renderRange(from, to, rangeHours = null) {
                             title: (items) => {
                                 const rawLabel = items[0].label;
                                 const d = new Date(rawLabel);
-                                return d.toLocaleString("de-DE");
+
+                                // ---------- UTC FORMAT ----------
+                                const date =
+                                    String(d.getUTCDate()).padStart(2, "0") + "." +
+                                    String(d.getUTCMonth() + 1).padStart(2, "0") + "." +
+                                    d.getUTCFullYear();
+
+                                const time =
+                                    String(d.getUTCHours()).padStart(2, "0") + ":" +
+                                    String(d.getUTCMinutes()).padStart(2, "0");
+
+                                return `${date} ${time} UTC`;
                             }
                         }
                     }
