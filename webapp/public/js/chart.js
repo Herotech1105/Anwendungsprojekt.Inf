@@ -1,3 +1,4 @@
+// chart.js
 import { getSensorRange } from "./api.js";
 import { getChartColors } from "./chart-colors.js";
 import { getAxesConfig } from "./chart-axes.js";
@@ -18,34 +19,39 @@ const rangeButtons = document.getElementById("rangeButtons");
 function setStatus(message, type = "info") {
     const el = document.getElementById("chartStatus");
     if (!el) return;
-
     el.textContent = message;
     el.className = "";
     el.classList.add(`status-${type}`);
 }
 
-/* ---------------------------------------------------
-   RANGE BUTTON LOGIK (1h / 10h / 24h)
---------------------------------------------------- */
-
+/* Range Buttons */
 if (rangeButtons) {
     rangeButtons.addEventListener("click", (e) => {
         if (!e.target.dataset.range) return;
-
         const hours = Number(e.target.dataset.range);
         lastRangeHours = hours;
-
         const to = new Date().toISOString();
         const from = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
-
         renderRange(from, to, hours);
     });
 }
 
-/* ---------------------------------------------------
-   CHART RENDERING
---------------------------------------------------- */
+/* Hilfsparser für Labels (robust) */
+function parseLabelToDate(label) {
+    if (label == null) return null;
+    if (typeof label === "number" || /^\d+$/.test(String(label))) {
+        const d = new Date(Number(label));
+        if (!isNaN(d.getTime())) return d;
+    }
+    if (typeof label === "string") {
+        // Wenn string endet mit 'Z' -> UTC; wenn nicht, Date interpretiert meist als lokal
+        const d = new Date(label);
+        if (!isNaN(d.getTime())) return d;
+    }
+    return null;
+}
 
+/* Render */
 export async function renderRange(from, to, rangeHours = null) {
     try {
         lastFrom = from;
@@ -54,17 +60,16 @@ export async function renderRange(from, to, rangeHours = null) {
 
         const data = await getSensorRange(from, to);
 
-        if (!data.labels || data.labels.length === 0) {
+        if (!data || !Array.isArray(data.labels) || data.labels.length === 0) {
             if (chart) chart.destroy();
             setStatus("Keine Daten im gewählten Zeitraum", "error");
             return;
         }
 
-        // Labels unverändert übernehmen (API should return ISO Z strings)
+        // Labels unverändert übernehmen (Backend liefert lokale Zeitstrings oder numeric timestamps)
         const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
-
         if (chart) chart.destroy();
 
         const tickIntervalMs = rangeHours ? getTickIntervalMs(rangeHours) : null;
@@ -77,7 +82,7 @@ export async function renderRange(from, to, rangeHours = null) {
             },
             options: {
                 responsive: true,
-                scales: getAxesConfig(tickIntervalMs),
+                scales: getAxesConfig(tickIntervalMs), // Achse formatiert lokal
 
                 plugins: {
                     legend: {
@@ -91,7 +96,9 @@ export async function renderRange(from, to, rangeHours = null) {
                         callbacks: {
                             title: (items) => {
                                 const rawLabel = items[0].label;
-                                const d = new Date(rawLabel);
+                                const d = parseLabelToDate(rawLabel);
+                                if (!d) return rawLabel;
+                                // Tooltip lokal anzeigen
                                 return d.toLocaleString("de-DE");
                             }
                         }
@@ -111,20 +118,13 @@ export async function renderRange(from, to, rangeHours = null) {
     }
 }
 
-/* ---------------------------------------------------
-   DARK/LIGHT MODE REBUILD
---------------------------------------------------- */
-
+/* Rebuild */
 export function rebuildChart() {
     if (!chart || !lastFrom) return;
-
     renderRange(lastFrom, lastTo || new Date().toISOString(), lastRangeHours);
 }
 
-/* ---------------------------------------------------
-   LOAD RANGE EVENT (FROM / FROM–TO)
---------------------------------------------------- */
-
+/* Load range event */
 window.addEventListener("loadRange", (e) => {
     const { from, to } = e.detail;
 
@@ -141,15 +141,12 @@ window.addEventListener("loadRange", (e) => {
 
     if (!to) {
         setStatus("Live‑Modus aktiv (minütliche Aktualisierung)", "live");
-
         const now = new Date().toISOString();
         renderRange(from, now);
-
         liveUpdateInterval = setInterval(() => {
             renderRange(from, new Date().toISOString());
             setStatus(`Live‑Modus aktualisiert: ${new Date().toLocaleTimeString()}`, "live");
         }, 60000);
-
     } else {
         renderRange(from, to);
     }

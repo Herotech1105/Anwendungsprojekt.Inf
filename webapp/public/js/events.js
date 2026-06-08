@@ -1,39 +1,33 @@
+// events.js
 import { logout } from "./auth.js";
 
 /**
- * Convert a datetime-local input value (e.g. "2024-06-03T19:30")
- * into an ISO Z string that represents the same clock time in UTC:
- * "2024-06-03T19:30:00.000Z"
- *
- * This avoids any browser-local-to-UTC shifting caused by new Date(...).toISOString()
+ * Liefert eine lokale ISO-ähnliche Zeichenkette ohne Zeitzone,
+ * passend wenn das Backend lokale Timestamps erwartet.
+ * Beispiel: "2024-06-03T19:30:00"
  */
-function localInputToUTCIso(inputValue) {
+function localInputToLocalIso(inputValue) {
     if (!inputValue) return null;
-
-    // inputValue is typically "YYYY-MM-DDTHH:mm" or "YYYY-MM-DDTHH:mm:ss"
+    // inputValue z.B. "2024-06-03T19:30" oder "2024-06-03T19:30:00"
     const [datePart, timePartRaw] = inputValue.split("T");
     if (!datePart || !timePartRaw) return null;
-
-    // Ensure seconds exist
     const timePart = timePartRaw.length === 5 ? `${timePartRaw}:00` : timePartRaw;
-
-    // Return ISO Z string that treats the chosen clock time as UTC
-    return `${datePart}T${timePart}.000Z`;
+    return `${datePart}T${timePart}`;
 }
 
 export function initEvents() {
     document.getElementById("loadDataBtn").addEventListener("click", () => {
-        const fromLocal = document.getElementById("from").value;
-        const toLocal = document.getElementById("to").value;
+        const fromLocal = document.getElementById("from").value; // "YYYY-MM-DDTHH:mm"
+        const toLocal = document.getElementById("to").value;     // optional
 
         if (!fromLocal) {
             alert("Bitte Startzeit auswählen");
             return;
         }
 
-        // Convert the datetime-local input into an ISO Z string that represents the same clock time in UTC
-        const from = localInputToUTCIso(fromLocal);
-        const to = toLocal ? localInputToUTCIso(toLocal) : null;
+        // Wir senden lokale Zeitstrings (Backend erwartet deutsche Lokalzeit)
+        const from = localInputToLocalIso(fromLocal);
+        const to = toLocal ? localInputToLocalIso(toLocal) : null;
 
         window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
     });
