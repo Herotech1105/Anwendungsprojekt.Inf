@@ -17,25 +17,25 @@ export function getAxesConfig(tickIntervalMs) {
                 },
 
                 callback: function(value, index, ticks) {
+                    const ts = ticks[index].value;
+                    const d = new Date(ts);
 
-                    // -----------------------------
-                    // 1) FROM–TO → automatisch filtern
-                    // -----------------------------
+                    const date = d.toLocaleDateString("de-DE");
+                    const time = d.toLocaleTimeString("de-DE", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
+
+                    // FROM–TO → automatisch filtern
                     if (!tickIntervalMs) {
                         const interval = Math.ceil(ticks.length / 8);
-                        if (index % interval === 0) {
-                            return this.getLabelForValue(value);
-                        }
+                        if (index % interval === 0) return [date, time];
                         return "";
                     }
 
-                    // -----------------------------
-                    // 2) Range‑Buttons → Intervall nutzen
-                    // -----------------------------
+                    // Range‑Buttons → Intervall nutzen
                     const interval = Math.ceil(ticks.length / 8);
-                    if (index % interval === 0) {
-                        return this.getLabelForValue(value);
-                    }
+                    if (index % interval === 0) return [date, time];
 
                     return "";
                 }

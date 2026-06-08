@@ -131,13 +131,15 @@ app.get('/api/sensordata/range', authenticateToken("dashboard-client", "dashboar
 });
 
 
-// Wert -> SQL-Literal (DECIMAL kommt beim mariadb-Connector als String)
-function toSqlLiteral(v) {
-    if (v === null || v === undefined) return 'NULL';
-    if (v instanceof Date) return `'${v.toISOString().slice(0, 19).replace('T', ' ')}'`;
-    if (typeof v === 'number') return String(v);
-    if (typeof v === 'string' && /^-?\d+(\.\d+)?$/.test(v)) return v;
-    return `'${String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+function toCsvField(v) {
+    if (v === null || v === undefined) return '';
+    if (v instanceof Date) v = v.toISOString().slice(0, 19).replace('T', ' ');
+    const s = String(v);
+    // Felder mit Komma, Anführungszeichen oder Zeilenumbruch müssen gequotet werden
+    if (/[",\n\r]/.test(s)) {
+        return `"${s.replace(/"/g, '""')}"`;
+    }
+    return s;
 }
 
 app.get('/api/admin/export',
@@ -148,35 +150,29 @@ app.get('/api/admin/export',
             const pool = await getAdminPool();
             conn = await pool.getConnection();
 
-            const filename = `myapp_export_${new Date().toISOString().slice(0, 10)}.sql`;
-            res.setHeader('Content-Type', 'application/sql; charset=utf-8');
+            const filename = `myapp_export_${new Date().toISOString().slice(0, 10)}.csv`;
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
 
             const tables = ['sensor_data', 'sensor_data_archive'];
             const columns = ['id', 'timestamp', 'temperature', 'humidity'];
 
-            res.write(`-- myapp export, erstellt ${new Date().toISOString()}\n`);
-            res.write(`USE myapp;\n\n`);
+            // Kopfzeile: Spalten + Herkunftstabelle
+            res.write(['source_table', ...columns].map(toCsvField).join(',') + '\r\n');
 
             for (const table of tables) {
-                const created = await conn.query(`SHOW CREATE TABLE \`${table}\``);
-                res.write(`-- Struktur: ${table}\n`);
-                res.write(created[0]['Create Table'] + ';\n\n');
-
-                res.write(`-- Daten: ${table}\n`);
                 const rows = await conn.query(
                     `SELECT ${columns.join(', ')} FROM \`${table}\` ORDER BY id ASC`
                 );
                 for (const row of rows) {
-                    const vals = columns.map(c => toSqlLiteral(row[c])).join(', ');
-                    res.write(`INSERT INTO \`${table}\` (${columns.join(', ')}) VALUES (${vals});\n`);
+                    const fields = [table, ...columns.map(c => row[c])];
+                    res.write(fields.map(toCsvField).join(',') + '\r\n');
                 }
-                res.write('\n');
             }
             res.end();
         } catch (err) {
             if (!res.headersSent) res.status(500).json({error: err.message});
-            else res.end(`\n-- FEHLER beim Export: ${err.message}\n`);
+            else res.end();
         } finally {
             if (conn) conn.release();
         }
