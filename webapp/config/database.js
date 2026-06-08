@@ -4,9 +4,12 @@ const DB_WRITE_USER = process.env.DB_WRITE_USER
 const DB_WRITE_PASSWORD = process.env.DB_WRITE_PASSWORD
 const DB_READ_USER = process.env.DB_READ_USER
 const DB_READ_PASSWORD = process.env.DB_READ_PASSWORD
+const DB_ADMIN_USER = process.env.DB_ADMIN_USER
+const DB_ADMIN_PASSWORD = process.env.DB_ADMIN_PASSWORD
 const DB_NAME = process.env.DB_NAME
 let readPool;
 let writePool;
+let adminPool;
 
 async function getWritePool() {
     if (!writePool) {
@@ -36,5 +39,19 @@ async function getReadPool() {
     return readPool;
 }
 
-module.exports = { getWritePool, getReadPool };
+async function getAdminPool() {
+    if (!adminPool) {
+        const mariadb = await import('mariadb');
+        adminPool = mariadb.createPool({
+            host: DB_HOST,
+            user: DB_ADMIN_USER,
+            password: DB_ADMIN_PASSWORD,
+            database: DB_NAME,
+            connectionLimit: 2
+        });
+    }
+    return adminPool;
+}
+
+module.exports = { getWritePool, getReadPool, getAdminPool };
 
