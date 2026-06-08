@@ -116,11 +116,166 @@ Liste mit übrigen Aufgaben
 
 ## Projektstruktur
 
-`
-Verzeichnismodell
-`
+Erstellt mit MS-DOS `tree`
 
-Beschreibung
+    Anwendungsprojekt.Inf
+    │   docker-compose.yml
+    │   README.md
+    │
+    ├───CA
+    │       ca.crt
+    │       ca.der
+    │       ca.key
+    │       ca.srl
+    │       mqtt.crt
+    │       mqtt.csr
+    │       mqtt.key
+    │       req.cnf
+    │       www_cert.cert
+    │       www_cert.csr
+    │       www_key.key
+    │
+    ├───configurations
+    │   │   wlan_ap_setup.py
+    │   │
+    │   ├───commands
+    │   │       commands.txt
+    │   │       san.cnf
+    │   │
+    │   └───pico
+    │           control.py
+    │           iot_config.py
+    │           main.py
+    │           mqtt.py
+    │           states.py
+    │           wifi.py
+    │
+    ├───controller
+    │   │   config.py
+    │   │   controller.py
+    │   │   data_generation.py
+    │   │   Dockerfile
+    │   │   https_client.py
+    │   │   keycloak_auth.py
+    │   │   lstm_handler.py
+    │   │   Messdaten.csv
+    │   │   Messdaten2.csv
+    │   │   model_trainer.py
+    │   │   mqtt_handler.py
+    │   │   requirements.txt
+    │   │   train.keras
+    │   │   train.py
+    │   │   validation.py
+    │   │   weather_data.csv
+    │   │
+    │   └───weights
+    │          lstm_weights.weights.h5
+    │   
+    │
+    ├───documentation
+    │   │   doku.md
+    │   │
+    │   ├───Phase 1
+    │   ├───Phase_1
+    │   │       6Phasen.png
+    │   │       AnwendungInfoEli.pdf
+    │   │       Gantt_Phase1.pdf
+    │   │       Machbarkeitstudie1.pdf
+    │   │       Phase1.png
+    │   │       Phase1_Praesentation.pdf
+    │   │
+    │   └───Phase_4
+    │           API_Phase_4_Lennart_Esch.pdf
+    │           API_Phase_4_Lennart_Esch.pptx
+    │           Phase_4_GANT.png
+    │           Phase_4_web_app_datenfluss.drawio.png
+    │
+    ├───environment
+    │       controller.env
+    │       db.env
+    │       keycloak.env
+    │       nginx.env
+    │       webapp.env
+    │
+    ├───keycloak
+    │   │   iot-realm.json
+    │   │
+    │   └───logs
+    │           27.05.2026;13;00;00
+    │
+    ├───mariadb
+    │       01_tables.sql
+    │       02_archive_job.sql
+    │       03_db_write_user.sql
+    │       04_db_read_user.sql
+    │       05_db_admin_user.sql
+    │
+    ├───mosquitto
+    │   ├───config
+    │   │       mosquitto.conf
+    │   │
+    │   ├───log
+    │   │       mosquitto.log
+    │   │
+    │   └───secure
+    │           acl
+    │           pwfile
+    │
+    ├───nginx
+    │       nginx.conf
+    │
+    ├───web-dashboard
+    │   └───grafana
+    │           dashboard.json
+    │           prometheus.yml
+    │
+    └───webapp
+    │   Dockerfile
+    │   package-lock.json
+    │   package.json
+    │   server.js
+    │
+    ├───config
+    │       database.js
+    │
+    ├───node_modules
+    │
+    ├───public
+    │   │   index.html
+    │   │   test.html
+    │   │
+    │   ├───css
+    │   │       base.css
+    │   │       components.css
+    │   │       layout.css
+    │   │       main.css
+    │   │       status.css
+    │   │       theme.css
+    │   │
+    │   ├───external
+    │   │       chart.umd.js
+    │   │       keycloak.js
+    │   │
+    │   ├───img
+    │   │       LOGO.svg
+    │   │
+    │   └───js
+    │           api.js
+    │           auth.js
+    │           chart-axes.js
+    │           chart-colors.js
+    │           chart-datasets.js
+    │           chart-target-plugin.js
+    │           chart-utils.js
+    │           chart.js
+    │           events.js
+    │           main.js
+    │           theme.js
+    │
+    └───service
+            authentication.js
+            validateSensorPayload.js
+    
 
 ### Beschreibung der Komponenten (jeweils)
 
