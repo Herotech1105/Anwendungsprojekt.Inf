@@ -67,13 +67,23 @@ GANT-Diagramm: [GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
 ### Phase 5:
 
-Datum:  
-Problemstellung:  
-Verantwortlicher:
-GANT-Diagramm:
+Datum: 13.05.2026 - 21.05.2026  
+Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz  
+Verantwortlicher: (To be assigned)  
+GANT-Diagramm: [GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
 
-| Datei | Änderung | Erklärung |
-|-------|----------|-----------|
+| Datei                              | Änderung                                                     | Erklärung                                                                                                                                                                                                                                                       |
+|-----------------------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| controller/lstm_handler.py         | Neu                                                          | Lädt das trainierte LSTM-Modell und stellt Funktionen zur Verfügung, um Vorhersagen zu treffen; wird verwendet, um den optimalen Aktor-Wert basierend auf Sensor-Eingaben zu berechnen                                                                               |
+| controller/train.keras             | Neu                                                          | Trainiertes Keras/TensorFlow LSTM-Modell; Gewichte und Architektur für die Vorhersage des optimalen Regelwertes                                                                                                                                                 |
+| controller/train.py                | Neu                                                          | Trainingsscript für das LSTM-Modell; verwendet historische Messdaten um das Netz zu trainieren                                                                                                                                                                   |
+| controller/model_trainer.py        | Neu                                                          | Modulare Trainingsfunktionen für das LSTM-Modell; ermöglicht automatisches Retraining basierend auf neuen Daten                                                                                                                                                   |
+| controller/data_generation.py      | Neu                                                          | Generiert Trainingsdaten aus historischen Sensor-Messwerten; bereitet Daten für das LSTM-Training auf                                                                                                                                                           |
+| controller/lstm_weights.weights.h5 | Neu                                                          | Exportierte Gewichte des trainierten LSTM-Modells; ermöglicht schnelleres Laden des Modells ohne Retraining                                                                                                                                                     |
+| configurations/pico/control.py     | Neu                                                          | Stellt Funktionen zur Ansteuerung des physischen Aktors (z.B. Heizung/Lüfter) bereit; implementiert PWM-Steuerung oder digitale Schaltausgänge                                                                                                                   |
+| configurations/pico/states.py      | Neu                                                          | Verwaltet die Zustände des Systems und des Aktors; definiert die möglichen Aktor-Positionen und deren Bedeutung                                                                                                                                                  |
+| docker-compose.yml                 | LSTM-Umgebungsvariablen im Controller-Service hinzugefügt     | Ermöglicht Konfiguration des LSTM-Modells und Trainingparameter über Umgebungsvariablen; aktiviert LSTM-Vorhersagen im Controller                                                                                                                                |
+| controller/Dockerfile              | TensorFlow/Keras Dependencies hinzugefügt                    | Integriert erforderliche Python-Libraries (tensorflow, keras, numpy, scikit-learn) für LSTM-Modellverarbeitung im Container                                                                                                                                    |
 
 ### Phase 6:
 
