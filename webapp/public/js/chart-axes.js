@@ -5,25 +5,16 @@ export function getAxesConfig(tickIntervalMs) {
 
     return {
         x: {
-            type: "time",
-
-            adapters: {
-                date: {} // nutzt Browser‑Date‑Parsing, kein Adapter nötig
-            },
-
-            time: {
-                tooltipFormat: "dd.MM.yyyy HH:mm",
-                displayFormats: {
-                    minute: "HH:mm",
-                    hour: "HH:mm",
-                    day: "dd.MM"
-                }
-            },
+            type: "category",
 
             ticks: {
                 color: c.text,
                 maxRotation: 0,
                 autoSkip: false,
+                font: {
+                    weight: "600",
+                    size: 12
+                },
 
                 callback: function(value, index, ticks) {
                     const ts = ticks[index].value;
@@ -35,8 +26,12 @@ export function getAxesConfig(tickIntervalMs) {
                         minute: "2-digit"
                     });
 
+                    // Maximal 8 Ticks anzeigen
                     const interval = Math.ceil(ticks.length / 8);
-                    if (index % interval === 0) return [date, time];
+
+                    if (index % interval === 0) {
+                        return [date, time];
+                    }
 
                     return "";
                 }

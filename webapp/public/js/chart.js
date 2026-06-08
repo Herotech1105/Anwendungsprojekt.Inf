@@ -61,10 +61,9 @@ export async function renderRange(from, to, rangeHours = null) {
         }
 
         /* ---------------------------------------------------
-           LABELS: Chart.js Time‑Axis akzeptiert ISO & Unix
-           → wir geben die Werte 1:1 weiter
+           LABELS: ISO → Unix‑Millisekunden
         --------------------------------------------------- */
-        const formattedLabels = data.labels;
+        const formattedLabels = data.labels.map(ts => new Date(ts).getTime());
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
@@ -80,11 +79,6 @@ export async function renderRange(from, to, rangeHours = null) {
             },
             options: {
                 responsive: true,
-
-                /* ---------------------------------------------------
-                   TIME‑AXIS OHNE DATE‑ADAPTER
-                   → Chart.js nutzt Browser‑Date‑Parsing
-                --------------------------------------------------- */
                 scales: getAxesConfig(tickIntervalMs),
 
                 plugins: {
