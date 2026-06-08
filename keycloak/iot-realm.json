@@ -33,7 +33,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["admin-user"]
+      "realmRoles": ["admin-user", "dashboard-user"]
     },
     {
       "username": "service-account-controller-client",
