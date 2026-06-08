@@ -30,7 +30,24 @@
       "username": "service-account-controller-client",
       "enabled": true,
       "serviceAccountClientId": "controller-client",
-      "realmRoles": ["controller-ingest"]
+      "realmRoles": [
+        "controller-ingest"
+      ]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "James",
+      "lastName": "Cookie",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin-user"]
     }
   ],
   "clients": [
