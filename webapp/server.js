@@ -1,7 +1,7 @@
 require('dotenv').config(); // use .env file
 const express = require('express');
 const app = express();
-const {getReadPool, getWritePool} = require('./config/database');
+const {getReadPool, getWritePool, getAdminPool} = require('./config/database');
 const PORT = process.env.PORT || 3000;
 const https = require('https');
 
@@ -129,3 +129,55 @@ app.get('/api/sensordata/range', authenticateToken("dashboard-client", "dashboar
         if (conn) conn.release();
     }
 });
+
+
+// Wert -> SQL-Literal (DECIMAL kommt beim mariadb-Connector als String)
+function toSqlLiteral(v) {
+    if (v === null || v === undefined) return 'NULL';
+    if (v instanceof Date) return `'${v.toISOString().slice(0, 19).replace('T', ' ')}'`;
+    if (typeof v === 'number') return String(v);
+    if (typeof v === 'string' && /^-?\d+(\.\d+)?$/.test(v)) return v;
+    return `'${String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+app.get('/api/admin/export',
+    authenticateToken("dashboard-client", "admin-user"),
+    async (req, res) => {
+        let conn;
+        try {
+            const pool = await getAdminPool();
+            conn = await pool.getConnection();
+
+            const filename = `myapp_export_${new Date().toISOString().slice(0, 10)}.sql`;
+            res.setHeader('Content-Type', 'application/sql; charset=utf-8');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+            const tables = ['sensor_data', 'sensor_data_archive'];
+            const columns = ['id', 'timestamp', 'temperature', 'humidity'];
+
+            res.write(`-- myapp export, erstellt ${new Date().toISOString()}\n`);
+            res.write(`USE myapp;\n\n`);
+
+            for (const table of tables) {
+                const created = await conn.query(`SHOW CREATE TABLE \`${table}\``);
+                res.write(`-- Struktur: ${table}\n`);
+                res.write(created[0]['Create Table'] + ';\n\n');
+
+                res.write(`-- Daten: ${table}\n`);
+                const rows = await conn.query(
+                    `SELECT ${columns.join(', ')} FROM \`${table}\` ORDER BY id ASC`
+                );
+                for (const row of rows) {
+                    const vals = columns.map(c => toSqlLiteral(row[c])).join(', ');
+                    res.write(`INSERT INTO \`${table}\` (${columns.join(', ')}) VALUES (${vals});\n`);
+                }
+                res.write('\n');
+            }
+            res.end();
+        } catch (err) {
+            if (!res.headersSent) res.status(500).json({error: err.message});
+            else res.end(`\n-- FEHLER beim Export: ${err.message}\n`);
+        } finally {
+            if (conn) conn.release();
+        }
+    });
