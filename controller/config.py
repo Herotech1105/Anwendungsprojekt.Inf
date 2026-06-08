@@ -1,9 +1,9 @@
-"""Konfiguration und Logging fuer den Sensor-Controller."""
+"""Configuration and logging for the sensor controller."""
 
 import logging
 import os
 
-# MQTT (Subscribe-Seite)
+# MQTT (subscribe side)
 MQTT_HOST = os.getenv("MQTT_HOST", "mqtt.local")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "8883"))
 MQTT_USER = os.getenv("MQTT_USER", "testuser")
@@ -11,11 +11,11 @@ MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "sensor/data")
 MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", "controller")
 MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", "60"))
-# Wenn das Server-Zertifikat keinen passenden SAN/CN fuer den Docker-DNS-Namen
-# besitzt, kann die Hostname-Pruefung temporaer abgeschaltet werden.
+# If the server certificate has no matching SAN/CN for the Docker DNS name,
+# hostname verification can be temporarily disabled.
 MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 
-# HTTP (Publish-Seite -> Webserver / Reverse Proxy)
+# HTTP (publish side -> web server / reverse proxy)
 BACKEND_URL = os.getenv(
     "BACKEND_URL", "https://www.lab.local/api/internal/sensordata"
 )
@@ -32,13 +32,13 @@ KC_CLIENT_ID = os.getenv("KC_CLIENT_ID", "controller-client")
 KC_CLIENT_SECRET = os.getenv("KC_CLIENT_SECRET", "change-me-please")
 KC_REQUIRED_ROLE = os.getenv("KC_REQUIRED_ROLE", "controller-ingest")
 
-# Plausibilitaetsbereiche (decken sich mit validateSensorPayload in server.js)
+# Plausibility ranges (match validateSensorPayload in server.js)
 TEMP_MIN = float(os.getenv("TEMP_MIN", "0"))
 TEMP_MAX = float(os.getenv("TEMP_MAX", "100"))
 HUM_MIN = float(os.getenv("HUM_MIN", "0"))
 HUM_MAX = float(os.getenv("HUM_MAX", "100"))
 
-# Steuerungsschwellenwerte fuer Aktor-Kontrolle
+# Control thresholds for actuator control
 TEMP_LOW = float(os.getenv("TEMP_LOW", "19"))
 TEMP_HIGH = float(os.getenv("TEMP_HIGH", "21"))
 HUM_LOW = float(os.getenv("HUM_LOW", "42"))

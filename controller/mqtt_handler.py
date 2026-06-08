@@ -1,4 +1,4 @@
-"""MQTT-Client-Aufbau und Callbacks."""
+"""MQTT client setup and callbacks."""
 import json
 import ssl
 from datetime import datetime, timezone
@@ -16,37 +16,37 @@ from validation import parse_and_validate
 from https_client import forward_to_backend
 
 
-# --- MQTT-Callbacks (paho-mqtt v2 API) -----------------------------------
+# --- MQTT callbacks (paho-mqtt v2 API) ------------------------------------
 
 def on_connect(client, userdata, flags, reason_code, properties=None):
-    # In paho 2.x ist reason_code ein ReasonCode-Objekt; '== 0' funktioniert.
+    # In paho 2.x reason_code is a ReasonCode object; '== 0' still works.
     if reason_code == 0:
-        log.info("Verbunden mit MQTT-Broker %s:%d", MQTT_HOST, MQTT_PORT)
+        log.info("Connected to MQTT broker %s:%d", MQTT_HOST, MQTT_PORT)
         client.subscribe(MQTT_TOPIC, qos=1)
-        log.info("Topic abonniert: %r (qos=1)", MQTT_TOPIC)
+        log.info("Subscribed to topic: %r (qos=1)", MQTT_TOPIC)
     else:
-        log.error("MQTT-Connect fehlgeschlagen: %s", reason_code)
+        log.error("MQTT connect failed: %s", reason_code)
 
 
 def on_disconnect(client, userdata, flags, reason_code, properties=None):
     log.warning(
-        "MQTT-Verbindung getrennt (rc=%s). Auto-Reconnect...", reason_code
+        "MQTT connection lost (rc=%s). Auto-reconnecting...", reason_code
     )
 
 
 def on_message(client, userdata, msg):
-    log.debug("Empfangen auf %s: %s", msg.topic, msg.payload)
+    log.debug("Received on %s: %s", msg.topic, msg.payload)
     parsed = parse_and_validate(msg.payload)
     if parsed is None:
         return
     temperature, humidity = parsed
-    # MQTT-Payload enthält keinen Timestamp -> beim Empfang setzen (UTC ISO)
+    # MQTT payload contains no timestamp -> set on receipt (UTC ISO)
     timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
     forward_to_backend(temperature, humidity, timestamp)
 
-    # -------------- LSTM-Vorhersage und Steuerungsentscheidungen -------------------
+    # -------------- LSTM prediction and control decisions ---------------------
 
-    # Vorhersage erhalten
+    # Get prediction
     try:
         prediction = predict_next_value(temperature, humidity)
         if prediction is None:
@@ -59,10 +59,10 @@ def on_message(client, userdata, msg):
         hum_state = _determine_hum_state(predicted_hum)
         action = _resolve_action(temp_state, hum_state)
 
-        # Nachricht absenden
+        # Publish message
         result = client.publish(topic, payload=action, qos=1)
 
-        # 4. LOGGEN NACH DEM ABSENDEN
+        # Log after publishing
         if result.rc == 0:
             log.info(
                 f"Published {action} on {topic}\nTemp: {predicted_temp}\nHumidity: {predicted_hum}"
@@ -74,7 +74,7 @@ def on_message(client, userdata, msg):
 
 
 def _determine_temp_state(avg_temp):
-    """Temperaturzustand anhand des Forecast-Durchschnitts bestimmen."""
+    """Determine temperature state based on forecast average."""
     if avg_temp > TEMP_HIGH:
         return "TOO_HIGH"
     elif avg_temp < TEMP_LOW:
@@ -83,7 +83,7 @@ def _determine_temp_state(avg_temp):
 
 
 def _determine_hum_state(humidity):
-    """Feuchtigkeitszustand anhand des aktuellen Messwertes bestimmen."""
+    """Determine humidity state based on current measurement."""
     if humidity > HUM_HIGH:
         return "TOO_HIGH"
     elif humidity < HUM_LOW:
@@ -92,25 +92,25 @@ def _determine_hum_state(humidity):
 
 
 def _resolve_action(temp_state, hum_state):
-    """Prioritaetslogik: Temperatur hat Vorrang vor Humidity.
-    Nachrichten passend zum Pico mqtt.py on_message:
+    """Priority logic: temperature takes precedence over humidity.
+    Messages matching Pico mqtt.py on_message:
     COOL, HEAT, DRY, HUM
     """
-    # 1. Temperatur pruefen (hoechste Prioritaet)
+    # 1. Check temperature (highest priority)
     if temp_state == "TOO_HIGH":
         return "COOL"
     if temp_state == "TOO_LOW":
         return "HEAT"
-    # 2. Humidity pruefen
+    # 2. Check humidity
     if hum_state == "TOO_HIGH":
         return "DRY"
     if hum_state == "TOO_LOW":
         return "HUM"
-    # 3. Alles im Bereich
+    # 3. Everything within range
     return "OK"
 
 
-# --- Client-Setup ---------------------------------------------------------
+# --- Client setup ---------------------------------------------------------
 
 def build_client() -> mqtt.Client:
     client = mqtt.Client(
@@ -121,14 +121,14 @@ def build_client() -> mqtt.Client:
     if MQTT_USER:
         client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
 
-    # TLS-Kontext: Server-Zertifikat gegen die Projekt-CA verifizieren
+    # TLS context: verify server certificate against the project CA
     ssl_ctx = ssl.create_default_context(cafile=CA_CERT_FILE)
     if MQTT_TLS_INSECURE:
         ssl_ctx.check_hostname = False
         ssl_ctx.verify_mode = ssl.CERT_NONE
         log.warning(
-            "TLS-Verifizierung DEAKTIVIERT (MQTT_TLS_INSECURE=true) - "
-            "nur fuer Tests verwenden!"
+            "TLS verification DISABLED (MQTT_TLS_INSECURE=true) - "
+            "use for testing only!"
         )
     client.tls_set_context(ssl_ctx)
 
@@ -136,6 +136,6 @@ def build_client() -> mqtt.Client:
     client.on_disconnect = on_disconnect
     client.on_message = on_message
 
-    # Eingebauter Reconnect-Backoff (genutzt von loop_forever)
+    # Built-in reconnect backoff (used by loop_forever)
     client.reconnect_delay_set(min_delay=1, max_delay=60)
     return client

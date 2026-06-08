@@ -1,4 +1,4 @@
-"""Validierung der MQTT-Sensor-Payloads."""
+"""Validation of MQTT sensor payloads."""
 
 from __future__ import annotations
 
@@ -11,37 +11,37 @@ from config import (
 
 
 def parse_and_validate(raw: bytes) -> Optional[Tuple[float, float]]:
-    """Dekodiert MQTT-Payload und gibt (temperature, humidity) zurueck.
+    """Decode MQTT payload and return (temperature, humidity).
 
-    None bei ungueltigen oder unplausiblen Daten.
+    Returns None for invalid or implausible data.
     """
     try:
         data = json.loads(raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        log.warning("Verwerfe nicht-JSON-Nachricht: %s", exc)
+        log.warning("Discarding non-JSON message: %s", exc)
         return None
 
     if not isinstance(data, dict):
-        log.warning("Verwerfe Payload (kein Objekt): %r", data)
+        log.warning("Discarding payload (not an object): %r", data)
         return None
 
     try:
         temperature = float(data["temperature"])
         humidity = float(data["humidity"])
     except (KeyError, TypeError, ValueError):
-        log.warning("temperature/humidity fehlt oder ungueltig: %r", data)
+        log.warning("temperature/humidity missing or invalid: %r", data)
         return None
 
     if not (TEMP_MIN <= temperature <= TEMP_MAX):
         log.warning(
-            "Temperatur %.1f ausserhalb [%.1f, %.1f]",
+            "Temperature %.1f outside range [%.1f, %.1f]",
             temperature, TEMP_MIN, TEMP_MAX,
         )
         return None
 
     if not (HUM_MIN <= humidity <= HUM_MAX):
         log.warning(
-            "Luftfeuchtigkeit %.1f ausserhalb [%.1f, %.1f]",
+            "Humidity %.1f outside range [%.1f, %.1f]",
             humidity, HUM_MIN, HUM_MAX,
         )
         return None

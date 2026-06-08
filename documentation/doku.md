@@ -8,13 +8,16 @@ Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgeg
 
 ### Phase 1:
 
-Datum:   
-Problemstellung:  
-Verantwortlicher:  
-GANT-Diagramm:
+Datum:   11.04.2026 - 23.04.2026    
+Problemstellung:  Planung des Projektes und dessen 6 Phasen  
+Verantwortlicher:  Jannis Weber     
+GANT-Diagramm:[Gantt_Phase1.pdf](Phase%201/Gantt_Phase1.pdf)
 
 | Datei | Änderung | Erklärung |
 |-------|----------|-----------|
+| [AnwendungInfoEli.pdf](Phase%201/AnwendungInfoEli.pdf) | N/A | Beschreibung der Anwendung und Projektidee mit Zielsetzung und Rahmenbedingungen |
+| [Machbarkeitstudie1.pdf](Phase%201/Machbarkeitstudie1.pdf) | N/A | Machbarkeitsstudie zur technischen und wirtschaftlichen Umsetzbarkeit des Projektes |
+| [6Phasen.png](Phase%201/6Phasen.png) | N/A | Erstmalige Verteilung der ersten Phasen |
 
 ### Phase 2:
 

@@ -1,4 +1,4 @@
-"""HTTP-Weiterleitung der Sensordaten an das Backend."""
+"""HTTP forwarding of sensor data to the backend."""
 
 import requests
 
@@ -7,7 +7,7 @@ from keycloak_auth import auth_header
 
 
 def _build_headers() -> dict:
-    """Erstellt die HTTP-Header mit API-Key und Bearer-Token."""
+    """Build HTTP headers with API key and Bearer token."""
     headers = {
         "Content-Type": "application/json",
         "x-api-key": API_KEY,
@@ -19,7 +19,7 @@ def _build_headers() -> dict:
 def forward_to_backend(
     temperature: float, humidity: float, timestamp: str
 ) -> None:
-    """POSTet die Sensordaten an den Webserver. Wirft keine Exception."""
+    """POST sensor data to the web server. Does not raise exceptions."""
     payload = {
         "temperature": temperature,
         "humidity": humidity,
@@ -34,17 +34,17 @@ def forward_to_backend(
             verify=CA_CERT_FILE,
         )
     except requests.RequestException as exc:
-        log.error("HTTP-POST an Backend fehlgeschlagen: %s", exc)
+        log.error("HTTP POST to backend failed: %s", exc)
         return
 
     if 200 <= resp.status_code < 300:
         log.info(
-            "An Backend weitergeleitet: %s (status %s)",
+            "Forwarded to backend: %s (status %s)",
             payload, resp.status_code,
         )
     else:
         log.warning(
-            "Backend hat Payload abgelehnt: status=%s body=%s",
+            "Backend rejected payload: status=%s body=%s",
             resp.status_code, resp.text[:200],
         )
 

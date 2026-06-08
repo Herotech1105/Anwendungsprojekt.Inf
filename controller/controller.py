@@ -1,10 +1,10 @@
 """
 controller.py
 
-Liest Sensordaten vom MQTT-Broker (ueber TLS) und leitet sie
-per HTTP POST an den Backend-Webserver weiter.
-Enthaelt Forecast-Logik (30 Min) via LSTM-Modell und
-publiziert Steuerungsnachrichten auf 'actuator/control'.
+Reads sensor data from the MQTT broker (via TLS) and forwards it
+to the backend web server via HTTP POST.
+Contains forecast logic (30 min) via LSTM model and
+publishes control messages on 'actuator/control'.
 """
 
 import os
@@ -28,26 +28,26 @@ from mqtt_handler import build_client
 def main() -> None:
     if not API_KEY:
         log.error(
-            "API_KEY env-Variable ist leer - Backend wird POSTs ablehnen"
+            "API_KEY env variable is empty - backend will reject POSTs"
         )
     if not MQTT_PASSWORD:
-        log.warning("MQTT_PASSWORD env-Variable ist leer")
+        log.warning("MQTT_PASSWORD env variable is empty")
     if not os.path.isfile(os.getenv("MQTT_CA_FILE", "")):
-        log.error("CA-Datei nicht gefunden: %s", os.getenv("MQTT_CA_FILE"))
+        log.error("CA file not found: %s", os.getenv("MQTT_CA_FILE"))
 
-    # Keycloak AuthN/AuthZ: Token holen und Rolle pruefen
+    # Keycloak AuthN/AuthZ: retrieve token and verify role
     try:
         verify_role()
     except Exception as exc:
-        log.error("Keycloak-Authentifizierung fehlgeschlagen: %s", exc)
+        log.error("Keycloak authentication failed: %s", exc)
         sys.exit(1)
 
 
     client = build_client()
 
-    # Sauberes Beenden bei SIGTERM (z.B. 'docker stop')
+    # Graceful shutdown on SIGTERM (e.g. 'docker stop')
     def _shutdown(signum, _frame):
-        log.info("Signal %s erhalten, trenne Verbindung...", signum)
+        log.info("Signal %s received, disconnecting...", signum)
         try:
             client.disconnect()
         finally:
@@ -57,13 +57,13 @@ def main() -> None:
     signal.signal(signal.SIGINT, _shutdown)
 
     log.info(
-        "Starte Controller -> MQTT %s:%d als '%s', Backend %s",
+        "Starting controller -> MQTT %s:%d as '%s', backend %s",
         MQTT_HOST, MQTT_PORT, MQTT_USER, BACKEND_URL,
     )
 
-    # loop_forever() handhabt Reconnects intern; aeusserer Loop faengt
-    # Faelle ab, in denen schon der erste Connect scheitert (z.B. Broker
-    # nicht erreichbar, Zertifikatsfehler).
+    # loop_forever() handles reconnects internally; outer loop catches
+    # cases where the initial connect fails (e.g. broker unreachable,
+    # certificate error).
     while True:
         try:
             client.connect(MQTT_HOST, MQTT_PORT, keepalive=MQTT_KEEPALIVE)
