@@ -1,31 +1,18 @@
 // chart-axes.js
 import { getChartColors } from "./chart-colors.js";
 
-/**
- * Parst verschiedene Label-Formate in ein Date-Objekt:
- * - ISO-Z (2024-06-03T19:30:00.000Z)
- * - ISO ohne Z (2024-06-03T19:30:00) -> treated as local
- * - numeric (unix ms)
- */
 function parseLabelToDate(label) {
     if (label == null) return null;
 
-    // numeric (unix ms)
-    if (typeof label === "number" || /^\d+$/.test(String(label))) {
+    if (typeof label === "number" || (/^\d+$/.test(String(label)) && String(label).length > 9)) {
         const ms = Number(label);
         const d = new Date(ms);
         if (!isNaN(d.getTime())) return d;
     }
 
-    // string
     if (typeof label === "string") {
-        // ISO-Z (UTC)
-        const dUtc = new Date(label);
-        if (!isNaN(dUtc.getTime())) {
-            // Wenn string endet mit 'Z' oder enthält timezone, Date interpretiert korrekt.
-            // Wenn string ist ISO ohne Z, Date interpretiert als local in most browsers.
-            return dUtc;
-        }
+        const d = new Date(label);
+        if (!isNaN(d.getTime())) return d;
     }
 
     return null;
@@ -48,9 +35,11 @@ export function getAxesConfig(tickIntervalMs) {
                     if (!rawLabel) return "";
 
                     const d = parseLabelToDate(rawLabel);
-                    if (!d) return "";
+                    if (!d) {
+                        console.debug("[chart-axes] could not parse label", rawLabel);
+                        return "";
+                    }
 
-                    // Lokale Darstellung: Datum / Zeit (z.B. "03.06.2024" / "19:30")
                     const date = d.toLocaleDateString("de-DE");
                     const time = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
 

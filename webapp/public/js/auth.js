@@ -1,3 +1,4 @@
+// auth.js
 const Keycloak = window.Keycloak;
 
 export const keycloak = new Keycloak({
@@ -18,8 +19,10 @@ export async function initAuth() {
             return;
         }
 
-        document.getElementById("userInfo").textContent =
-            "Eingeloggt als: " + keycloak.tokenParsed.preferred_username;
+        console.debug("[auth] authenticated user", keycloak.tokenParsed && keycloak.tokenParsed.preferred_username);
+
+        const userInfoEl = document.getElementById("userInfo");
+        if (userInfoEl) userInfoEl.textContent = "Eingeloggt als: " + keycloak.tokenParsed.preferred_username;
 
         setInterval(() => {
             keycloak.updateToken(30).catch(() => {
@@ -34,5 +37,6 @@ export async function initAuth() {
 }
 
 export function logout() {
+    console.debug("[auth] logout called");
     keycloak.logout();
 }
