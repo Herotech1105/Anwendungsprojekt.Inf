@@ -69,7 +69,7 @@ GANT-Diagramm: [GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
 Datum: 13.05.2026 - 21.05.2026  
 Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz  
-Verantwortlicher: (To be assigned)  
+Verantwortlicher: Tim Dorozynski  
 GANT-Diagramm: [GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
 
 | Datei                              | Änderung                                                     | Erklärung                                                                                                                                                                                                                                                       |
