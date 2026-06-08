@@ -3,7 +3,7 @@ import { getChartColors } from "./chart-colors.js";
 import { getAxesConfig } from "./chart-axes.js";
 import { getDatasets } from "./chart-datasets.js";
 import { targetRangePlugin } from "./chart-target-plugin.js";
-import { formatTimestampParts, getTickIntervalMs } from "./chart-utils.js";
+import { getTickIntervalMs } from "./chart-utils.js";
 
 const Chart = window.Chart;
 
@@ -25,7 +25,7 @@ function setStatus(message, type = "info") {
 }
 
 /* ---------------------------------------------------
-   RANGE BUTTON LOGIC (1h / 10h / 24h)
+   RANGE BUTTON LOGIK (1h / 10h / 24h)
 --------------------------------------------------- */
 
 if (rangeButtons) {
@@ -60,26 +60,15 @@ export async function renderRange(from, to, rangeHours = null) {
             return;
         }
 
-        /* -------------------------------
-           CALCULATE TIMESTAMP FORMAT
-        -------------------------------- */
-        const formattedLabels = data.labels.map(ts => {
-            const { date, time } = formatTimestampParts(ts);
-            return [date, time];
-        });
+        // Labels = echte Timestamps
+        const formattedLabels = data.labels.map(ts => ts);
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
 
         if (chart) chart.destroy();
 
-        /* -------------------------------
-           CALCULATE TICK-INTERVALL
-        -------------------------------- */
         const tickIntervalMs = rangeHours ? getTickIntervalMs(rangeHours) : null;
 
-        /* -------------------------------
-           CHART INITIALIZATION
-        -------------------------------- */
         chart = new Chart(ctx, {
             type: "line",
             data: {
@@ -94,6 +83,15 @@ export async function renderRange(from, to, rangeHours = null) {
                         labels: {
                             color: getChartColors().text,
                             font: { weight: "600", size: 14 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => {
+                                const ts = items[0].label;
+                                const d = new Date(ts);
+                                return d.toLocaleString("de-DE");
+                            }
                         }
                     }
                 }
