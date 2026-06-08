@@ -121,10 +121,10 @@ GANT-Diagramm:
 
 Liste mit übrigen Aufgaben
 
-| Datei | Änderung                                                                         | Erklärung                                                                                                                      |
-|-------|----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| CA/*  | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis |
-|       |                                                                                  |                                                                                                                                |
+| Datei         | Änderung                                                                                                                                             | Erklärung                                                                                                                                            |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CA/*          | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt                                                                     | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis                       |
+| environment/* | Environment Variablen wurden von der docker-compose und den Dockerfiles in dieses Verzeichnis nach dem Namensschema [container_name].env ausgelagert | Die Environment Dateien sind jetzt an einem Ort gebündelt und müssen bei Installation der Software angepasst werden, was hierdurch vereinfacht wurde |
 
 ## Projektstruktur
 
