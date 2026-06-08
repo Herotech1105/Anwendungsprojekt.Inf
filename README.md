@@ -24,7 +24,6 @@
 
 ### Backend server
 
-* Install the Raspberry Pi light Image on one of the Pis using the SD-Card. 
 * Connect to the Pi using ssh or pi.connect. 
 * Connect to the Wi-Fi using `nmtui`:
   1. Run `nmtui`
