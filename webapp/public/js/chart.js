@@ -60,10 +60,7 @@ export async function renderRange(from, to, rangeHours = null) {
             return;
         }
 
-        /* ---------------------------------------------------
-           LABELS: WICHTIG → ISO‑Strings NICHT verändern!
-           Category‑Scale braucht die Originalwerte.
-        --------------------------------------------------- */
+        // Labels unverändert übernehmen
         const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
@@ -95,18 +92,7 @@ export async function renderRange(from, to, rangeHours = null) {
                             title: (items) => {
                                 const rawLabel = items[0].label;
                                 const d = new Date(rawLabel);
-
-                                // ---------- UTC FORMAT ----------
-                                const date =
-                                    String(d.getUTCDate()).padStart(2, "0") + "." +
-                                    String(d.getUTCMonth() + 1).padStart(2, "0") + "." +
-                                    d.getUTCFullYear();
-
-                                const time =
-                                    String(d.getUTCHours()).padStart(2, "0") + ":" +
-                                    String(d.getUTCMinutes()).padStart(2, "0");
-
-                                return `${date} ${time} UTC`;
+                                return d.toLocaleString("de-DE");
                             }
                         }
                     }
