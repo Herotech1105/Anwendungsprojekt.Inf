@@ -60,10 +60,7 @@ export async function renderRange(from, to, rangeHours = null) {
             return;
         }
 
-        /* ---------------------------------------------------
-           LABELS: WICHTIG → ISO‑Strings NICHT verändern!
-           Category‑Scale braucht die Originalwerte.
-        --------------------------------------------------- */
+        // Labels unverändert übernehmen
         const formattedLabels = data.labels;
 
         const ctx = document.getElementById("sensorChart").getContext("2d");
