@@ -84,8 +84,9 @@ def run():
             })
             result = client.publish(MQTT_SENSOR_TOPIC, payload=payload, qos=1)
             result.wait_for_publish(timeout=5)
-            # Small delay between messages so the controller can process each one
-            time.sleep(0.5)
+            # Delay between messages so the controller processes each one
+            # and the LSTM buffer fills up properly
+            time.sleep(1.0)
 
         record(PASS, f"{LSTM_BUFFER_FILL_COUNT} sensor messages published")
     except Exception as exc:
@@ -104,7 +105,10 @@ def run():
     # -- Step 4: Check if COOL was received --
     if not received_commands:
         record(FAIL, "Received actuator command",
-               "No messages on actuator/control within timeout")
+               "No messages on actuator/control within timeout. "
+               "Check: 1) Is the controller container running? "
+               "2) Does mosquitto ACL allow test client to subscribe to actuator/control? "
+               "3) Check controller logs: docker logs controller")
     elif "COOL" in received_commands:
         record(PASS, "Received 'COOL' on actuator/control",
                f"All commands received: {received_commands}")

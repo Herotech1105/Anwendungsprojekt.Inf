@@ -5,13 +5,17 @@ MQTT Publish -> Broker -> controller.py -> nginx -> server.js -> MariaDB
 
 Publishes a sensor message with a unique temperature value via MQTT,
 waits for the data to flow through the entire pipeline, then queries
-the dashboard API to verify the value arrived in the database.
+the dashboard range API to verify the value arrived in the database.
+
+Uses /api/sensordata/range instead of /api/sensordata because the
+real Pico may be sending live data, making our test value no longer
+the "latest" entry by the time we query.
 """
 
 import json
 import ssl
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import paho.mqtt.client as mqtt
 import requests
@@ -19,7 +23,7 @@ import requests
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_SENSOR_TOPIC, MQTT_TLS_INSECURE, CA_CERT_FILE,
-    DASHBOARD_SENSORDATA_URL, KC_TOKEN_URL, KC_DASHBOARD_CLIENT_ID,
+    BACKEND_BASE_URL, KC_TOKEN_URL, KC_DASHBOARD_CLIENT_ID,
     KC_NORMAL_USER, KC_NORMAL_PASSWORD,
     HTTP_TIMEOUT, PIPELINE_WAIT,
     TEST_TEMPERATURE, TEST_HUMIDITY, SSL_VERIFY,
@@ -55,11 +59,13 @@ def run():
     token = _get_dashboard_token()
     if token is None:
         record(FAIL, "Get dashboard token for DB query",
-               "Could not get token. Is Keycloak running? Is directAccessGrantsEnabled=true?")
+               "Could not get token. Is Keycloak running?")
         exit_with_result()
     record(PASS, f"Dashboard token obtained (user: {KC_NORMAL_USER})")
 
-    # -- Step 2: Publish MQTT message (simulates the Pico) --
+    # -- Step 2: Record time window and publish MQTT message --
+    time_before = datetime.now(timezone.utc) - timedelta(seconds=5)
+
     print(f"\n  Publishing MQTT message: temp={TEST_TEMPERATURE}, hum={TEST_HUMIDITY}")
     print(f"  Topic: {MQTT_SENSOR_TOPIC} @ {MQTT_HOST}:{MQTT_PORT}\n")
 
@@ -95,36 +101,46 @@ def run():
     print(f"\n  Waiting {PIPELINE_WAIT}s for data to flow through the pipeline...\n")
     time.sleep(PIPELINE_WAIT)
 
-    # -- Step 4: Query latest entry via dashboard API --
+    # -- Step 4: Query range API to find our value --
+    time_after = datetime.now(timezone.utc) + timedelta(seconds=5)
+    range_url = f"{BACKEND_BASE_URL}/api/sensordata/range"
+
     try:
         resp = requests.get(
-            DASHBOARD_SENSORDATA_URL,
+            range_url,
+            params={
+                "from": time_before.isoformat(),
+                "to": time_after.isoformat(),
+            },
             headers={"Authorization": f"Bearer {token}"},
             timeout=HTTP_TIMEOUT,
             verify=SSL_VERIFY,
         )
 
         if resp.status_code != 200:
-            record(FAIL, "Backend returned sensor data",
+            record(FAIL, "Backend returned sensor data range",
                    f"Status {resp.status_code}: {resp.text[:150]}")
             exit_with_result()
 
-        record(PASS, "Backend returned sensor data",
+        record(PASS, "Backend returned sensor data range",
                f"Status {resp.status_code}")
     except requests.RequestException as exc:
-        record(FAIL, "Backend returned sensor data", str(exc))
+        record(FAIL, "Backend returned sensor data range", str(exc))
         exit_with_result()
 
-    # -- Step 5: Verify the data matches --
+    # -- Step 5: Search for our specific temperature in the results --
     data = resp.json()
-    db_temp = float(data.get("temperature", 0))
+    temperatures = data.get("temperatures", [])
 
-    if abs(db_temp - TEST_TEMPERATURE) < 0.01:
-        record(PASS, "Temperature in DB matches published value",
-               f"Expected: {TEST_TEMPERATURE}, Got: {db_temp}")
+    found = any(abs(float(t) - TEST_TEMPERATURE) < 0.01 for t in temperatures)
+
+    if found:
+        record(PASS, "Test temperature found in DB",
+               f"Found {TEST_TEMPERATURE} among {len(temperatures)} entries in time window")
     else:
-        record(FAIL, "Temperature in DB matches published value",
-               f"Expected: {TEST_TEMPERATURE}, Got: {db_temp}")
+        record(FAIL, "Test temperature found in DB",
+               f"Expected {TEST_TEMPERATURE} not found. "
+               f"Got {len(temperatures)} entries: {temperatures[:10]}...")
 
     exit_with_result()
 

@@ -77,11 +77,12 @@ def run():
             record(FAIL, "Admin GET /api/sensordata", str(exc))
 
         # Admin accesses export endpoint (requires admin-user role)
+        # Higher timeout because export streams CSV from two tables
         try:
             resp = requests.get(
                 ADMIN_EXPORT_URL,
                 headers={"Authorization": f"Bearer {admin_token}"},
-                timeout=HTTP_TIMEOUT,
+                timeout=60,
                 verify=SSL_VERIFY,
             )
             if resp.status_code == 200:
@@ -124,7 +125,7 @@ def run():
             resp = requests.get(
                 ADMIN_EXPORT_URL,
                 headers={"Authorization": f"Bearer {user_token}"},
-                timeout=HTTP_TIMEOUT,
+                timeout=60,
                 verify=SSL_VERIFY,
             )
             if resp.status_code == 403:
