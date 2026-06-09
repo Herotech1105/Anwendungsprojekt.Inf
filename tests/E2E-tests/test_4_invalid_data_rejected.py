@@ -18,22 +18,48 @@ import requests
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_SENSOR_TOPIC, MQTT_TLS_INSECURE, CA_CERT_FILE,
-    SENSORDATA_LATEST_URL, API_KEY, HTTP_TIMEOUT, PIPELINE_WAIT,
+    DASHBOARD_SENSORDATA_URL, KC_TOKEN_URL, KC_DASHBOARD_CLIENT_ID,
+    KC_NORMAL_USER, KC_NORMAL_PASSWORD,
+    HTTP_TIMEOUT, PIPELINE_WAIT, SSL_VERIFY,
 )
 from helpers import print_header, record, exit_with_result, PASS, FAIL
 
 
-def _get_latest_entry():
-    """Fetch the most recent DB entry via the backend API."""
-    resp = requests.get(
-        SENSORDATA_LATEST_URL,
-        headers={"x-api-key": API_KEY},
-        timeout=HTTP_TIMEOUT,
-        verify=CA_CERT_FILE,
-    )
-    if resp.status_code == 200:
-        return resp.json()
-    return None
+def _get_dashboard_token() -> str | None:
+    """Get a Bearer token for iotuser01 via password grant."""
+    try:
+        resp = requests.post(
+            KC_TOKEN_URL,
+            data={
+                "grant_type": "password",
+                "client_id": KC_DASHBOARD_CLIENT_ID,
+                "username": KC_NORMAL_USER,
+                "password": KC_NORMAL_PASSWORD,
+            },
+            timeout=HTTP_TIMEOUT,
+            verify=SSL_VERIFY,
+        )
+        if resp.status_code == 200:
+            return resp.json()["access_token"]
+        return None
+    except requests.RequestException:
+        return None
+
+
+def _get_latest_entry(token: str):
+    """Fetch the most recent DB entry via the dashboard API."""
+    try:
+        resp = requests.get(
+            DASHBOARD_SENSORDATA_URL,
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=HTTP_TIMEOUT,
+            verify=SSL_VERIFY,
+        )
+        if resp.status_code == 200:
+            return resp.json()
+        return None
+    except requests.RequestException:
+        return None
 
 
 def _publish_mqtt(payload_str: str):
@@ -60,8 +86,16 @@ def _publish_mqtt(payload_str: str):
 def run():
     print_header("TEST 4: Invalid Sensor Data Rejected")
 
+    # -- Step 0: Get dashboard token --
+    token = _get_dashboard_token()
+    if token is None:
+        record(FAIL, "Get dashboard token for DB query",
+               "Could not get token. Is Keycloak running?")
+        exit_with_result()
+    record(PASS, f"Dashboard token obtained (user: {KC_NORMAL_USER})")
+
     # -- Step 1: Remember current latest entry --
-    before = _get_latest_entry()
+    before = _get_latest_entry(token)
     if before is None:
         record(FAIL, "Fetch baseline DB entry", "Could not reach backend API")
         exit_with_result()
@@ -97,7 +131,7 @@ def run():
     time.sleep(PIPELINE_WAIT)
 
     # -- Step 4: Check that no new entry was created --
-    after = _get_latest_entry()
+    after = _get_latest_entry(token)
     if after is None:
         record(FAIL, "Fetch DB entry after invalid messages",
                "Could not reach backend API")

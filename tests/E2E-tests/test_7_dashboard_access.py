@@ -21,7 +21,7 @@ from config import (
     KC_NORMAL_USER, KC_NORMAL_PASSWORD,
     KC_NOROLE_USER, KC_NOROLE_PASSWORD,
     DASHBOARD_SENSORDATA_URL, ADMIN_EXPORT_URL,
-    CA_CERT_FILE, HTTP_TIMEOUT,
+    CA_CERT_FILE, HTTP_TIMEOUT, SSL_VERIFY,
 )
 from helpers import print_header, record, exit_with_result, PASS, FAIL, SKIP
 
@@ -38,7 +38,7 @@ def _get_user_token(username: str, password: str) -> str | None:
                 "password": password,
             },
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
         if resp.status_code == 200:
             return resp.json()["access_token"]
@@ -66,7 +66,7 @@ def run():
                 DASHBOARD_SENSORDATA_URL,
                 headers={"Authorization": f"Bearer {admin_token}"},
                 timeout=HTTP_TIMEOUT,
-                verify=CA_CERT_FILE,
+                verify=SSL_VERIFY,
             )
             if resp.status_code == 200:
                 record(PASS, "Admin GET /api/sensordata -> 200 OK")
@@ -82,7 +82,7 @@ def run():
                 ADMIN_EXPORT_URL,
                 headers={"Authorization": f"Bearer {admin_token}"},
                 timeout=HTTP_TIMEOUT,
-                verify=CA_CERT_FILE,
+                verify=SSL_VERIFY,
             )
             if resp.status_code == 200:
                 record(PASS, "Admin GET /api/admin/export -> 200 OK",
@@ -109,7 +109,7 @@ def run():
                 DASHBOARD_SENSORDATA_URL,
                 headers={"Authorization": f"Bearer {user_token}"},
                 timeout=HTTP_TIMEOUT,
-                verify=CA_CERT_FILE,
+                verify=SSL_VERIFY,
             )
             if resp.status_code == 200:
                 record(PASS, "User GET /api/sensordata -> 200 OK")
@@ -125,7 +125,7 @@ def run():
                 ADMIN_EXPORT_URL,
                 headers={"Authorization": f"Bearer {user_token}"},
                 timeout=HTTP_TIMEOUT,
-                verify=CA_CERT_FILE,
+                verify=SSL_VERIFY,
             )
             if resp.status_code == 403:
                 record(PASS, "User GET /api/admin/export -> 403 Forbidden")
@@ -152,7 +152,7 @@ def run():
                 DASHBOARD_SENSORDATA_URL,
                 headers={"Authorization": f"Bearer {norole_token}"},
                 timeout=HTTP_TIMEOUT,
-                verify=CA_CERT_FILE,
+                verify=SSL_VERIFY,
             )
             if resp.status_code == 403:
                 record(PASS, "No-role user GET /api/sensordata -> 403 Forbidden",

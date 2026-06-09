@@ -13,7 +13,7 @@ import requests
 
 from config import (
     SENSORDATA_URL, DASHBOARD_SENSORDATA_URL,
-    CA_CERT_FILE, HTTP_TIMEOUT,
+    HTTP_TIMEOUT, SSL_VERIFY,
 )
 from helpers import print_header, record, exit_with_result, PASS, FAIL
 
@@ -31,7 +31,7 @@ def run():
             json=payload,
             headers={"Content-Type": "application/json"},
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
         if resp.status_code == 401:
             record(PASS, "POST /api/internal/sensordata without auth -> 401")
@@ -51,7 +51,7 @@ def run():
                 "x-api-key": "wrong-key-12345",
             },
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
         if resp.status_code == 401:
             record(PASS, "POST with wrong API key -> 401")
@@ -66,7 +66,7 @@ def run():
         resp = requests.get(
             DASHBOARD_SENSORDATA_URL,
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
         if resp.status_code == 401:
             record(PASS, "GET /api/sensordata without Bearer -> 401")
@@ -82,7 +82,7 @@ def run():
             DASHBOARD_SENSORDATA_URL,
             headers={"Authorization": "Bearer this.is.not.a.valid.jwt"},
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
         if resp.status_code in (401, 403):
             record(PASS, f"GET with invalid Bearer token -> {resp.status_code}")

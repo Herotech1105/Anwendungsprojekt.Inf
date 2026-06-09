@@ -5,7 +5,7 @@ MQTT Publish -> Broker -> controller.py -> nginx -> server.js -> MariaDB
 
 Publishes a sensor message with a unique temperature value via MQTT,
 waits for the data to flow through the entire pipeline, then queries
-the backend API to verify the value arrived in the database.
+the dashboard API to verify the value arrived in the database.
 """
 
 import json
@@ -19,17 +19,48 @@ import requests
 from config import (
     MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD,
     MQTT_SENSOR_TOPIC, MQTT_TLS_INSECURE, CA_CERT_FILE,
-    SENSORDATA_LATEST_URL, API_KEY, HTTP_TIMEOUT, PIPELINE_WAIT,
-    TEST_TEMPERATURE, TEST_HUMIDITY,
+    DASHBOARD_SENSORDATA_URL, KC_TOKEN_URL, KC_DASHBOARD_CLIENT_ID,
+    KC_NORMAL_USER, KC_NORMAL_PASSWORD,
+    HTTP_TIMEOUT, PIPELINE_WAIT,
+    TEST_TEMPERATURE, TEST_HUMIDITY, SSL_VERIFY,
 )
 from helpers import print_header, record, exit_with_result, PASS, FAIL
+
+
+def _get_dashboard_token() -> str | None:
+    """Get a Bearer token for iotuser01 via password grant."""
+    try:
+        resp = requests.post(
+            KC_TOKEN_URL,
+            data={
+                "grant_type": "password",
+                "client_id": KC_DASHBOARD_CLIENT_ID,
+                "username": KC_NORMAL_USER,
+                "password": KC_NORMAL_PASSWORD,
+            },
+            timeout=HTTP_TIMEOUT,
+            verify=SSL_VERIFY,
+        )
+        if resp.status_code == 200:
+            return resp.json()["access_token"]
+        return None
+    except requests.RequestException:
+        return None
 
 
 def run():
     print_header("TEST 1: Sensor Data -> Database (Happy Path)")
 
-    # -- Step 1: Publish MQTT message (simulates the Pico) --
-    print(f"  Publishing MQTT message: temp={TEST_TEMPERATURE}, hum={TEST_HUMIDITY}")
+    # -- Step 1: Get a dashboard token to query DB later --
+    token = _get_dashboard_token()
+    if token is None:
+        record(FAIL, "Get dashboard token for DB query",
+               "Could not get token. Is Keycloak running? Is directAccessGrantsEnabled=true?")
+        exit_with_result()
+    record(PASS, f"Dashboard token obtained (user: {KC_NORMAL_USER})")
+
+    # -- Step 2: Publish MQTT message (simulates the Pico) --
+    print(f"\n  Publishing MQTT message: temp={TEST_TEMPERATURE}, hum={TEST_HUMIDITY}")
     print(f"  Topic: {MQTT_SENSOR_TOPIC} @ {MQTT_HOST}:{MQTT_PORT}\n")
 
     payload = json.dumps({
@@ -37,7 +68,6 @@ def run():
         "humidity": TEST_HUMIDITY,
     })
 
-    published = False
     try:
         client = mqtt.Client(
             client_id="e2e-test-1",
@@ -56,37 +86,36 @@ def run():
         result = client.publish(MQTT_SENSOR_TOPIC, payload=payload, qos=1)
         result.wait_for_publish(timeout=5)
         client.disconnect()
-        published = True
         record(PASS, "MQTT message published")
     except Exception as exc:
         record(FAIL, "MQTT message published", str(exc))
         exit_with_result()
 
-    # -- Step 2: Wait for pipeline --
+    # -- Step 3: Wait for pipeline --
     print(f"\n  Waiting {PIPELINE_WAIT}s for data to flow through the pipeline...\n")
     time.sleep(PIPELINE_WAIT)
 
-    # -- Step 3: Query latest entry from backend API --
+    # -- Step 4: Query latest entry via dashboard API --
     try:
         resp = requests.get(
-            SENSORDATA_LATEST_URL,
-            headers={"x-api-key": API_KEY},
+            DASHBOARD_SENSORDATA_URL,
+            headers={"Authorization": f"Bearer {token}"},
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
 
         if resp.status_code != 200:
-            record(FAIL, "Backend returned latest sensor data",
+            record(FAIL, "Backend returned sensor data",
                    f"Status {resp.status_code}: {resp.text[:150]}")
             exit_with_result()
 
-        record(PASS, "Backend returned latest sensor data",
+        record(PASS, "Backend returned sensor data",
                f"Status {resp.status_code}")
     except requests.RequestException as exc:
-        record(FAIL, "Backend returned latest sensor data", str(exc))
+        record(FAIL, "Backend returned sensor data", str(exc))
         exit_with_result()
 
-    # -- Step 4: Verify the data matches --
+    # -- Step 5: Verify the data matches --
     data = resp.json()
     db_temp = float(data.get("temperature", 0))
 

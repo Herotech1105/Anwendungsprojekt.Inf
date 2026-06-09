@@ -16,7 +16,8 @@ import requests
 from config import (
     KC_TOKEN_URL, KC_CONTROLLER_CLIENT_ID, KC_CONTROLLER_CLIENT_SECRET,
     KC_REQUIRED_ROLE, CA_CERT_FILE, HTTP_TIMEOUT,
-    SENSORDATA_URL, API_KEY,
+    DASHBOARD_SENSORDATA_URL, KC_DASHBOARD_CLIENT_ID,
+    KC_NORMAL_USER, KC_NORMAL_PASSWORD, SSL_VERIFY,
 )
 from helpers import print_header, record, exit_with_result, PASS, FAIL
 
@@ -36,7 +37,7 @@ def run():
                 "client_secret": KC_CONTROLLER_CLIENT_SECRET,
             },
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
 
         if resp.status_code == 200:
@@ -84,28 +85,41 @@ def run():
     else:
         record(FAIL, "Token not expired", f"Expired {int(now - exp)}s ago")
 
-    # -- Step 5: Backend accepts a request with this token --
+    # -- Step 5: Backend validates a Bearer token (via dashboard endpoint) --
+    # Get a dashboard-user token to test actual JWT validation in server.js
     try:
-        from datetime import datetime, timezone
-        ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        resp = requests.post(
-            SENSORDATA_URL,
-            json={"temperature": 20.0, "humidity": 50.0, "timestamp": ts},
-            headers={
-                "x-api-key": API_KEY,
-                "Authorization": f"Bearer {token}",
+        user_resp = requests.post(
+            KC_TOKEN_URL,
+            data={
+                "grant_type": "password",
+                "client_id": KC_DASHBOARD_CLIENT_ID,
+                "username": KC_NORMAL_USER,
+                "password": KC_NORMAL_PASSWORD,
             },
             timeout=HTTP_TIMEOUT,
-            verify=CA_CERT_FILE,
+            verify=SSL_VERIFY,
         )
-        if 200 <= resp.status_code < 300:
-            record(PASS, "Backend accepts request with Bearer token",
+        if user_resp.status_code != 200:
+            record(FAIL, "Get dashboard-user token for validation test",
+                   f"Status {user_resp.status_code}")
+            exit_with_result()
+
+        user_token = user_resp.json()["access_token"]
+
+        resp = requests.get(
+            DASHBOARD_SENSORDATA_URL,
+            headers={"Authorization": f"Bearer {user_token}"},
+            timeout=HTTP_TIMEOUT,
+            verify=SSL_VERIFY,
+        )
+        if resp.status_code == 200:
+            record(PASS, "Backend validates Bearer token on /api/sensordata",
                    f"Status {resp.status_code}")
         else:
-            record(FAIL, "Backend accepts request with Bearer token",
+            record(FAIL, "Backend validates Bearer token on /api/sensordata",
                    f"Status {resp.status_code}: {resp.text[:150]}")
     except requests.RequestException as exc:
-        record(FAIL, "Backend accepts request with Bearer token", str(exc))
+        record(FAIL, "Backend validates Bearer token", str(exc))
 
     exit_with_result()
 

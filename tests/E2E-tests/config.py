@@ -25,7 +25,6 @@ HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "10"))
 
 # Derived endpoints
 SENSORDATA_URL = f"{BACKEND_BASE_URL}/api/internal/sensordata"
-SENSORDATA_LATEST_URL = f"{BACKEND_BASE_URL}/api/internal/sensordata/latest"
 DASHBOARD_SENSORDATA_URL = f"{BACKEND_BASE_URL}/api/sensordata"
 ADMIN_EXPORT_URL = f"{BACKEND_BASE_URL}/api/admin/export"
 STATUS_URL = f"{BACKEND_BASE_URL}/api/status"
@@ -34,6 +33,16 @@ STATUS_URL = f"{BACKEND_BASE_URL}/api/status"
 # TLS / CA Certificate
 # ---------------------------------------------------------------------------
 CA_CERT_FILE = os.getenv("CA_CERT_PATH", "../../CA/ca.crt")
+
+# Set to "false" to skip SSL verification for all tests (except Test 6).
+# Needed when the CA cert lacks extensions like keyUsage (common with
+# self-signed certs and strict Python 3.13+ SSL validation).
+VERIFY_SSL = os.getenv("VERIFY_SSL", "false").lower() == "true"
+
+# This is what gets passed to requests' verify= parameter:
+# - CA_CERT_FILE path when VERIFY_SSL is True
+# - False when VERIFY_SSL is False
+SSL_VERIFY = CA_CERT_FILE if VERIFY_SSL else False
 
 # ---------------------------------------------------------------------------
 # Keycloak
@@ -54,7 +63,7 @@ KC_DASHBOARD_CLIENT_ID = os.getenv("KC_DASHBOARD_CLIENT_ID", "dashboard-client")
 
 # Test users
 KC_ADMIN_USER = os.getenv("KC_ADMIN_USER", "admin")
-KC_ADMIN_PASSWORD = os.getenv("KC_ADMIN_PASSWORD", "admin")
+KC_ADMIN_PASSWORD = os.getenv("KC_ADMIN_PASSWORD", "password")
 
 KC_NORMAL_USER = os.getenv("KC_NORMAL_USER", "iotuser01")
 KC_NORMAL_PASSWORD = os.getenv("KC_NORMAL_PASSWORD", "password")
@@ -77,9 +86,9 @@ MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
 # Test tuning
 # ---------------------------------------------------------------------------
 # How long to wait (seconds) for data to flow through the pipeline
-PIPELINE_WAIT = float(os.getenv("PIPELINE_WAIT", "5"))
+PIPELINE_WAIT = float(os.getenv("PIPELINE_WAIT", "10"))
 # How many MQTT messages to send to fill the LSTM buffer (needs 10)
-LSTM_BUFFER_FILL_COUNT = int(os.getenv("LSTM_BUFFER_FILL_COUNT", "12"))
+LSTM_BUFFER_FILL_COUNT = int(os.getenv("LSTM_BUFFER_FILL_COUNT", "15"))
 # Unique temperature used in Test 1 to identify our data in the DB
 TEST_TEMPERATURE = float(os.getenv("TEST_TEMPERATURE", "17.77"))
 TEST_HUMIDITY = float(os.getenv("TEST_HUMIDITY", "44.33"))
