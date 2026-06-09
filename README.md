@@ -1,35 +1,36 @@
-# Temperature and Humidity Regulator
+# Temperatur- und Luftfeuchtigkeitsregulierer
 
-## Requirements
+## Anforderungen
 
 * 2 Raspberry Pi 4s
 * 1 Pi Pico
-* Access to the internet using a network cable
-* 2 SD-Cards
+* Ein Netzwerkkabel mit Internetzugriff
+* 2 SD-Karten
 
 ## Installation
 
 ### Pi Setup
-* Install the Raspberry Pi light Image the Pis using the SD-Cards.
-* Check one of the Pis for its MAC-address and note it for later use. This Pi will be the backend.
+* Installiere das Raspberry Pi light Image auf beiden Pis
+* Lies die MAC-Addresse eines Pis aus; dieser Pi wird später zum Backend
 
 ### WLAN AP
  
-* Connect to the other Pi using ssh or pi.connect.
-* Change the backend_mac_address in line 4 in `/conficuration/wlan_ap_setup.py` to the backends mac address. 
-* Run `sudo apt install hostapd dnsmasq`
-* Now copy the script to your users root directory on the WLAN Pi. 
-* Run that script using `sudo python3 wlan_ap_setup.py`.
+* Verbinde den WLAN Pi über ein Netzwerkkabel mit dem Internet
+* Stelle eine Verbindung zum Pi via ssh her
+* Setze backend_mac_address in Zeile 4 in `/conficuration/wlan_ap_setup.py` auf die MAC-Addresse des Backends
+* Bei Bedarf können auch Passwort und SSID in den zwei folgenden Zeilen geändert werden
+* Führe `sudo apt install hostapd dnsmasq` auf dem Pi aus
+* Kopiere jetzt das Skript `wlan_ap_setup.py` auf den Pi und führe es mit root-Rechten aus
 
 ### Pi Pico
 
 ### Backend server
 
-* Connect to the Pi using ssh or pi.connect. 
-* Connect to the Wi-Fi using `nmtui`:
-  1. Run `nmtui`
-  2. Select "Activate a connection"
-  3. Choose the Wi-Fi `Production` and enter the password `Production-01` 
-* Clone the repository onto the Pi. 
-* Install docker compose on the Pi.
-* In the Project root directory run `sudo docker compose up`
+* Verbinde dich über ssh mit dem Backend
+* Verbinde dich mit `nmtui` mit dem WiFi:
+  1. Führe `nmtui` aus
+  2. Wähle "Activate a connection"
+  3. Wähle das Netzwerk aus und gebe das Passwort ein (Standard: Production, Production-01)
+* Klone das Repository auf das Backend
+* Installiere Docker Compose
+* Zum Starten der Software führe jetzt `sudo docker compose up` im Projektverzeichnis aus
