@@ -32,7 +32,7 @@ STATUS_URL = f"{BACKEND_BASE_URL}/api/status"
 # ---------------------------------------------------------------------------
 # TLS / CA Certificate
 # ---------------------------------------------------------------------------
-CA_CERT_FILE = os.getenv("CA_CERT_PATH", "../../CA/ca.crt")
+CA_CERT_FILE = os.getenv("CA_CERT_PATH", "ca.crt")
 
 # Set to "false" to skip SSL verification for all tests (except Test 6).
 # Needed when the CA cert lacks extensions like keyUsage (common with
