@@ -323,7 +323,126 @@ Hier liegen das Script für den WLAN-Access-Point und unter pico die Dateien des
 
 ### controller
 
-Hier liegen alle Dateien für den Controller.
+Der Controller ist die zentrale Brücke zwischen dem **Sensor-Netzwerk** und dem **Backend-Server**. Er läuft als eigenständiger Docker-Container im `sensor-network` und hat zwei Hauptaufgaben:
+
+1. **Sensordaten empfangen und weiterleiten**  
+   Der Controller abonniert das MQTT-Topic `sensor/data`, auf dem der Raspberry Pi Pico Temperatur- und Feuchtigkeitsmesswerte publiziert. Jede eingehende Nachricht wird validiert und per HTTPS an den Backend-Webserver (`server.js`) hinter dem nginx Reverse Proxy weitergeleitet, der sie in der MariaDB-Datenbank speichert.
+
+2. **Steuerungsentscheidungen treffen**  
+   Mithilfe eines LSTM-Modells erstellt der Controller eine Vorhersage der nächsten Temperatur- und Feuchtigkeitswerte. Basierend auf dieser Vorhersage und konfigurierbaren Schwellenwerten wird eine Aktor-Steuerungsnachricht (`COOL`, `HEAT`, `DRY`, `HUM` oder `OK`) auf dem MQTT-Topic `actuator/control` publiziert, die der Pico empfängt und umsetzt.
+
+Der Controller authentifiziert sich per **Keycloak Client Credentials Flow** mit einem OAuth2 Access-Token und sendet dieses als `Authorization: Bearer`-Header bei jedem Request an das Backend mit. Beim Start wird geprüft, ob das Token die Rolle `controller-ingest` enthält — ist dies nicht der Fall, beendet sich der Controller.
+
+Die gesamte Kommunikation erfolgt verschlüsselt: MQTT über TLS (Port 8883) und HTTP über HTTPS (Port 443), wobei die Zertifikate gegen die Projekt-CA validiert werden.
+
+#### `config.py`
+
+Zentrale Konfigurationsdatei des Controllers. Liest alle Betriebsparameter aus Environment-Variablen aus, die im Dockerfile definiert und optional über `docker-compose.yml` überschrieben werden. Dazu gehören:
+
+- **MQTT-Verbindungsdaten** — Host, Port, Benutzer, Passwort, Topic
+- **Backend-Konfiguration** — URL, API-Key, HTTP-Timeout
+- **Keycloak-Zugangsdaten** — Client-ID, Client-Secret, Token-URL, benötigte Rolle
+- **TLS** — Pfad zum CA-Zertifikat
+- **Plausibilitätsgrenzen** — Min/Max für Temperatur und Luftfeuchtigkeit
+- **Steuerungsschwellenwerte** — Ober-/Untergrenzen für die Aktor-Kontrolle
+
+Außerdem wird hier das zentrale Logging konfiguriert, das von allen anderen Modulen über den `log`-Logger verwendet wird.
+
+#### `controller.py`
+
+Einstiegspunkt und Main-Datei des Controllers. Der Ablauf beim Start:
+
+1. Environment-Variablen auf Vollständigkeit prüfen (API-Key, MQTT-Passwort, CA-Datei)
+2. **Keycloak-Authentifizierung** — Access-Token holen und Rolle `controller-ingest` verifizieren. Schlägt dies fehl, beendet sich der Controller sofort.
+3. MQTT-Client aufbauen
+4. Endlosschleife (`loop_forever`) starten, die Reconnects bei Verbindungsabbrüchen automatisch handhabt
+
+Signal-Handler für `SIGTERM` und `SIGINT` sorgen für ein sauberes Herunterfahren bei `docker stop`.
+
+#### `keycloak_auth.py`
+
+Zuständig für die gesamte Keycloak-Authentifizierung per **OAuth2 Client Credentials Flow**.
+
+| Funktion          | Beschreibung                                                                                                                               |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `request_token()` | POST-Request an den Keycloak-Token-Endpoint mit `client_id` und `client_secret`. Empfängt das Access-Token (JWT) und cached es im Speicher |
+| `get_token()`     | Gibt ein gültiges Token zurück — cached oder neu geholt. Erneuert automatisch 30 Sekunden vor Ablauf                                      |
+| `verify_role()`   | Dekodiert den JWT-Payload per Base64 und prüft, ob `controller-ingest` im Feld `realm_access.roles` vorhanden ist                         |
+| `auth_header()`   | Liefert einen fertigen `Authorization: Bearer <token>`-Header für HTTP-Requests                                                           |
+
+#### `mqtt_handler.py`
+
+Baut den MQTT-Client auf und definiert die drei Callback-Funktionen für die paho-mqtt-Bibliothek (v2 API).
+
+| Callback          | Beschreibung                                         |
+|-------------------|------------------------------------------------------|
+| `on_connect`      | Abonniert das Sensor-Topic nach erfolgreicher Verbindung |
+| `on_disconnect`   | Loggt den Verbindungsabbruch                         |
+| `on_message`      | Zentrale Verarbeitungslogik (siehe unten)            |
+
+**Ablauf bei eingehender Nachricht (`on_message`):**
+
+1. Nachricht durch `validation.py` validieren
+2. UTC-Timestamp setzen
+3. Daten per `https_client.py` an das Backend weiterleiten
+4. LSTM-Vorhersage abrufen
+5. Steuerungsentscheidung treffen (`COOL` / `HEAT` / `DRY` / `HUM` / `OK`)
+6. Ergebnis auf `actuator/control` publizieren
+
+Enthält zusätzlich die Hilfsfunktionen `_determine_temp_state()`, `_determine_hum_state()` und `_resolve_action()` für die Schwellenwert-Logik, sowie `build_client()` für den TLS-gesicherten Client-Aufbau.
+
+#### `https_client.py`
+
+Zuständig für die HTTP-Weiterleitung der Sensordaten an das Backend.
+
+| Funktion               | Beschreibung                                                                                                |
+|------------------------|-------------------------------------------------------------------------------------------------------------|
+| `_build_headers()`     | Erstellt die HTTP-Header mit API-Key (`x-api-key`) und Keycloak Bearer-Token (`Authorization`)              |
+| `forward_to_backend()` | HTTPS-POST mit Sensor-Payload (Temperatur, Feuchtigkeit, Timestamp) an die Backend-URL                     |
+
+Die TLS-Verbindung wird gegen das CA-Zertifikat validiert. Fehler werden abgefangen und geloggt, ohne eine Exception zu werfen, damit der MQTT-Loop nicht unterbrochen wird.
+
+#### `validation.py`
+
+Validiert jede eingehende MQTT-Nachricht in drei Schritten:
+
+1. **JSON-Prüfung** — Ist der Payload gültiges JSON und ein Objekt?
+2. **Feld-Extraktion** — Sind `temperature` und `humidity` als Zahlenwerte vorhanden?
+3. **Range-Check** — Liegen die Werte innerhalb der konfigurierbaren Plausibilitätsgrenzen? (Standard: 0–100)
+
+Nur wenn alle drei Prüfungen bestanden sind, werden die Werte als Tuple zurückgegeben. Andernfalls wird `None` zurückgegeben und eine Warnung geloggt. Dies schützt die Pipeline vor fehlerhaften oder manipulierten Nachrichten.
+
+#### `lstm_handler.py`
+
+Lädt beim Start das trainierte LSTM-Keras-Modell (`train.keras`) und verwaltet einen Ringbuffer der letzten 10 Messwerte.
+
+| Funktion               | Beschreibung                                                                                                                                                         |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `predict_next_value()` | Fügt einen neuen Messwert zum Buffer hinzu. Sobald 10 Werte vorhanden sind: Normalisierung → Modell-Vorhersage → Rückskalierung. Gibt vorhergesagte Temperatur und Feuchtigkeit zurück |
+
+Der MinMaxScaler wird manuell mit den gleichen Parametern wie im Training konfiguriert (Bereich 0–100 für beide Features).
+
+#### `model_trainer.py`
+
+Trainingsscript für das LSTM-Modell.
+
+- **Input:** CSV-Datei (`weather_data.csv`) mit Temperatur- und Feuchtigkeitswerten
+- **Preprocessing:** MinMaxScaler (0–1), Sliding-Window-Sequenzen der Länge 10
+- **Architektur:** LSTM (64 Units) → Dense (32 Units) → Dense (2 Outputs: Temperatur, Feuchtigkeit)
+- **Training:** Adam-Optimizer, MSE-Loss, 15 Epochen, Batch-Size 32
+- **Output:** Gespeichertes Modell als `train.keras`
+
+#### `data_generation.py`
+
+Generiert synthetische Trainingsdaten für das LSTM-Modell.
+
+- **Umfang:** 30 Tage im Minutentakt (43.200 Datenpunkte)
+- **Simulation:** Sinusförmige Tag-/Nacht-Zyklen, Zufallsrauschen, simulierte Thermostat-Logik (Heizung/Kühlung)
+- **Output:** `weather_data.csv` als Input für `model_trainer.py`
+
+#### `train.py`
+
+Alternatives Trainingsscript mit einer anderen Modellarchitektur (zwei gestapelte LSTM-Schichten mit Dropout statt einer einzelnen). Nutzt synthetisch generierte Sinus-Daten statt einer CSV-Datei und gibt nur einen Wert aus. Dient als früherer Prototyp — das produktive Training erfolgt über `model_trainer.py`.
 
 ### webapp
 
