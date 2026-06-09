@@ -331,6 +331,15 @@ Hier liegen alle Dateien für den Controller.
 
 In dieser Datei sind Pools für die jeweiligen Datenbanknutzer definiert.
 
+#### service/authentication.js
+
+Beinhaltet Middleware und Funktion für die Access Token Validierung
+
+#### service/validateSensorPayload.js
+
+Beinhaltet Funktion um Übertragunsinhalt der Sensoren (Temperatur, Luftfeuchtigkeit, Zeitstempel) zu validieren.
+Gewährleistet, dass keine inkorekten Einträge in die Datenbank geschrieben werden.
+
 #### server.js
 
 Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die Datenbank.
