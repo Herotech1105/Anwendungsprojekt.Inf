@@ -1,10 +1,26 @@
 # Temperatur- und Luftfeuchtigkeitsregulierer
 
+In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Temperatur entwickelt, dass die Messdaten sicher
+speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
+Die Anforderungen für das Endprodukt waren die folgenden:
+
+*
+*
+
+Zur Erarbeitung des
+Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
+
+1. Planung und Einteilung der folgenden Phasen
+2. Erstellen eines WLAN Access Points mit Firewall
+3. Verdrahtung des Pico und Übertragen der Sensordaten an das Backend
+4. Sicheres Speichern der Sensordaten in der Datenbank
+5.
+
 ## Phasen (Patchnotes)
 
-Die Präsentationen zu den einzelnen Phasen sind als PDF und Powerpoint/Google Presentation i Verzeichnis zu
-finden.  
-Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgegliedert
+Die Präsentationen zu den einzelnen Phasen sind als PDF und Powerpoint/Google Presentation im Verzeichnis der
+zugehörigen Phase zu finden.  
+Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgegliedert:
 
 ### Phase 1:
 
@@ -47,7 +63,8 @@ GANT-Diagramm:
 Datum: 06.05.2026 - 12.05.2026  
 Problemstellung: Sichere Übermittlung der Sensordaten und Speicherung in der Datenbank  
 Verantwortlicher: Lennart Esch  
-GANT-Diagramm: ![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
+GANT-Diagramm:  
+![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
 | Datei                      | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |----------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -298,28 +315,17 @@ Erstellt mit MS-DOS `tree`
 CA steht für Certificate authority. In diesem Verzeichnis liegen alle verwendeten Zertifikate. Alle verwendeten
 Zertifikate sind selbstsigniert.
 
-* `ca.crt`: Öffentliche Zertifikatsdatei, um die Zertifikate der Services zu verifizieren.
-* `ca.der`: Öffentliche Zertifikatsdatei für den Pico in binärcode
-* `ca.key`: Privater Schlüssel der CA zum signieren weiterer Zertifikate
-* `ca.srl`: Serialisierungsnummer der `ca.crt`
-* `commands.txt`: Befehle für das Generieren neuer Zertifikate
-* `mqtt.crt`: Öffentliches Zertifikat für den mqtt-broker
-* `mqtt.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für den mqtt-broker zu signieren
-* `mqtt.key`: Privater Schlüssel für den mqtt-broker
-* `req.cnf`: Konfigurationsdatei für das Generieren und Signieren neuer Zertifikate
-* `www_cert.cert`: Öffentliches Zertifikat für Nginx, Webserver und Keycloak
-* `www_cert.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für Nginx, Webserver und Keycloak zu
-  signieren
-* `www_key.key`: Privater Schlüssel für Nginx, Webserver und Keycloak
-
 ### configurations
 
-Unter configurations sind alle Dateien abgelegt, die nicht für das Backend benötigt werden.  
-Hier liegen das Script für den WLAN-Access-Point und unter pico die Dateien des Pico.
+Unter `configurations` sind alle Dateien abgelegt, die nicht für das Backend benötigt werden.  
+Hier liegen das Script für die Einrichtung des WLAN-Access-Points und unter `pico` die Dateien des Pico.
 
 #### pico
 
 #### wlan_ap_setup.py
+
+Python Skript, mit dem das WLAN Netzwerk angelegt wird. Die Anleitung hierzu wird unter
+`Installation und Inbetriebnahme` erläutert.
 
 ### controller
 
@@ -329,3 +335,6 @@ Hier liegen alle Dateien für den Controller.
 
 Siehe `../README.md`
 
+## Bedienung
+
+## Fazit
