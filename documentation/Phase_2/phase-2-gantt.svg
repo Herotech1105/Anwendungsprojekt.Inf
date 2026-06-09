@@ -1,8 +1,7 @@
 <svg width="1100" height="380" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .title { font: bold 22px Arial, sans-serif; fill: #333; }
-    .header { font: bold 12px Arial, sans-serif; fill: #555; }
-    .task { font: 13px Arial, sans-serif; fill: #222; }
+    .header { font: bold 12px Arial, sans-serif; fill: cyan; }
+    .task { font: 13px Arial, sans-serif; fill: cyan; }
     .grid { stroke: #ddd; stroke-width: 1; }
     .bar { fill: #4f8ef7; rx: 4; ry: 4; }
     .bar2 { fill: #2ecc71; rx: 4; ry: 4; }
@@ -14,8 +13,6 @@
       <path d="M0,0 L8,3 L0,6 Z" fill="#666"></path>
     </marker>
   </defs>
-
-  <text x="20" y="30" class="title">Projekt Gantt-Diagramm</text>
 
   <!-- Zeitachse -->
   <g transform="translate(250,60)">
