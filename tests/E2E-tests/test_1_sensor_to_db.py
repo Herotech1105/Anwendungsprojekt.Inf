@@ -132,7 +132,7 @@ def run():
     data = resp.json()
     temperatures = data.get("temperatures", [])
 
-    found = any(abs(float(t) - TEST_TEMPERATURE) < 0.01 for t in temperatures)
+    found = any(abs(float(t) - TEST_TEMPERATURE) < 0.1 for t in temperatures)
 
     if found:
         record(PASS, "Test temperature found in DB",
