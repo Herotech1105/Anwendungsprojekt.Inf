@@ -38,10 +38,11 @@ GANT-Diagramm: [Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
 
 ### Phase 2:
 
-Datum: 11.04.2026 - 28.04.2026
-Problemstellung: Deployment der Kern-Infrastruktur
-Verantwortlicher: Benjamin Hager
-GANT-Diagramm:![GANT Diagramm Phase 2](./Phase_2/phase-2-gantt.svg)
+Datum: 11.04.2026 - 28.04.2026  
+Problemstellung: Deployment der Kern-Infrastruktur  
+Verantwortlicher: Benjamin Hager  
+GANT-Diagramm: 
+![GANT Diagramm Phase 2](./Phase_2/phase-2-gantt.svg)  
 
 | Datei                           | Änderung                                                                                                                   | Erklärung                                                                                                                                                                                                                                                                             |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
