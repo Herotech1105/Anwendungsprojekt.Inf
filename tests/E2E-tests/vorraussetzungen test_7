@@ -1,0 +1,4 @@
+Zwei Voraussetzungen für Test 7:
+
+directAccessGrantsEnabled: true auf dem dashboard-client in iot-realm.json setzen (sonst kann der Test keine User-Tokens holen ohne Browser)
+Einen User testuser_norole in Keycloak anlegen, der keine Rollen hat (für 7c)
