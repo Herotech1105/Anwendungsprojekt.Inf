@@ -221,6 +221,9 @@ Hier liegen das Script für den WLAN-Access-Point und unter pico die Dateien des
 
 #### pico
 
+Steuert Aktoren über Pins an, liefert Spannungsversorgung für den Sensor und liest Sensordaten aus.
+Sendet Sensordaten über MQTT an den MQTT-Broker, liest vom controller gesendete Steuerbefehle über den MQTT-Broker.
+
 #### wlan_ap_setup.py
 
 ### controller
@@ -328,6 +331,16 @@ Gegebene Endpoints:
 * Kopiere jetzt das Skript `wlan_ap_setup.py` auf den Pi und führe es mit root-Rechten aus
 
 ### Pi Pico
+
+* Verbinde den Pi Pico über Micro-USB an USB-A/USB-C eines Endgerätes mit Thonny:
+  1. BOOTSEL-Taste (weiße Taste auf Pico) gedrückt halten
+  2. An Entwicklungs-Endgerät per USB-Kabel anschließen
+  3. .uf2-Datei mit der MicroPython-Firmware auf das Laufwerk "RPI-RP2" per Drag und Drop kopieren. 
+  4. Pico startet neu
+* Danach kann der Pi Pico immer wieder eingesteckt und Thonny geöffnet werden
+* Der Pi Pico verbindet sich dann automatisch mit Thonny
+* main.py auswählen und "Run current script" Button klicken um zu starten
+* Bei Spannungsversorgung ohne Datenfluss (zum Beispiel Pico direkt über USB-Kabel an Netzteil) startet main.py automatisch
 
 ### Backend server
 
