@@ -369,20 +369,46 @@ früherer Prototyp — das produktive Training erfolgt über `model_trainer.py`.
 #### config/database.js
 
 In dieser Datei sind Pools für die jeweiligen Datenbanknutzer definiert.
+Hier speziell für den Read-, Write- und Adminuser.
+
+#### public
+
+Dieser Ordner beinhaltet alle Frontendelemente für das Anzeigen des Dashboardes.
+
+- **css** — Verwendete CSS-Elemente
+- **external** — Extern importierte Skripte
+- **img** — Bilddateien
+- **js** — Verwendete Skripte
+- **index.html** — HTML-Element für das Dashboard
 
 #### service/authentication.js
 
 Beinhaltet Middleware und Funktion für die Access Token Validierung
+Speziell geprüft wird das Vorhandensein des Tokens und die erwarteten Audiences und Rollen.
+Darüberhinaus ist der Endpoint für die Authentifizierung des API-Keys für die Datenbankzugriffe definiert.
 
 #### service/validateSensorPayload.js
 
 Beinhaltet Funktion um Übertragunsinhalt der Sensoren (Temperatur, Luftfeuchtigkeit, Zeitstempel) zu validieren.
-Gewährleistet, dass keine inkorekten Einträge in die Datenbank geschrieben werden.
+Es wird speziell geprüft:
+
+1. Sind Temperatur und Luftfeuchtigkeit als Zahlen vertreten
+2. Ist das Format des Zeitstempels valide
+3. Sind Temperatur und Luftfeuchtigkeit innerhalb des definierten Bereiches
+4. Ist der Zeitstempel aktuell
+
+Damit werden korrekte Einträge in der Datenbank gewährleistet.
 
 #### server.js
 
-Hauptkomponente zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
-Datenbank.
+Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die Datenbank.
+Gegebene Endpoints:
+
+- **GET /api/status** — Serverstatus abfragen
+- **GET /api/sensordata** — Aktuellste Sensordaten erhalten
+- **GET /api/sensordata/range** — Sensordaten von einem bestimmten Zeitfenster erhalten
+- **GET /api/admin/export** — Aktuelle und Archivierte Sensordaten als CSV erhalten
+- **POST /api/internal/sensordata** — Sensordaten in Datenbank schreiben
 
 ## Installation und Inbetriebnahme
 
