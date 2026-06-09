@@ -8,16 +8,17 @@ import control
 import mqtt
 
 
-panel = control.lcd
 mqtt.client.set_callback(mqtt.on_message)
 
+#========== Anhang ==========
+panel = control.lcd
 
 #0----Interrupt-----
 press_time = 0
 last_reset = 0
 
 def button_pressed(pin):
-    """Reset Button um den Pico neu zu starten"""
+    """Reset Button for restarting the pico"""
     global press_time, last_reset
     now   = ticks_ms()
     value = control.button.value()
@@ -37,26 +38,30 @@ control.button.irq(
     handler = button_pressed
 )
 #1----Interrupt-----
+#========== Anhang Ende ==========
 
-
-"""Verbindung zum WLAN"""
+"""Connection to WLAN"""
 #0----WLAN-Connection-----
 try:
     wlan = wifi.connect_wifi()
 except OSError as e:
     print("Failed connect wlan: ", e)
+
+#========== Anhang ==========
     panel.clear()
     panel.move_to(0, 0)
     panel.putstr("WLAN Error")
     panel.move_to(0, 1)
     panel.putstr("Reconnecting...")
+#========== Anhang Ende ==========
+
 #1----WLAN-Connection-----
 
 
 sleep(3)
 
 
-"""Verbindung zum MQTT-Broker"""
+"""Connection to MQTT Broker"""
 #0----MQTT-Connection-----
 mqtt_connected = False
 print("Vor MQTT connect")
@@ -69,18 +74,26 @@ try:
     print("MQTT verbunden!")
 except OSError as e:
     print("Failed connect mqtt: ", e)
+
+#========== Anhang ==========
     panel.clear()
     panel.move_to(0, 0)
     panel.putstr("MQTT Error")
     panel.move_to(0, 1)
     panel.putstr("Reconnecting...")
+#========== Anhang Ende ==========
+
 except Exception as e:
     print("MQTT Exception:", e)
+
+#========== Anhang ==========
     panel.clear()
     panel.move_to(0, 0)
     panel.putstr("MQTT Error")
     panel.move_to(0, 1)
     panel.putstr(str(e)[:16])
+#========== Anhang Ende ==========
+
 #1----MQTT-Connection-----
 
 
@@ -105,12 +118,12 @@ while True:
             print("Published")
 
         wait_start = ticks_ms()
-        while ticks_diff(ticks_ms(), wait_start) < 10000:
+        while ticks_diff(ticks_ms(), wait_start) < 59000:
             if mqtt_connected:
                 mqtt.client.check_msg()
                 if mqtt.process_last():
                     
-                    
+                    #========== Anhang ==========
                     #0----Value-Display-----
                     panel.clear()
                     panel.move_to(0, 0)
@@ -120,15 +133,15 @@ while True:
                     panel.move_to(0, 1)
                     panel.putstr(str(states.current_state))
                     #1----Value-Display-----
+                    #========== Anhang Ende ==========
             
             
             sleep_ms(1000)
         #1----MQTT-Message-----
 
-
+    #========== Anhang ==========
         #states.lcd.clear()
         #states.scroll_text("Das ist ein sehr langer Text um den Scroll Text zu testen", zeile=0)
-
 
     #0----Sensor-Error-----
     except OSError as e:
@@ -139,6 +152,7 @@ while True:
         panel.move_to(0, 1)
         panel.putstr("Can't read")
     #1----Sensor-Error-----
+    #========== Anhang Ende ==========
 
 
 

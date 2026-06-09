@@ -8,13 +8,13 @@ import states
 last_message = {"topic": None, "payload": None}
 
 def on_message(topic, msg):
-    """Gibt die Daten des Subscribe aus"""
+    """Returns the subscribe data"""
     last_message["topic"] = topic
     last_message["payload"] = msg
     print(topic, msg)
 
 def process_last():
-    """Verarbeitet nur die neuste Nachricht, gibt True zurück wenn was da war"""
+    """Only processes the latest message, returns True if there was a message"""
     msg = last_message["payload"]
     if msg is None:
         return False
@@ -38,7 +38,7 @@ def process_last():
 #1----Subscribe Message-----
 
 
-"""Erstellt einen MQTTClient und konfiguriert CA und TLS"""
+"""Creates a MQTT-Client and configures CA and TLS"""
 print("mqtt.py - Start")
 
 with open(iot.CA_CERT, "rb") as f:

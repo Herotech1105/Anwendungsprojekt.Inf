@@ -1,7 +1,7 @@
 import control
 
 
-"""State Variablen"""
+"""State Variables"""
 #0----States-----
 TEMP_TOO_LOW  = 0
 TEMP_OK       = 1
@@ -22,7 +22,7 @@ HUM_MAX  = 53.0
 
 #0----Apply State-----
 def apply_state(temp_state, hum_state):
-    """Regelt zuerst Temperatur, dann Feuchtigkeit"""
+    """Regulates temperature first, then humidity"""
 
     global current_state
 

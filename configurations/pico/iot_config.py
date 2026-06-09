@@ -1,10 +1,10 @@
-"""Konfiguration aller Datenvariablen"""
-# --- WLAN Konfiguration ---
+"""Configuration of all data variables"""
+# --- WLAN Configuration ---
 WIFI_SSID 		= "Production"
 WIFI_PASSWORD 	= "Production-01"
 
-# --- MQTT Broker Konfiguration ---
-# IP-Adresse
+# --- MQTT Broker Configuration ---
+# IP-Address
 MQTT_BROKER = "192.168.4.18"
 
 # TLS-Port
@@ -21,5 +21,5 @@ MQTT_CLIENT = "pico"
 MQTT_USER = "iotuser"
 MQTT_PASS = "kleber"
 
-# --- Zertifikate ---
+# --- Certificates ---
 CA_CERT   = "/certs/ca.der"

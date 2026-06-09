@@ -5,21 +5,24 @@ from time import sleep
 import dht
 
 
-"""Initialisierung Input/Output"""
+"""Initialization Input/Output"""
 #0----Initialization-----
 sensor 	 = dht.DHT22(Pin(2, Pin.IN, Pin.PULL_UP))
-peltier = Pin(11, Pin.OUT)		# Peltier-Element
-radiator = Pin(12, Pin.OUT)   	# Heizung
-fan 	 = Pin(13, Pin.OUT)     # Lüfter / Kühlung
-button 	 = Pin(14, Pin.IN, Pin.PULL_UP)
+radiator = Pin(12, Pin.OUT)
+fan 	 = Pin(13, Pin.OUT)
+
+#========== Anhang ==========
+peltier = Pin(11, Pin.OUT)
+button 	 = Pin(14, Pin.IN, Pin.PULL_UP) # Reset Button
 i2c 	 = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 lcd 	 = I2cLcd(i2c, 0x27, 2, 16)
-#1----Initialization-----
+#========== Anhang Ende ==========
 
+#1----Initialization-----
 
 pico_led.on()
 
-
+#========== Anhang ==========
 def scroll_text(text, zeile=0):
     """Scrollt den Text auf dem LCD-Display von Rechts nach Links"""
     padded = " " * 16 + text + " " * 16
@@ -32,3 +35,4 @@ def scroll_text(text, zeile=0):
                 lcd.putstr(current[j])
         prev = current
         sleep(0.2)
+#========== Anhang Ende ==========
