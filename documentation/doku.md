@@ -52,10 +52,11 @@ GANT-Diagramm:
 
 ### Phase 3:
 
-Datum:
-Problemstellung:  
-Verantwortlicher:  
+Datum: 29.04.2026 - 05.05.2026
+Problemstellung: Sichere Übertragung der Sensordaten an MQTT
+Verantwortlicher: Walter neer
 GANT-Diagramm:
+![GANT Diagramm Phase 3](./Phase_3/Phase_3_GANT.png)
 
 | Datei | Änderung | Erklärung |
 |-------|----------|-----------|
@@ -370,3 +371,25 @@ Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu e
 
 
 ## Literatur und Hilfsmittel
+
+https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3
+Zugriff: 18.04.2026
+Pico W firmware
+
+https://pip-assets.raspberrypi.com/categories/686-raspberry-pi-pico-w/documents/RP-008312-DS-1-pico-w-datasheet.pdf?disposition=inline
+Zugriff: 18.04.2026
+Pico W datasheet
+
+https://docs.micropython.org/en/latest/rp2/quickref.html
+Zugriff: 24.04.2026
+RP2 code reference
+
+https://github.com/micropython/micropython-lib/blob/master/micropython/umqtt.simple/example_sub.py
+Zugriff: 18.05.2026
+umqtt reference
+
+FreeCAD 1.0.2: Erstellung der 3D-Modelle und technischen Zeichnungen
+InkScape: Erstellung LOGO.svg
+draw.io: Erstellung Schaltplan
+Bambu Studio: 3D-Modelle für den Druck slicen
+Bambu Lab P1S-Drucker: Drucken der 3D-Modelle
