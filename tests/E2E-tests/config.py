@@ -38,7 +38,7 @@ CA_CERT_FILE = os.getenv("CA_CERT_PATH", "../../CA/ca.crt")
 # ---------------------------------------------------------------------------
 # Keycloak
 # ---------------------------------------------------------------------------
-KC_BASE_URL = os.getenv("KC_BASE_URL", "https://www.lab.local/auth")
+KC_BASE_URL = os.getenv("KC_BASE_URL", "https://local.kleber.data/auth")
 KC_TOKEN_URL = os.getenv(
     "KC_TOKEN_URL",
     f"{KC_BASE_URL}/realms/iot/protocol/openid-connect/token",
