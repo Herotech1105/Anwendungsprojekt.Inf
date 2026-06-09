@@ -208,6 +208,8 @@ Erstellt mit MS-DOS `tree`
 
 ## Deployment Diagramm
 
+[Deployment Diagramm Gesammt](./DeploymentDiagramm.png)
+
 ## Beschreibung der Komponenten
 
 ### CA
