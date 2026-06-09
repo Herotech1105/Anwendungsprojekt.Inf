@@ -1,8 +1,8 @@
 <svg width="1100" height="380" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .title { font: bold 22px Arial, sans-serif; fill: #333; }
-    .header { font: bold 12px Arial, sans-serif; fill: #555; }
-    .task { font: 13px Arial, sans-serif; fill: #222; }
+    .title { font: bold 22px Arial, sans-serif; fill: white; }
+    .header { font: bold 12px Arial, sans-serif; fill: white; }
+    .task { font: 13px Arial, sans-serif; fill: white; }
     .grid { stroke: #ddd; stroke-width: 1; }
     .bar { fill: #4f8ef7; rx: 4; ry: 4; }
     .bar2 { fill: #2ecc71; rx: 4; ry: 4; }
