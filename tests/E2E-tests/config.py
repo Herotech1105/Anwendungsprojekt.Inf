@@ -19,7 +19,7 @@ import os
 # ---------------------------------------------------------------------------
 # Backend (nginx reverse proxy)
 # ---------------------------------------------------------------------------
-BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "https://www.lab.local")
+BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "https://local.kleber.data")
 API_KEY = os.getenv("API_KEY", "api_key")
 HTTP_TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "10"))
 
