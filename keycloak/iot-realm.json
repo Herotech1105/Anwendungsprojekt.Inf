@@ -12,6 +12,19 @@
   },
   "users": [
     {
+      "username": "testuser_norole",
+      "enabled": true,
+      "credentials": [
+        {
+
+          "type": "password",
+          "value": "${IOTUSER01_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "realmRoles": []
+    },
+    {
       "username": "iotuser01",
       "enabled": true,
       "credentials": [
