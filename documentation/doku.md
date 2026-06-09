@@ -15,7 +15,7 @@ Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
 3. Verdrahtung des Pico und Übertragen der Sensordaten an das Backend
 4. Sicheres Speichern der Sensordaten in der Datenbank
 5. Steuerung der Aktoren des Pico mittels LSTM-Netz
-6. Erstellen einer sicheren Web Applikation für die Sensordaten 
+6. Erstellen einer sicheren Web Applikation für die Sensordaten
 
 ## Phasen (Patchnotes)
 
@@ -65,7 +65,7 @@ GANT-Diagramm:
 Datum: 06.05.2026 - 12.05.2026  
 Problemstellung: Sichere Übermittlung der Sensordaten und Speicherung in der Datenbank  
 Verantwortlicher: Lennart Esch  
-GANT-Diagramm: 
+GANT-Diagramm:
 ![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
 | Datei                      | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -92,7 +92,7 @@ GANT-Diagramm:
 Datum: 13.05.2026 - 21.05.2026  
 Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz  
 Verantwortlicher: Tim Dorozynski  
-GANT-Diagramm: 
+GANT-Diagramm:
 [GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
 
 | Datei                              | Änderung                                                  | Erklärung                                                                                                                                                                              |
@@ -205,10 +205,9 @@ Erstellt mit MS-DOS `tree`
          └───public
                  (Öffentliche Dateien für den Client)
 
-
 ## Deployment Diagramm
 
-## Beschreibung der Komponenten 
+## Beschreibung der Komponenten
 
 ### CA
 
@@ -414,6 +413,7 @@ Gegebene Endpoints:
 ## Installation und Inbetriebnahme
 
 ### Pi Setup
+
 * Installiere das Raspberry Pi light Image auf beiden Pis
 * Lies die MAC-Addresse eines Pis aus; dieser Pi wird später zum Backend
 
@@ -432,9 +432,9 @@ Gegebene Endpoints:
 
 * Verbinde dich über ssh mit dem Backend
 * Verbinde dich mit `nmtui` mit dem WiFi:
-   1. Führe `nmtui` aus
-   2. Wähle "Activate a connection"
-   3. Wähle das Netzwerk aus und gebe das Passwort ein (Standard: Production, Production-01)
+    1. Führe `nmtui` aus
+    2. Wähle "Activate a connection"
+    3. Wähle das Netzwerk aus und gebe das Passwort ein (Standard: Production, Production-01)
 * Klone das Repository auf das Backend
 * Installiere Docker Compose
 * Zum Starten der Software führe jetzt `sudo docker compose up` im Projektverzeichnis aus
@@ -442,7 +442,15 @@ Gegebene Endpoints:
 ## Bedienung
 
 Die Applikation lässt sich mit `sudo docker compose up/down` starten und beenden.  
-
+Vor dem Start ist sicherzustellen, dass der WLAN-AP Pi hochgefahren und funktionstüchtig ist (z.B. indem geprüft wird,
+ob das Backend ´mit dem zugehörigen WLAN verbunden ist).  
+Der Pico wird durch Ausführen der `main.py` gestartet.
+Nach dem Start kann eine Verbindung zum Netzwerk aufgebaut werden und
+unter [https://local.kleber.data](https://local.kleber.data) das Web Dashboard besucht werden.  
+Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].
+Danach wird das Dashboard angezeigt. 
+Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren. 
 
 ## Fazit
 
+## Literatur und Hilfsmittel
