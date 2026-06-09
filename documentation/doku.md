@@ -453,4 +453,6 @@ Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu e
 
 ## Fazit
 
+
+
 ## Literatur und Hilfsmittel
