@@ -1,5 +1,21 @@
 # Temperatur- und Luftfeuchtigkeitsregulierer
 
+In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Temperatur entwickelt, dass die Messdaten sicher
+speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
+Die Anforderungen für das Endprodukt waren die folgenden:
+
+*
+*
+
+Zur Erarbeitung des
+Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
+
+1. Planung und Einteilung der folgenden Phasen
+2. Erstellen eines WLAN Access Points mit Firewall
+3. Verdrahtung des Pico und Übertragen der Sensordaten an das Backend
+4. Sicheres Speichern der Sensordaten in der Datenbank
+5.
+
 ## Phasen (Patchnotes)
 
 Die Präsentationen zu den einzelnen Phasen sind als PDF und Powerpoint/Google Presentation i Verzeichnis zu
@@ -26,15 +42,15 @@ Problemstellung: Deployment der Kern-Infrastruktur
 Verantwortlicher: Benjamin Hager
 GANT-Diagramm:
 
-| Datei | Änderung | Erklärung |
-| --- | --- | --- |
-| configurations/wlan_ap_setup.py | Neu erstellt, danach mehrfach überarbeitet (Firewall-Regeln korrigiert, SSH auf allen Interfaces erlaubt, Quellen ergänzt) | Python-Skript zur Einrichtung eines WLAN-Access-Points auf dem Raspberry Pi: konfiguriert hostapd, dnsmasq, statische IP (192.168.4.1), IP-Forwarding und nftables-Firewall mit NAT (Masquerading über eth0). Ermöglicht das Produktionsnetzwerk "Production" für IoT-Clients. |
-| configurations/pico_main.py | Neu erstellt, danach erweitert (Phase 2 Integration) | MicroPython-Skript für den Raspberry Pi Pico W: verbindet sich als WLAN-Client mit dem Produktionsnetzwerk, ruft die Außentemperatur aus Friedrichshafen via Open-Meteo-API ab und steuert die Onboard-LED (Blinkrate abhängig von Temperatur: <10°C → 2s, ≤25°C → 1s, >25°C → 0.3s). |
-| pico_wlan_connection.txt | Neu erstellt, danach angepasst | Dokumentation/Notizen zur WLAN-Konfiguration des Pico W (SSID, Passwort, Verbindungsaufbau). |
+| Datei                           | Änderung                                                                                                                   | Erklärung                                                                                                                                                                                                                                                                             |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| configurations/wlan_ap_setup.py | Neu erstellt, danach mehrfach überarbeitet (Firewall-Regeln korrigiert, SSH auf allen Interfaces erlaubt, Quellen ergänzt) | Python-Skript zur Einrichtung eines WLAN-Access-Points auf dem Raspberry Pi: konfiguriert hostapd, dnsmasq, statische IP (192.168.4.1), IP-Forwarding und nftables-Firewall mit NAT (Masquerading über eth0). Ermöglicht das Produktionsnetzwerk "Production" für IoT-Clients.        |
+| configurations/pico_main.py     | Neu erstellt, danach erweitert (Phase 2 Integration)                                                                       | MicroPython-Skript für den Raspberry Pi Pico W: verbindet sich als WLAN-Client mit dem Produktionsnetzwerk, ruft die Außentemperatur aus Friedrichshafen via Open-Meteo-API ab und steuert die Onboard-LED (Blinkrate abhängig von Temperatur: <10°C → 2s, ≤25°C → 1s, >25°C → 0.3s). |
+| pico_wlan_connection.txt        | Neu erstellt, danach angepasst                                                                                             | Dokumentation/Notizen zur WLAN-Konfiguration des Pico W (SSID, Passwort, Verbindungsaufbau).                                                                                                                                                                                          |
 
 ### Phase 3:
 
-Datum: 
+Datum:
 Problemstellung:  
 Verantwortlicher:  
 GANT-Diagramm:
@@ -47,7 +63,8 @@ GANT-Diagramm:
 Datum: 06.05.2026 - 12.05.2026  
 Problemstellung: Sichere Übermittlung der Sensordaten und Speicherung in der Datenbank  
 Verantwortlicher: Lennart Esch  
-GANT-Diagramm: ![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
+GANT-Diagramm: 
+![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 
 | Datei                      | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |----------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -73,7 +90,8 @@ GANT-Diagramm: ![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
 Datum: 13.05.2026 - 21.05.2026  
 Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz  
 Verantwortlicher: Tim Dorozynski  
-GANT-Diagramm: [GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
+GANT-Diagramm: 
+[GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
 
 | Datei                              | Änderung                                                  | Erklärung                                                                                                                                                                              |
 |------------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -291,26 +309,14 @@ Erstellt mit MS-DOS `tree`
             authentication.js
             validateSensorPayload.js
 
-### Beschreibung der Komponenten (jeweils)
+## Deployment Diagramm
+
+## Beschreibung der Komponenten 
 
 ### CA
 
 CA steht für Certificate authority. In diesem Verzeichnis liegen alle verwendeten Zertifikate. Alle verwendeten
 Zertifikate sind selbstsigniert.
-
-* `ca.crt`: Öffentliche Zertifikatsdatei, um die Zertifikate der Services zu verifizieren.
-* `ca.der`: Öffentliche Zertifikatsdatei für den Pico in binärcode
-* `ca.key`: Privater Schlüssel der CA zum signieren weiterer Zertifikate
-* `ca.srl`: Serialisierungsnummer der `ca.crt`
-* `commands.txt`: Befehle für das Generieren neuer Zertifikate
-* `mqtt.crt`: Öffentliches Zertifikat für den mqtt-broker
-* `mqtt.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für den mqtt-broker zu signieren
-* `mqtt.key`: Privater Schlüssel für den mqtt-broker
-* `req.cnf`: Konfigurationsdatei für das Generieren und Signieren neuer Zertifikate
-* `www_cert.cert`: Öffentliches Zertifikat für Nginx, Webserver und Keycloak
-* `www_cert.csr`: Certificate Signing Request; Zwischenschritt, um ein Zertifikat für Nginx, Webserver und Keycloak zu
-  signieren
-* `www_key.key`: Privater Schlüssel für Nginx, Webserver und Keycloak
 
 ### configurations
 
@@ -323,21 +329,30 @@ Hier liegen das Script für den WLAN-Access-Point und unter pico die Dateien des
 
 ### controller
 
-Der Controller ist die zentrale Brücke zwischen dem **Sensor-Netzwerk** und dem **Backend-Server**. Er läuft als eigenständiger Docker-Container im `sensor-network` und hat zwei Hauptaufgaben:
+Der Controller ist die zentrale Brücke zwischen dem **Sensor-Netzwerk** und dem **Backend-Server**. Er läuft als
+eigenständiger Docker-Container im `sensor-network` und hat zwei Hauptaufgaben:
 
 1. **Sensordaten empfangen und weiterleiten**  
-   Der Controller abonniert das MQTT-Topic `sensor/data`, auf dem der Raspberry Pi Pico Temperatur- und Feuchtigkeitsmesswerte publiziert. Jede eingehende Nachricht wird validiert und per HTTPS an den Backend-Webserver (`server.js`) hinter dem nginx Reverse Proxy weitergeleitet, der sie in der MariaDB-Datenbank speichert.
+   Der Controller abonniert das MQTT-Topic `sensor/data`, auf dem der Raspberry Pi Pico Temperatur- und
+   Feuchtigkeitsmesswerte publiziert. Jede eingehende Nachricht wird validiert und per HTTPS an den Backend-Webserver (
+   `server.js`) hinter dem nginx Reverse Proxy weitergeleitet, der sie in der MariaDB-Datenbank speichert.
 
 2. **Steuerungsentscheidungen treffen**  
-   Mithilfe eines LSTM-Modells erstellt der Controller eine Vorhersage der nächsten Temperatur- und Feuchtigkeitswerte. Basierend auf dieser Vorhersage und konfigurierbaren Schwellenwerten wird eine Aktor-Steuerungsnachricht (`COOL`, `HEAT`, `DRY`, `HUM` oder `OK`) auf dem MQTT-Topic `actuator/control` publiziert, die der Pico empfängt und umsetzt.
+   Mithilfe eines LSTM-Modells erstellt der Controller eine Vorhersage der nächsten Temperatur- und Feuchtigkeitswerte.
+   Basierend auf dieser Vorhersage und konfigurierbaren Schwellenwerten wird eine Aktor-Steuerungsnachricht (`COOL`,
+   `HEAT`, `DRY`, `HUM` oder `OK`) auf dem MQTT-Topic `actuator/control` publiziert, die der Pico empfängt und umsetzt.
 
-Der Controller authentifiziert sich per **Keycloak Client Credentials Flow** mit einem OAuth2 Access-Token und sendet dieses als `Authorization: Bearer`-Header bei jedem Request an das Backend mit. Beim Start wird geprüft, ob das Token die Rolle `controller-ingest` enthält — ist dies nicht der Fall, beendet sich der Controller.
+Der Controller authentifiziert sich per **Keycloak Client Credentials Flow** mit einem OAuth2 Access-Token und sendet
+dieses als `Authorization: Bearer`-Header bei jedem Request an das Backend mit. Beim Start wird geprüft, ob das Token
+die Rolle `controller-ingest` enthält — ist dies nicht der Fall, beendet sich der Controller.
 
-Die gesamte Kommunikation erfolgt verschlüsselt: MQTT über TLS (Port 8883) und HTTP über HTTPS (Port 443), wobei die Zertifikate gegen die Projekt-CA validiert werden.
+Die gesamte Kommunikation erfolgt verschlüsselt: MQTT über TLS (Port 8883) und HTTP über HTTPS (Port 443), wobei die
+Zertifikate gegen die Projekt-CA validiert werden.
 
 #### `config.py`
 
-Zentrale Konfigurationsdatei des Controllers. Liest alle Betriebsparameter aus Environment-Variablen aus, die im Dockerfile definiert und optional über `docker-compose.yml` überschrieben werden. Dazu gehören:
+Zentrale Konfigurationsdatei des Controllers. Liest alle Betriebsparameter aus Environment-Variablen aus, die im
+Dockerfile definiert und optional über `docker-compose.yml` überschrieben werden. Dazu gehören:
 
 - **MQTT-Verbindungsdaten** — Host, Port, Benutzer, Passwort, Topic
 - **Backend-Konfiguration** — URL, API-Key, HTTP-Timeout
@@ -346,14 +361,16 @@ Zentrale Konfigurationsdatei des Controllers. Liest alle Betriebsparameter aus E
 - **Plausibilitätsgrenzen** — Min/Max für Temperatur und Luftfeuchtigkeit
 - **Steuerungsschwellenwerte** — Ober-/Untergrenzen für die Aktor-Kontrolle
 
-Außerdem wird hier das zentrale Logging konfiguriert, das von allen anderen Modulen über den `log`-Logger verwendet wird.
+Außerdem wird hier das zentrale Logging konfiguriert, das von allen anderen Modulen über den `log`-Logger verwendet
+wird.
 
 #### `controller.py`
 
 Einstiegspunkt und Main-Datei des Controllers. Der Ablauf beim Start:
 
 1. Environment-Variablen auf Vollständigkeit prüfen (API-Key, MQTT-Passwort, CA-Datei)
-2. **Keycloak-Authentifizierung** — Access-Token holen und Rolle `controller-ingest` verifizieren. Schlägt dies fehl, beendet sich der Controller sofort.
+2. **Keycloak-Authentifizierung** — Access-Token holen und Rolle `controller-ingest` verifizieren. Schlägt dies fehl,
+   beendet sich der Controller sofort.
 3. MQTT-Client aufbauen
 4. Endlosschleife (`loop_forever`) starten, die Reconnects bei Verbindungsabbrüchen automatisch handhabt
 
@@ -366,19 +383,19 @@ Zuständig für die gesamte Keycloak-Authentifizierung per **OAuth2 Client Crede
 | Funktion          | Beschreibung                                                                                                                               |
 |-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `request_token()` | POST-Request an den Keycloak-Token-Endpoint mit `client_id` und `client_secret`. Empfängt das Access-Token (JWT) und cached es im Speicher |
-| `get_token()`     | Gibt ein gültiges Token zurück — cached oder neu geholt. Erneuert automatisch 30 Sekunden vor Ablauf                                      |
-| `verify_role()`   | Dekodiert den JWT-Payload per Base64 und prüft, ob `controller-ingest` im Feld `realm_access.roles` vorhanden ist                         |
-| `auth_header()`   | Liefert einen fertigen `Authorization: Bearer <token>`-Header für HTTP-Requests                                                           |
+| `get_token()`     | Gibt ein gültiges Token zurück — cached oder neu geholt. Erneuert automatisch 30 Sekunden vor Ablauf                                       |
+| `verify_role()`   | Dekodiert den JWT-Payload per Base64 und prüft, ob `controller-ingest` im Feld `realm_access.roles` vorhanden ist                          |
+| `auth_header()`   | Liefert einen fertigen `Authorization: Bearer <token>`-Header für HTTP-Requests                                                            |
 
 #### `mqtt_handler.py`
 
 Baut den MQTT-Client auf und definiert die drei Callback-Funktionen für die paho-mqtt-Bibliothek (v2 API).
 
-| Callback          | Beschreibung                                         |
-|-------------------|------------------------------------------------------|
-| `on_connect`      | Abonniert das Sensor-Topic nach erfolgreicher Verbindung |
-| `on_disconnect`   | Loggt den Verbindungsabbruch                         |
-| `on_message`      | Zentrale Verarbeitungslogik (siehe unten)            |
+| Callback        | Beschreibung                                             |
+|-----------------|----------------------------------------------------------|
+| `on_connect`    | Abonniert das Sensor-Topic nach erfolgreicher Verbindung |
+| `on_disconnect` | Loggt den Verbindungsabbruch                             |
+| `on_message`    | Zentrale Verarbeitungslogik (siehe unten)                |
 
 **Ablauf bei eingehender Nachricht (`on_message`):**
 
@@ -389,18 +406,20 @@ Baut den MQTT-Client auf und definiert die drei Callback-Funktionen für die pah
 5. Steuerungsentscheidung treffen (`COOL` / `HEAT` / `DRY` / `HUM` / `OK`)
 6. Ergebnis auf `actuator/control` publizieren
 
-Enthält zusätzlich die Hilfsfunktionen `_determine_temp_state()`, `_determine_hum_state()` und `_resolve_action()` für die Schwellenwert-Logik, sowie `build_client()` für den TLS-gesicherten Client-Aufbau.
+Enthält zusätzlich die Hilfsfunktionen `_determine_temp_state()`, `_determine_hum_state()` und `_resolve_action()` für
+die Schwellenwert-Logik, sowie `build_client()` für den TLS-gesicherten Client-Aufbau.
 
 #### `https_client.py`
 
 Zuständig für die HTTP-Weiterleitung der Sensordaten an das Backend.
 
-| Funktion               | Beschreibung                                                                                                |
-|------------------------|-------------------------------------------------------------------------------------------------------------|
-| `_build_headers()`     | Erstellt die HTTP-Header mit API-Key (`x-api-key`) und Keycloak Bearer-Token (`Authorization`)              |
-| `forward_to_backend()` | HTTPS-POST mit Sensor-Payload (Temperatur, Feuchtigkeit, Timestamp) an die Backend-URL                     |
+| Funktion               | Beschreibung                                                                                   |
+|------------------------|------------------------------------------------------------------------------------------------|
+| `_build_headers()`     | Erstellt die HTTP-Header mit API-Key (`x-api-key`) und Keycloak Bearer-Token (`Authorization`) |
+| `forward_to_backend()` | HTTPS-POST mit Sensor-Payload (Temperatur, Feuchtigkeit, Timestamp) an die Backend-URL         |
 
-Die TLS-Verbindung wird gegen das CA-Zertifikat validiert. Fehler werden abgefangen und geloggt, ohne eine Exception zu werfen, damit der MQTT-Loop nicht unterbrochen wird.
+Die TLS-Verbindung wird gegen das CA-Zertifikat validiert. Fehler werden abgefangen und geloggt, ohne eine Exception zu
+werfen, damit der MQTT-Loop nicht unterbrochen wird.
 
 #### `validation.py`
 
@@ -410,17 +429,20 @@ Validiert jede eingehende MQTT-Nachricht in drei Schritten:
 2. **Feld-Extraktion** — Sind `temperature` und `humidity` als Zahlenwerte vorhanden?
 3. **Range-Check** — Liegen die Werte innerhalb der konfigurierbaren Plausibilitätsgrenzen? (Standard: 0–100)
 
-Nur wenn alle drei Prüfungen bestanden sind, werden die Werte als Tuple zurückgegeben. Andernfalls wird `None` zurückgegeben und eine Warnung geloggt. Dies schützt die Pipeline vor fehlerhaften oder manipulierten Nachrichten.
+Nur wenn alle drei Prüfungen bestanden sind, werden die Werte als Tuple zurückgegeben. Andernfalls wird `None`
+zurückgegeben und eine Warnung geloggt. Dies schützt die Pipeline vor fehlerhaften oder manipulierten Nachrichten.
 
 #### `lstm_handler.py`
 
-Lädt beim Start das trainierte LSTM-Keras-Modell (`train.keras`) und verwaltet einen Ringbuffer der letzten 10 Messwerte.
+Lädt beim Start das trainierte LSTM-Keras-Modell (`train.keras`) und verwaltet einen Ringbuffer der letzten 10
+Messwerte.
 
-| Funktion               | Beschreibung                                                                                                                                                         |
-|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Funktion               | Beschreibung                                                                                                                                                                           |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `predict_next_value()` | Fügt einen neuen Messwert zum Buffer hinzu. Sobald 10 Werte vorhanden sind: Normalisierung → Modell-Vorhersage → Rückskalierung. Gibt vorhergesagte Temperatur und Feuchtigkeit zurück |
 
-Der MinMaxScaler wird manuell mit den gleichen Parametern wie im Training konfiguriert (Bereich 0–100 für beide Features).
+Der MinMaxScaler wird manuell mit den gleichen Parametern wie im Training konfiguriert (Bereich 0–100 für beide
+Features).
 
 #### `model_trainer.py`
 
@@ -442,7 +464,9 @@ Generiert synthetische Trainingsdaten für das LSTM-Modell.
 
 #### `train.py`
 
-Alternatives Trainingsscript mit einer anderen Modellarchitektur (zwei gestapelte LSTM-Schichten mit Dropout statt einer einzelnen). Nutzt synthetisch generierte Sinus-Daten statt einer CSV-Datei und gibt nur einen Wert aus. Dient als früherer Prototyp — das produktive Training erfolgt über `model_trainer.py`.
+Alternatives Trainingsscript mit einer anderen Modellarchitektur (zwei gestapelte LSTM-Schichten mit Dropout statt einer
+einzelnen). Nutzt synthetisch generierte Sinus-Daten statt einer CSV-Datei und gibt nur einen Wert aus. Dient als
+früherer Prototyp — das produktive Training erfolgt über `model_trainer.py`.
 
 ### webapp
 
@@ -461,10 +485,49 @@ Gewährleistet, dass keine inkorekten Einträge in die Datenbank geschrieben wer
 
 #### server.js
 
-Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die Datenbank.
-
+Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
+Datenbank.
 
 ## Installation und Inbetriebnahme
 
-Siehe `../README.md`
+# Temperatur- und Luftfeuchtigkeitsregulierer
+
+## Anforderungen
+
+* 2 Raspberry Pi 4s
+* 1 Pi Pico
+* Ein Netzwerkkabel mit Internetzugriff
+* 2 SD-Karten
+
+## Installation
+
+### Pi Setup
+* Installiere das Raspberry Pi light Image auf beiden Pis
+* Lies die MAC-Addresse eines Pis aus; dieser Pi wird später zum Backend
+
+### WLAN AP
+
+* Verbinde den WLAN Pi über ein Netzwerkkabel mit dem Internet
+* Stelle eine Verbindung zum Pi via ssh her
+* Setze backend_mac_address in Zeile 4 in `/conficuration/wlan_ap_setup.py` auf die MAC-Addresse des Backends
+* Bei Bedarf können auch Passwort und SSID in den zwei folgenden Zeilen geändert werden
+* Führe `sudo apt install hostapd dnsmasq` auf dem Pi aus
+* Kopiere jetzt das Skript `wlan_ap_setup.py` auf den Pi und führe es mit root-Rechten aus
+
+### Pi Pico
+
+### Backend server
+
+* Verbinde dich über ssh mit dem Backend
+* Verbinde dich mit `nmtui` mit dem WiFi:
+   1. Führe `nmtui` aus
+   2. Wähle "Activate a connection"
+   3. Wähle das Netzwerk aus und gebe das Passwort ein (Standard: Production, Production-01)
+* Klone das Repository auf das Backend
+* Installiere Docker Compose
+* Zum Starten der Software führe jetzt `sudo docker compose up` im Projektverzeichnis aus
+
+## Bedienung
+
+## Fazit
 
