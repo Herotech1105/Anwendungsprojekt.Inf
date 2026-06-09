@@ -21,17 +21,20 @@ GANT-Diagramm: [Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
 
 ### Phase 2:
 
-Datum:  
-Problemstellung:  
-Verantwortlicher:  
+Datum: 11.04.2026 - 28.04.2026
+Problemstellung: Deployment der Kern-Infrastruktur
+Verantwortlicher: Benjamin Hager
 GANT-Diagramm:
 
 | Datei | Änderung | Erklärung |
-|-------|----------|-----------|
+| --- | --- | --- |
+| configurations/wlan_ap_setup.py | Neu erstellt, danach mehrfach überarbeitet (Firewall-Regeln korrigiert, SSH auf allen Interfaces erlaubt, Quellen ergänzt) | Python-Skript zur Einrichtung eines WLAN-Access-Points auf dem Raspberry Pi: konfiguriert hostapd, dnsmasq, statische IP (192.168.4.1), IP-Forwarding und nftables-Firewall mit NAT (Masquerading über eth0). Ermöglicht das Produktionsnetzwerk "Production" für IoT-Clients. |
+| configurations/pico_main.py | Neu erstellt, danach erweitert (Phase 2 Integration) | MicroPython-Skript für den Raspberry Pi Pico W: verbindet sich als WLAN-Client mit dem Produktionsnetzwerk, ruft die Außentemperatur aus Friedrichshafen via Open-Meteo-API ab und steuert die Onboard-LED (Blinkrate abhängig von Temperatur: <10°C → 2s, ≤25°C → 1s, >25°C → 0.3s). |
+| pico_wlan_connection.txt | Neu erstellt, danach angepasst | Dokumentation/Notizen zur WLAN-Konfiguration des Pico W (SSID, Passwort, Verbindungsaufbau). |
 
 ### Phase 3:
 
-Datum:  
+Datum: 
 Problemstellung:  
 Verantwortlicher:  
 GANT-Diagramm:
