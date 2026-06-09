@@ -265,10 +265,6 @@ Trainingsscript für das LSTM-Modell. Liest CSV-Daten, erstellt Sliding-Window-S
 
 Generiert synthetische Trainingsdaten (30 Tage, Minutentakt) mit simulierter Thermostat-Logik.
 
-#### `train.py`
-
-Früherer Prototyp des Trainingsscripts mit alternativer Modellarchitektur.
-
 ### webapp
 
 #### config/database.js
