@@ -14,7 +14,8 @@ Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
 2. Erstellen eines WLAN Access Points mit Firewall
 3. Verdrahtung des Pico und Übertragen der Sensordaten an das Backend
 4. Sicheres Speichern der Sensordaten in der Datenbank
-5.
+5. Steuerung der Aktoren des Pico mittels LSTM-Netz
+6. Erstellen einer sicheren Web Applikation für die Sensordaten 
 
 ## Phasen (Patchnotes)
 
@@ -108,7 +109,7 @@ GANT-Diagramm:
 
 ### Phase 6:
 
-Datum:  2026-05-22 bis 28
+Datum:  22.05.2026 - 28.05.2026
 Problemstellung:  Sichere Web-Applikation (AuthN/AuthZ mit Keycloak)
 Verantwortlicher:  Barnabas Steiner
 GANT-Diagramm:
@@ -156,92 +157,32 @@ Erstellt mit MS-DOS `tree`
     │   README.md
     │
     ├───CA
-    │       ca.crt
-    │       ca.der
-    │       ca.key
-    │       ca.srl
-    │       mqtt.crt
-    │       mqtt.csr
-    │       mqtt.key
-    │       req.cnf
-    │       www_cert.cert
-    │       www_cert.csr
-    │       www_key.key
+    │       (Zertifikate und Dateien zum anlegen)
     │
     ├───configurations
     │   │   wlan_ap_setup.py
     │   │
-    │   ├───commands
-    │   │       commands.txt
-    │   │       san.cnf
-    │   │
     │   └───pico
-    │           control.py
-    │           iot_config.py
-    │           main.py
-    │           mqtt.py
-    │           states.py
-    │           wifi.py
+    │           (Dateien des Pico)
     │
     ├───controller
-    │   │   config.py
-    │   │   controller.py
-    │   │   data_generation.py
-    │   │   Dockerfile
-    │   │   https_client.py
-    │   │   keycloak_auth.py
-    │   │   lstm_handler.py
-    │   │   Messdaten.csv
-    │   │   Messdaten2.csv
-    │   │   model_trainer.py
-    │   │   mqtt_handler.py
-    │   │   requirements.txt
-    │   │   train.keras
-    │   │   train.py
-    │   │   validation.py
-    │   │   weather_data.csv
+    │   │   (Hauptdateien des Controller)
     │   │
     │   └───weights
-    │          lstm_weights.weights.h5
+    │          (Gewichte für das LSTM-Netzwerk)
     │   
     │
     ├───documentation
-    │   │   doku.md
-    │   │
-    │   ├───Phase 1
-    │   ├───Phase_1
-    │   │       6Phasen.png
-    │   │       AnwendungInfoEli.pdf
-    │   │       Gantt_Phase1.pdf
-    │   │       Machbarkeitstudie1.pdf
-    │   │       Phase1.png
-    │   │       Phase1_Praesentation.pdf
-    │   │
-    │   └───Phase_4
-    │           API_Phase_4_Lennart_Esch.pdf
-    │           API_Phase_4_Lennart_Esch.pptx
-    │           Phase_4_GANT.png
-    │           Phase_4_web_app_datenfluss.drawio.png
+    │       (Dokumentation)
     │
     ├───environment
-    │       controller.env
-    │       db.env
-    │       keycloak.env
-    │       nginx.env
-    │       webapp.env
+    │       (Dateien für die Umgebungsvariablen der einzelnen Services)
     │
     ├───keycloak
-    │   │   iot-realm.json
-    │   │
-    │   └───logs
-    │           27.05.2026;13;00;00
+    │   └───iot-realm.json
     │
     ├───mariadb
-    │       01_tables.sql
-    │       02_archive_job.sql
-    │       03_db_write_user.sql
-    │       04_db_read_user.sql
-    │       05_db_admin_user.sql
+    │       (Initialisierungsskripte für die Datenbank)
     │
     ├───mosquitto
     │   ├───config
@@ -257,57 +198,12 @@ Erstellt mit MS-DOS `tree`
     ├───nginx
     │       nginx.conf
     │
-    ├───web-dashboard
-    │   └───grafana
-    │           dashboard.json
-    │           prometheus.yml
-    │
     └───webapp
-    │   Dockerfile
-    │   package-lock.json
-    │   package.json
-    │   server.js
-    │
-    ├───config
-    │       database.js
-    │
-    ├───node_modules
-    │
-    ├───public
-    │   │   index.html
-    │   │   test.html
-    │   │
-    │   ├───css
-    │   │       base.css
-    │   │       components.css
-    │   │       layout.css
-    │   │       main.css
-    │   │       status.css
-    │   │       theme.css
-    │   │
-    │   ├───external
-    │   │       chart.umd.js
-    │   │       keycloak.js
-    │   │
-    │   ├───img
-    │   │       LOGO.svg
-    │   │
-    │   └───js
-    │           api.js
-    │           auth.js
-    │           chart-axes.js
-    │           chart-colors.js
-    │           chart-datasets.js
-    │           chart-target-plugin.js
-    │           chart-utils.js
-    │           chart.js
-    │           events.js
-    │           main.js
-    │           theme.js
-    │
-    └───service
-            authentication.js
-            validateSensorPayload.js
+         │   (Hauptdateien für den Webserver)
+         │
+         └───public
+                 (Öffentliche Dateien für den Client)
+
 
 ## Deployment Diagramm
 
@@ -485,21 +381,10 @@ Gewährleistet, dass keine inkorekten Einträge in die Datenbank geschrieben wer
 
 #### server.js
 
-Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
+Hauptkomponente zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
 Datenbank.
 
 ## Installation und Inbetriebnahme
-
-# Temperatur- und Luftfeuchtigkeitsregulierer
-
-## Anforderungen
-
-* 2 Raspberry Pi 4s
-* 1 Pi Pico
-* Ein Netzwerkkabel mit Internetzugriff
-* 2 SD-Karten
-
-## Installation
 
 ### Pi Setup
 * Installiere das Raspberry Pi light Image auf beiden Pis
@@ -528,6 +413,9 @@ Datenbank.
 * Zum Starten der Software führe jetzt `sudo docker compose up` im Projektverzeichnis aus
 
 ## Bedienung
+
+Die Applikation lässt sich mit `sudo docker compose up/down` starten und beenden.  
+
 
 ## Fazit
 
