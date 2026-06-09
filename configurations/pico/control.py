@@ -24,7 +24,7 @@ pico_led.on()
 
 #========== Anhang ==========
 def scroll_text(text, zeile=0):
-    """Scrollt den Text auf dem LCD-Display von Rechts nach Links"""
+    """Scrolls the Text on the LCD-Display from right to left"""
     padded = " " * 16 + text + " " * 16
     prev   = ""
     for i in range(len(padded) - 15):
