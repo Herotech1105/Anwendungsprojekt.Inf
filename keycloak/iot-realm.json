@@ -18,7 +18,7 @@
         {
 
           "type": "password",
-          "value": "${IOTUSER01_PASSWORD}",
+          "value": "password",
           "temporary": false
         }
       ],
@@ -31,7 +31,7 @@
         {
           
           "type": "password",
-          "value": "${IOTUSER01_PASSWORD}",
+          "value": "password",
           "temporary": false
         }
       ],
@@ -43,7 +43,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "${ADMIN_PASSWORD}",
+          "value": "password",
           "temporary": false
         }
       ],
@@ -87,7 +87,7 @@
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
-      "secret": "${CONTROLLER_CLIENT_SECRET}"
+      "secret": "change-me-please"
     }
   ]
 }
