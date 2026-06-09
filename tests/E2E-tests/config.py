@@ -74,10 +74,13 @@ KC_NOROLE_PASSWORD = os.getenv("KC_NOROLE_PASSWORD", "password")
 # ---------------------------------------------------------------------------
 # MQTT Broker
 # ---------------------------------------------------------------------------
+# The E2E tests simulate the Pico, so they must use the 'iotuser' account
+# which has write access on sensor/data and read access on actuator/control.
+# (The 'testuser' account is the controller and can only READ sensor/data.)
 MQTT_HOST = os.getenv("MQTT_HOST", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "8883"))
-MQTT_USER = os.getenv("MQTT_USER", "testuser")
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "test")
+MQTT_USER = os.getenv("MQTT_USER", "iotuser")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "kleber")
 MQTT_SENSOR_TOPIC = os.getenv("MQTT_SENSOR_TOPIC", "sensor/data")
 MQTT_ACTUATOR_TOPIC = os.getenv("MQTT_ACTUATOR_TOPIC", "actuator/control")
 MQTT_TLS_INSECURE = os.getenv("MQTT_TLS_INSECURE", "true").lower() == "true"
