@@ -332,6 +332,11 @@ Hier liegen die Entrypoint Skripte für den Datenbank-Container. In diesen Skrip
 
 ### mosquitto
 
+Hier liegen die Konfigurationsdateien für den mosquitto-broker.  
+Unter config liegt die allgemeine Konfiguration, in der Port, Autorisierungsdateien und Zertifikate angegeben werden.  
+Unter log liegt eine leere log-file, die von mqtt nach dem Start verwendet wird.  
+Unter secure liegen die Anmeldedaten für mqtt.
+
 ### nginx
 
 ### webapp
