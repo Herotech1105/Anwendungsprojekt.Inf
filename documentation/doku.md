@@ -1,10 +1,11 @@
 # Temperatur- und Luftfeuchtigkeitsregulierer
 
 In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Temperatur entwickelt, dass die Messdaten sicher
-speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
-Die Anforderungen für das Endprodukt waren die folgenden:
+speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.
 
 ## Anforderungen und Struktur
+
+Die Anforderungen für das Endprodukt waren die folgenden:
 
 **Funktionale Anforderungen:**
 
