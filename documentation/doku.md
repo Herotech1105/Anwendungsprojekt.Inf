@@ -316,9 +316,19 @@ Generiert synthetische Trainingsdaten (30 Tage, Minutentakt) mit simulierter The
 
 ### environment
 
+Enthält die Umgebungsvariablen für die Services. Es war geplant, dass durch eine Änderung an dieser Stelle alle
+benötigten Änderungen für alle Services automatisch durchgeführt werden, aber wegen Zeitknappheit konnte dies leider
+nicht mehr implementiert werden. Probleme waren besonders die Zertifikate, die durch ein Skript neu generiert werden
+müssten.
+
 ### keycloak
 
 ### mariadb
+
+Hier liegen die Entrypoint Skripte für den Datenbank-Container. In diesen Skripten werden:
+* Tabellen für Sensordaten und ein Archiv angelegt
+* Ein Job konfiguriert, der einmal täglich alle Messwerte, die älter als eine Woche sind ins Archiv verschiebt
+* Nutzerrechte vergibt für einen iot-schreiber-, client-reader- und admin-export-Nutzer
 
 ### mosquitto
 
@@ -444,7 +454,6 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 * Verbinde den WLAN Pi über ein Netzwerkkabel mit dem Internet
 * Stelle eine Verbindung zum Pi via ssh her
 * Setze backend_mac_address in Zeile 4 in `/conficuration/wlan_ap_setup.py` auf die MAC-Addresse des Backends
-* Bei Bedarf können auch Passwort und SSID in den zwei folgenden Zeilen geändert werden
 * Führe `sudo apt install hostapd dnsmasq` auf dem Pi aus
 * Kopiere jetzt das Skript `wlan_ap_setup.py` auf den Pi und führe es mit root-Rechten aus
 
@@ -484,7 +493,7 @@ Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].
 Danach wird das Dashboard angezeigt.
 Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
 
-### E2E-tests Ergebnisse
+## E2E-tests Ergebnisse
 
 ## Fazit
 
