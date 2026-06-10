@@ -752,9 +752,10 @@ Beispiel-Prompt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Date
 Beispiel-Prompt: Erkläre mir was genau ich brauche um einen Controller zu bauen.
 
 https://gemini.google.com/app
-Google Gemini: Eingesetzt zur Fehlercode-Analyse.
+Google Gemini: Eingesetzt zur Fehlercode-Analyse und zur Fehlerfindung.
 Beispiel-Prompt: What is the source of the following error on python3.13 if it works on a python3.12-slim: "ca cert does
 not include key usage extension"
+Beispiel-Promt: Is the provided code fully functional or does it have errors
 
 https://copilot.microsoft.com/
 Microsoft Copilot: Eingesetzt für Fehleranalyse und Informationsrecherche.  
