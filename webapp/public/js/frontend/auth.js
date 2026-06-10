@@ -1,15 +1,41 @@
 // js/frontend/auth.js
+import { initEvents } from "./events.js";
+import { initThemeToggle } from "./theme.js";
+
 export let keycloak = null;
 
 export function initAuth() {
     keycloak = new Keycloak({
-        url: "https://auth.kleber.data/",
+        url: "https://local.kleber.data/auth",
         realm: "iot",
-        clientId: "iot-frontend"
+        clientId: "dashboard-client"
     });
 
-    keycloak.init({ onLoad: "login-required" }).then(() => {
+    // Login wird erzwungen, bevor irgendwas anderes passiert
+    keycloak.init({
+        onLoad: "login-required",
+        checkLoginIframe: false
+    }).then(authenticated => {
+
+        if (!authenticated) {
+            // Falls aus irgendeinem Grund nicht eingeloggt → Login erzwingen
+            keycloak.login();
+            return;
+        }
+
         updateUserInfo();
+
+        // Events & Theme erst NACH erfolgreichem Login starten
+        initEvents();
+        initThemeToggle();
+
+        // Token automatisch erneuern
+        setInterval(() => {
+            keycloak.updateToken(30).catch(() => keycloak.login());
+        }, 20000);
+
+    }).catch(err => {
+        console.error("Keycloak Init Error:", err);
     });
 }
 
