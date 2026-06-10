@@ -610,31 +610,35 @@ Erfahrungsgewinn des Teams.
 | Nr. | Funktion                            | Prio   | Bewertung                                                                                                                                                                                                    |
 |-----|-------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | FA1 | Sensormessung                       | Must   | Erfüllt; Der Pico misst realistische Werte                                                                                                                                                                   |
-| FA2 | Datenübertragung                    | Must   | Erfüllt; getestet in E2E test_1                                                                                                                                                                              |
+| FA2 | Datenübertragung                    | Must   | Erfüllt; getestet in E2E Test 1                                                                                                                                                                              |
 | FA3 | Automatische Temperatursteuerung    | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Temperatur kann erhöht und reduziert werden; Sollwerte sind aber zu weit von Außentemperatur entfernt, um diese zu erreichen                                |
 | FA4 | Automatische Feuchtigkeitssteuerung | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Luftfeuchtigkeit kann erhöht und reduziert werden; Programm ist mit der Temperaturanpassung stark ausgelastet; Luftfeuchtigkeit wird erst danach reguliert; |
 | FA5 | Web-Dashboard (Visualisierung)      | Must   | Erfüllt; Visualisiert SensorDaten der letzten Woche; Demonstration in Life-Demo                                                                                                                              |
-| FA6 | Manueller Eingriff                  | Must   | Nicht Erfüllt; Ausschließlich automatische Steuerung durch Backend                                                                                                                                           |
+| FA6 | Manueller Eingriff                  | Must   | Nicht Erfüllt; Ausschließlich automatische Steuerung durch controller; Aus Sicherheitsgründen keine Kommunikation zwischen Pico und Webserver                                                                |
 | FA7 | Datenspeicherung Kurzzeit           | Should | Erfüllt; Sensordaten werden eine Woche in einer Tabelle gespeichert und danach archiviert                                                                                                                    |
 | FA8 | Datenspeicherung Langzeit           | Should | Erfüllt; Sensordaten werden nach einer Woche Archiviert; Sind danach im Archiv gespeichert                                                                                                                   |
 
 Das Produkt erfüllt die wichtigsten funktionalen Anforderungen.
 Es fehlt aber der manuelle Eingriff vom Dashboard.
 Dieser wäre relevant, wenn das LSTM-Modell es nicht schafft die richtigen Steuersignale an den Pico zu schicken.
+Zur Kontrolle wurde in E2E Test 5 geprüft, ob der Controller bei kritisch hohen Temperaturen auf jeden Fall kühlt.
 
 **Nicht-funktionale Anforderungen:**
 
-| Nr.  | Anforderung                       | Prio   | Bewertung |
-|------|-----------------------------------|--------|-----------|
-| NFA1 | Sicherheit – Verschlüsselung      | Must   |           |
-| NFA2 | Authentifizierung & Autorisierung | Must   |           |
-| NFA3 | Netzwerkisolation                 | Must   |           |
-| NFA4 | Verfügbarkeit / Zuverlässigkeit   | Must   |           |
-| NFA5 | Kosteneffizienz                   | Must   |           |
-| NFA6 | Wartbarkeit                       | Should |           |
-| NFA7 | Mobilität / WLAN                  | Must   |           |
-| NFA8 | Datenschutz (DSGVO)               | Should |           |
-| NFA9 | Benutzbarkeit                     | Could  |           |
+| Nr.  | Anforderung                       | Prio   | Bewertung                                                                                                                                          |
+|------|-----------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| NFA1 | Sicherheit – Verschlüsselung      | Must   | Erfüllt; Alle Datentransporte sind durch selbstsignierte Zertifikate gesichert; getestet in E2E Test 6                                             |
+| NFA2 | Authentifizierung & Autorisierung | Must   | Erfüllt; Datenabfragen getestet mit E2E Test 7; Kein Zugriff auf Dashboard ohne gültige Anmeldung                                                  |
+| NFA3 | Netzwerkisolation                 | Must   | Erfüllt; Zugriff von außen durch nftables begrenzt auf mqtt Port 8883 und ssh Port 22                                                              |
+| NFA4 | Verfügbarkeit / Zuverlässigkeit   | Must   | Nicht erfüllt; Aus Sicherheitsgründen keine Kommunikation zwischen Pico und Webserver                                                              |
+| NFA5 | Kosteneffizienz                   | Must   | Erfüllt; Verwendete Software ist open-source; Zusätzliche Hardware wie das Peltier-Element kostet nur wenige Euro und liegt somit im Budget-Rahmen |
+| NFA6 | Wartbarkeit                       | Should | Erfüllt; Es wurden nur Standardisierte Bibliotheken und Docker Images verwendet                                                                    |
+| NFA7 | Mobilität / WLAN                  | Must   | Erfüllt; Kommunikation über eigenes Production-Wlan                                                                                                |
+| NFA8 | Datenschutz (DSGVO)               | Should | Erfüllt; Keine kritischen Daten; Sicherheit wird eingehalten                                                                                       |
+| NFA9 | Benutzbarkeit                     | Could  | Nach eigenen Ermessen erfüllt; Das Dashboard wird als Nutzerfreundlich genug eingeschätzt, um von IT-Fremden Personal bedient zu werden            |
+
+Die wichtigsten Nicht-Funktionalen Anforderungen sind erfüllt. In Bezug auf die Zuverlässigkeit wurde sich dafür
+entschieden aus Sicherheitsgründen auf manuelle Steuerung zu verzichten.
 
 ### Erfahrungsgewinn
 
