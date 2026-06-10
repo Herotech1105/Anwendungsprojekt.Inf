@@ -229,6 +229,7 @@ Liste mit übrigen Aufgaben
 | train.py           | Entfernt                                                                                                                                             | Wurde nicht mehr benötigt, weil die Trainingsmethode von model_trainer.py effizienter ist.                                                                                                                                                                                                           |
 |mariadb/05_db_admin_user.sql|Neu| Für Least Privalages wird ein Neuer User benötigt, um die erweiterten Rechte des Admins abzubilden.|
 |config/database.js & server.js| Dritter Connection-Pool getAdminPool() analog zu Read/Write hinzugefügt und neuer API Endpoint| Umsetzung von Least Privalages und erlaubt den Export beider Tabellen als CSV|
+|keycloak/iot-realm.json| Hinzufügung Admin-user und Test-User| Nötige Identitäten für automatisierten Test und Admin zugang|
 
 ## Projektstruktur
 
