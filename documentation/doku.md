@@ -323,6 +323,11 @@ müssten.
 
 ### keycloak
 
+Hier liegen die Daten des Identitäts und Zugangsrechte Verwaltungsystem (IAM).
+* Rollen: admin-user, dashboard-user, controller-ingest
+* Identitäten: testuser_norole, iotuser01, dashboard-user, admin, service-account-controller-client
+* Clients: dashboard-client, controller-client
+
 ### mariadb
 
 Hier liegen die Entrypoint Skripte für den Datenbank-Container. In diesen Skripten werden:
