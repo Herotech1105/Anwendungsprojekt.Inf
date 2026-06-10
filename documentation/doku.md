@@ -4,8 +4,32 @@ In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Tempera
 speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
 Die Anforderungen für das Endprodukt waren die folgenden:
 
-*
-*
+**Funktionale Anforderungen:**
+
+| Nr. | Funktion | Beschreibung | Prio |
+|-----|----------|-------------|------|
+| FA1 | Sensormessung | Das System misst regelmäßig (z. B. alle 60 s) Temperatur und Luftfeuchtigkeit an der Klebestation. | Must |
+| FA2 | Datenübertragung | Messwerte werden vom Mikrocontroller sicher über WLAN/MQTT an den Backend-Server übertragen. | Must |
+| FA3 | Automatische Temperatursteuerung | Temperatur wird automatisch im Bereich 19–21 °C gehalten (Aktor: Heizung/Lüfter, Regelung per LSTM). | Must |
+| FA4 | Automatische Feuchtigkeitssteuerung | Luftfeuchtigkeit wird automatisch im Bereich 40–55 % gehalten. | Must |
+| FA5 | Web-Dashboard (Visualisierung) | Mitarbeiter sehen den zeitlichen Verlauf von Temperatur und Luftfeuchtigkeit grafisch im Leitstand. | Must |
+| FA6 | Manueller Eingriff | Bei Ausfall der automatischen Steuerung können Mitarbeiter manuell über das Dashboard Aktoren steuern. | Must |
+| FA7 | Datenspeicherung Kurzzeit | Sensordaten werden für mindestens 7 Tage online in einer Datenbank abrufbar gespeichert. | Should |
+| FA8 | Datenspeicherung Langzeit | Ältere Daten werden für mindestens 3 Jahre archiviert und können bei Bedarf wieder eingespielt werden. | Should |
+
+**Nicht-funktionale Anforderungen:**
+
+| Nr. | Anforderung | Beschreibung | Prio |
+|-----|-------------|-------------|------|
+| NFA1 | Sicherheit – Verschlüsselung | Alle Sensor- und Steuerungsdaten werden verschlüsselt (TLS) übertragen. | Must |
+| NFA2 | Authentifizierung & Autorisierung | Zugriff auf das Web-Dashboard nur mit gültigem Benutzerkonto und Passwort (z. B. Keycloak/IAM). | Must |
+| NFA3 | Netzwerkisolation | Das WLAN der Klebestation ist durch eine Firewall vom Unternehmens-LAN getrennt; eingehender Verkehr wird blockiert. | Must |
+| NFA4 | Verfügbarkeit / Zuverlässigkeit | Bei Ausfall der automatischen Steuerung muss manueller Eingriff weiterhin möglich sein (kein Single Point of Failure). | Must |
+| NFA5 | Kosteneffizienz | Gesamtkosten für Hardware und Software unter 10.000 €; Software soll Open Source sein. | Must |
+| NFA6 | Wartbarkeit | Betrieb mit standardisierten Docker-Containern für einfache Updates und Wartung. | Should |
+| NFA7 | Mobilität / WLAN | Kommunikation über WLAN, da die Klebestation häufig räumlich verschoben wird und Kabel nicht praktikabel sind. | Must |
+| NFA8 | Datenschutz (DSGVO) | Sensordaten sind keine personenbezogenen Daten — datenschutzrechtlich unkritisch, Compliance dennoch prüfen. | Should |
+| NFA9 | Benutzbarkeit | Das Dashboard muss für Leitstandmitarbeiter ohne IT-Kenntnisse intuitiv bedienbar sein. | Could |
 
 Zur Erarbeitung des
 Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
@@ -35,6 +59,19 @@ Projektplan: ![Gantt_Phase1.pdf](Phase_1/Phase1.png)
 | [AnwendungInfoEli.pdf](Phase_1/AnwendungInfoEli.pdf)     | N/A      | Beschreibung der Anwendung und Projektidee mit Zielsetzung und Rahmenbedingungen    |
 | [Machbarkeitstudie1.pdf](Phase_1/Machbarkeitstudie1.pdf) | N/A      | Machbarkeitsstudie zur technischen und wirtschaftlichen Umsetzbarkeit des Projektes |
 | [6Phasen.png](Phase_1/6Phasen.png)                       | N/A      | Erstmalige Verteilung der ersten Phasen                                             |
+
+**Machbarkeitsstudie:**
+
+| Technik | Gegenstand der Bewertung | Bewertung |
+|---------|--------------------------|-----------|
+| Technische Machbarkeit | Personal und Fachkompetenz; Hardware; Software | Vorkenntnisse in Web-Entwicklung und teilweise Elektrotechnik vorhanden; Hardware bereits gestellt; ausschließlich Open-Source-Software verwendbar |
+| Wirtschaftliche Machbarkeit | Investitionskosten; Entwicklungskosten; Wartungskosten; Betriebskosten | Hardware bereits gestellt; kostenlose Software, keine Personalkosten; Betriebskosten beschränken sich auf Stromverbrauch und möglichen Hardware-Verschleiß |
+| Organisatorische Machbarkeit | Integration in bestehende Systeme; Fachkenntnisse für Betrieb | Keine bestehende Systemlandschaft, keine Integration notwendig; Betrieb erfordert keine spezifischen Fachkenntnisse nach Demonstration |
+| Zeitliche Machbarkeit | Zeit für Kompetenzgewinn; Zeit für Entwicklungsarbeit | Benötigte Kompetenzen können im Zeitrahmen erworben werden; ab dem 28.04.2026 ist die verfügbare Entwicklungszeit ausreichend |
+| Rechtliche Machbarkeit | Personenbezogene Daten; Schutz erhobener Daten | Keine personenbezogenen Daten erhoben; Daten können durch Security-By-Design geschützt werden |
+| Risiken und Gegenmaßnahmen | Frühere Abgabe; Verzug durch langsame Arbeit oder größeren Zeitaufwand bei Kompetenzaneignung | Risiko gering; Verzug wahrscheinlich, Gegenmaßnahme: Überstunden |
+
+**Machbarkeitsbericht:** Das Projekt wird unter den oben angegebenen Umständen als durchführbar eingestuft.
 
 Plan für die nächsten Phasen:  
 ![Phasenplan](./Phase_1/6Phasen.png)
