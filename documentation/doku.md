@@ -19,22 +19,25 @@ Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
 
 ## Phasen (Patchnotes)
 
-Die Präsentationen zu den einzelnen Phasen sind als PDF und Powerpoint/Google Presentation i Verzeichnis zu
+Die Präsentationen zu den einzelnen Phasen sind als PDF im jeweiligen Verzeichnis zu
 finden.  
-Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgegliedert
+Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgegliedert:
 
 ### Phase 1:
 
 Datum: 11.04.2026 - 23.04.2026  
 Problemstellung: Planung des Projektes und dessen 6 Phasen  
 Verantwortlicher: Jannis Weber  
-GANT-Diagramm: ![Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
+GANT-Diagramm: ![Gantt_Phase1.pdf](Phase_1/Phase1.png)
 
 | Datei                                                    | Änderung | Erklärung                                                                           |
 |----------------------------------------------------------|----------|-------------------------------------------------------------------------------------|
 | [AnwendungInfoEli.pdf](Phase_1/AnwendungInfoEli.pdf)     | N/A      | Beschreibung der Anwendung und Projektidee mit Zielsetzung und Rahmenbedingungen    |
 | [Machbarkeitstudie1.pdf](Phase_1/Machbarkeitstudie1.pdf) | N/A      | Machbarkeitsstudie zur technischen und wirtschaftlichen Umsetzbarkeit des Projektes |
 | [6Phasen.png](Phase_1/6Phasen.png)                       | N/A      | Erstmalige Verteilung der ersten Phasen                                             |
+
+Plan für die nächsten Phasen:  
+![Phasenplan](./Phase_1/6Phasen.png)
 
 ### Phase 2:
 
@@ -43,8 +46,7 @@ Problemstellung: Deployment der Kern-Infrastruktur
 Verantwortlicher: Benjamin Hager  
 GANT-Diagramm:
 ![GANT Diagramm Phase 2](./Phase_2/phase-2-gantt.svg)
-Deployment-Diagramm:  
-
+Deployment-Diagramm:
 
 | Datei                           | Änderung                                                                                                                   | Erklärung                                                                                                                                                                                                                                                                             |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -473,7 +475,6 @@ Danach wird das Dashboard angezeigt.
 Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
 
 ### E2E-tests Ergebnisse
-
 
 ## Fazit
 
