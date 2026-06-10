@@ -3,6 +3,7 @@ import { getSensorRange } from "../frontend/api.js";
 import { getAxesConfig } from "./chart-axes.js";
 import { getDatasets } from "./chart-datasets.js";
 import { targetRangePlugin } from "./chart-target-plugin.js";
+import { getChartColors } from "./chart-colors.js";
 
 const ChartLib = window.Chart;
 
@@ -42,6 +43,8 @@ export async function renderRange(from, to) {
         canvas.style.display = "block";
 
         if (chart) chart.destroy();
+
+        ChartLib.defaults.color = getChartColors().text;
 
         chart = new ChartLib(ctx, {
             type: "line",
