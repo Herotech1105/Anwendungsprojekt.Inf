@@ -728,7 +728,7 @@ Bambu Lab P1S-Drucker: Drucken der 3D-Modelle
 Google Übersetzer: Deutsch zu Englisch
 
 https://claude.ai/
-Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation.
+Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen, zusammenfassen/erklälaren und Dokumentation.
 Beispiel-Prompt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu
 verändern
 Beispiel-Prompt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
