@@ -142,7 +142,8 @@ GANT-Diagramm:
 Datum:  22.05.2026 - 28.05.2026
 Problemstellung:  Sichere Web-Applikation (AuthN/AuthZ mit Keycloak)
 Verantwortlicher:  Barnabas Steiner
-GANT-Diagramm:
+GANT-Diagramm: 
+[GANT Diagramm Phase 6](./Phase_6/GanttPh6.drawio.svg)
 
 | Datei                                   | Änderung                                                                                                                    | Erklärung                                                                                                                    |
 |-----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
