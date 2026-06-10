@@ -36,13 +36,16 @@ export function initEvents() {
     document.getElementById("logoutBtn").addEventListener("click", logout);
 
     document.getElementById("loadDataBtn").addEventListener("click", () => {
-        const from = document.getElementById("from").value;
-        const to = document.getElementById("to").value || new Date().toISOString();
+        const fromDate = document.getElementById("from").value;
+        const toDate = document.getElementById("to").value;
 
-        if (!from) {
-            alert("Bitte Startzeit auswählen");
+        if (!fromDate) {
+            alert("Bitte Startdatum auswählen");
             return;
         }
+
+        const from = fromDate + "T00:00:00";
+        const to = toDate ? toDate + "T23:59:59" : new Date().toISOString();
 
         window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
     });
