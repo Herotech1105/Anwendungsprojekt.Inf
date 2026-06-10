@@ -314,6 +314,16 @@ Trainingsscript für das LSTM-Modell. Liest CSV-Daten, erstellt Sliding-Window-S
 
 Generiert synthetische Trainingsdaten (30 Tage, Minutentakt) mit simulierter Thermostat-Logik.
 
+### environment
+
+### keycloak
+
+### mariadb
+
+### mosquitto
+
+### nginx
+
 ### webapp
 
 #### config/database.js
@@ -470,7 +480,7 @@ ob das Backend ´mit dem zugehörigen WLAN verbunden ist).
 Der Pico wird durch Ausführen der `main.py` gestartet.
 Nach dem Start kann eine Verbindung zum Netzwerk aufgebaut werden und
 unter [https://local.kleber.data](https://local.kleber.data) das Web Dashboard besucht werden.  
-Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].
+Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].  
 Danach wird das Dashboard angezeigt.
 Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
 
