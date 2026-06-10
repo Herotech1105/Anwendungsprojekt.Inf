@@ -390,6 +390,12 @@ Unter secure liegen die Anmeldedaten für mqtt.
 
 ### nginx
 
+Unter nginx liegt die entsprechende Konfigurationsdatei `nginx.conf`.  
+In dieser werden Private Key und öffentliches Zertifikat spezifiziert und mehrere reverse-proxys definiert.
+Einmal bei https auf /auth zu keycloak.  
+Dann bei https auf / zum webserver.  
+Und auf http eine Umleitung auf https.
+
 ### webapp
 
 Unter webapp liegen alle Dateien für den webserver Container.
