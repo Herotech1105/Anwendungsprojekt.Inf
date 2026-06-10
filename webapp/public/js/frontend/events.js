@@ -28,7 +28,7 @@ function getUserRoles() {
 }
 
 function isAdmin() {
-    return getUserRoles().includes("admin");
+    return getUserRoles().includes("admin-user");
 }
 
 export function initEvents() {
