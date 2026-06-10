@@ -103,7 +103,7 @@ input:checked + .slider:before {
     gap: 10px;
 }
 
-/* --- Range Buttons (smaller than Standard-Buttons) --- */
+/* --- Range Buttons --- */
 .range-btn {
     padding: 6px 12px;
     font-size: 0.9rem;
@@ -121,4 +121,10 @@ input:checked + .slider:before {
 
 .range-btn:active {
     transform: translateY(0);
+}
+
+/* --- Aktiver Range Button --- */
+.range-btn.active-range {
+    background: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.4);
 }

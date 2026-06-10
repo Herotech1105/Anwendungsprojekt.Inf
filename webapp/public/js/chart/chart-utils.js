@@ -1,4 +1,5 @@
-// chart-utils.js
+// js/chart/chart-utils.js
+
 export function formatTimestampParts(ts) {
     const d = new Date(ts);
 
@@ -13,17 +14,4 @@ export function formatTimestampParts(ts) {
         date: `${day}.${month}.${year}`,
         time: `${hours}:${minutes}`
     };
-}
-
-export function getTickIntervalMs(rangeHours) {
-    if (rangeHours <= 1) {
-        return 10 * 60 * 1000; // 10 Minuten
-    }
-    if (rangeHours <= 10) {
-        return 2 * 60 * 60 * 1000; // 2 Stunden
-    }
-    if (rangeHours <= 24) {
-        return 4 * 60 * 60 * 1000; // 4 Stunden
-    }
-    return null; // FROM–TO → auto
 }

@@ -7,6 +7,18 @@
     color: white;
     padding: 10px 40px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+    /* Fixierter Header */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+/* Inhalt nach unten schieben */
+body {
+    padding-top: 80px;
 }
 
 .topbar-right {
@@ -43,3 +55,4 @@
     align-items: center;
     gap: 20px;
 }
+

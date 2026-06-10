@@ -1,4 +1,4 @@
-// chart-colors.js
+// js/chart/chart-colors.js
 export function getChartColors() {
     const dark = document.body.classList.contains("dark");
 

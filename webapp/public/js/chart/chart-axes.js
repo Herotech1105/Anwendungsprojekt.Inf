@@ -1,24 +1,7 @@
-// chart-axes.js
+// js/chart/chart-axes.js
 import { getChartColors } from "./chart-colors.js";
 
-function parseLabelToDate(label) {
-    if (label == null) return null;
-
-    if (typeof label === "number" || (/^\d+$/.test(String(label)) && String(label).length > 9)) {
-        const ms = Number(label);
-        const d = new Date(ms);
-        if (!isNaN(d.getTime())) return d;
-    }
-
-    if (typeof label === "string") {
-        const d = new Date(label);
-        if (!isNaN(d.getTime())) return d;
-    }
-
-    return null;
-}
-
-export function getAxesConfig(tickIntervalMs) {
+export function getAxesConfig() {
     const c = getChartColors();
 
     return {
@@ -27,25 +10,20 @@ export function getAxesConfig(tickIntervalMs) {
             ticks: {
                 color: c.text,
                 maxRotation: 0,
-                autoSkip: false,
+                autoSkip: true,
                 font: { weight: "600", size: 12 },
-
-                callback: function(value, index, ticks) {
-                    const rawLabel = this.getLabelForValue(value);
-                    if (!rawLabel) return "";
-
-                    const d = parseLabelToDate(rawLabel);
-                    if (!d) {
-                        console.debug("[chart-axes] could not parse label", rawLabel);
-                        return "";
-                    }
+                callback: function (value) {
+                    const raw = this.getLabelForValue(value);
+                    const d = new Date(raw);
+                    if (isNaN(d.getTime())) return raw;
 
                     const date = d.toLocaleDateString("de-DE");
-                    const time = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+                    const time = d.toLocaleTimeString("de-DE", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
 
-                    const interval = Math.max(1, Math.ceil(ticks.length / 8));
-                    if (index % interval === 0) return [date, time];
-                    return "";
+                    return `${date} ${time}`;
                 }
             },
             grid: { color: c.text + "33" }

@@ -1,69 +1,89 @@
 <!DOCTYPE html>
 <html lang="de">
-    <head>
-        <meta charset="UTF-8" />
-        <title>IoT Dashboard</title>
+<head>
+    <meta charset="UTF-8" />
+    <title>IoT Dashboard</title>
 
-        <link rel="icon" href="img/LOGO.svg" />
-        <link rel="stylesheet" href="css/main.css">
-    </head>
+    <link rel="icon" href="img/LOGO.svg" />
+    <link rel="stylesheet" href="css/main.css">
 
-    <body>
-        <header class="topbar">
-            <h1>IoT Dashboard</h1>
+    <style>
+        /* Fixierter Header */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
 
-            <div class="topbar-right">
-                <div id="userInfo" class="user-info"></div>
+        /* Damit der Inhalt nicht unter dem Header verschwindet */
+        body {
+            padding-top: 80px;
+        }
+    </style>
+</head>
 
-                <div class="darkmode-wrapper">
-                    <span class="darkmode-label">Dark Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+<body>
+<header class="topbar">
+    <h1>IoT Dashboard</h1>
+
+    <div class="topbar-right">
+        <div id="userInfo" class="user-info"></div>
+
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+
+        <div class="darkmode-wrapper">
+            <span class="darkmode-label">Dark Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <section class="card controls">
+        <h2>Zeitraum wählen</h2>
+
+        <div class="input-row horizontal">
+            <label>
+                Von:
+                <input type="datetime-local" id="from">
+            </label>
+
+            <label>
+                Bis:
+                <input type="datetime-local" id="to">
+            </label>
+
+            <button id="loadDataBtn">Daten laden</button>
+            <button id="exportBtn">Export Data</button>
+        </div>
+    </section>
+
+    <section class="card chart-card">
+        <div class="chart-header">
+            <h2>Sensordaten</h2>
+
+            <div id="rangeButtons" class="range-buttons">
+                <button class="range-btn" data-range="1">1 Stunde</button>
+                <button class="range-btn" data-range="10">10 Stunden</button>
+                <button class="range-btn" data-range="24">24 Stunden</button>
             </div>
-        </header>
+        </div>
 
-        <main class="container">
-            <section class="card controls">
-                <h2>Zeitraum wählen</h2>
+        <div id="chartStatus"></div>
+        <canvas id="sensorChart"></canvas>
+    </section>
+</main>
 
-                <div class="input-row horizontal">
-                    <label>
-                        Von:
-                        <input type="datetime-local" id="from">
-                    </label>
+<script src="external/keycloak.js"></script>
+<script src="external/chart.umd.js"></script>
 
-                    <label>
-                        Bis:
-                        <input type="datetime-local" id="to">
-                    </label>
-
-                    <button id="loadDataBtn">Daten laden</button>
-                    <button id="logoutBtn" class="logout-btn">Logout</button>
-                </div>
-            </section>
-
-            <section class="card chart-card">
-                <div class="chart-header">
-                    <h2>Sensordaten</h2>
-
-                    <div id="rangeButtons" class="range-buttons" style="display:none;">
-                        <button class="range-btn" data-range="1">1 Stunde</button>
-                        <button class="range-btn" data-range="10">10 Stunden</button>
-                        <button class="range-btn" data-range="24">24 Stunden</button>
-                    </div>
-                </div>
-
-                <div id="chartStatus"></div>
-                <canvas id="sensorChart"></canvas>
-            </section>
-        </main>
-
-        <script src="external/keycloak.js"></script>
-        <script src="external/chart.umd.js"></script>
-
-        <script type="module" src="js/main.js"></script>
-    </body>
+<!-- Neue Ordnerstruktur -->
+<script type="module" src="js/frontend/main.js"></script>
+</body>
 </html>
+

@@ -1,4 +1,4 @@
-// chart-target-plugin.js
+// js/chart/chart-target-plugin.js
 import { getChartColors } from "./chart-colors.js";
 
 export const targetRangePlugin = {

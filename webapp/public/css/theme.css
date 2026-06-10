@@ -46,3 +46,8 @@ body.dark .range-btn {
 body.dark .range-btn:hover {
     background: #2563eb;
 }
+
+body.dark .range-btn.active-range {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.4);
+}
