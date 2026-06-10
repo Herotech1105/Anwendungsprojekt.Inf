@@ -1,0 +1,397 @@
+pi@Backend:~/Anwendungsprojekt.Inf/tests/E2E-tests $ ./bin/python3.12 run_all.py
+
+
+
+======================================================================
+
+  E2E TEST SUITE  —  All Tests
+
+  2026-06-10 09:48:42
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 1: Sensor -> DB (test_1_sensor_to_db.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 1: Sensor Data -> Database (Happy Path)
+
+  2026-06-10 09:48:42
+
+======================================================================
+
+
+
+  [PASS]  Dashboard token obtained (user: iotuser01)
+
+
+
+  Publishing MQTT message: temp=17.77, hum=44.33
+
+  Topic: sensor/data @ localhost:8883
+
+
+
+  [PASS]  MQTT message published
+
+
+
+  Waiting 10.0s for data to flow through the pipeline...
+
+
+
+  [PASS]  Backend returned sensor data range
+
+         Status 200
+
+  [PASS]  Test temperature found in DB
+
+         Found 17.77 among 1 entries in time window
+
+
+
+======================================================================
+
+  RESULT:  4 passed / 0 failed / 0 skipped / 4 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 2: Keycloak Token Flow (test_2_keycloak_token_flow.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 2: Keycloak Token Flow (Client Credentials)
+
+  2026-06-10 09:49:03
+
+======================================================================
+
+
+
+  [PASS]  Token retrieved from Keycloak
+
+         expires_in=300s
+
+  [PASS]  Token is valid JWT format (header.payload.signature)
+
+  [PASS]  Role 'controller-ingest' present in token
+
+         All roles: ['controller-ingest']
+
+  [PASS]  Token not expired
+
+         299s remaining
+
+  [PASS]  Backend validates Bearer token on /api/sensordata
+
+         Status 200
+
+
+
+======================================================================
+
+  RESULT:  5 passed / 0 failed / 0 skipped / 5 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 3: No Auth Rejected (test_3_no_auth_rejected.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 3: Unauthenticated Requests Rejected
+
+  2026-06-10 09:49:04
+
+======================================================================
+
+
+
+  [PASS]  POST /api/internal/sensordata without auth -> 401
+
+  [PASS]  POST with wrong API key -> 401
+
+  [PASS]  GET /api/sensordata without Bearer -> 401
+
+  [PASS]  GET with invalid Bearer token -> 403
+
+
+
+======================================================================
+
+  RESULT:  4 passed / 0 failed / 0 skipped / 4 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 4: Invalid Data Rejected (test_4_invalid_data_rejected.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 4: Invalid Sensor Data Rejected
+
+  2026-06-10 09:49:05
+
+======================================================================
+
+
+
+  [PASS]  Dashboard token obtained (user: iotuser01)
+
+  [PASS]  Baseline DB entry fetched
+
+         id/timestamp: 130
+
+  -> Published: Temperature out of range (999)
+
+  -> Published: Humidity out of range (-50)
+
+  -> Published: Not valid JSON
+
+  -> Published: Missing humidity field
+
+  -> Published: Non-numeric values
+
+
+
+  Waiting 10.0s...
+
+
+
+  [PASS]  No new DB entry after invalid messages
+
+         Latest entry still: 130
+
+
+
+======================================================================
+
+  RESULT:  3 passed / 0 failed / 0 skipped / 3 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 5: Actuator Control (test_5_actuator_control.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 5: Actuator Control (High Temperature -> COOL)
+
+  2026-06-10 09:49:52
+
+======================================================================
+
+
+
+  [PASS]  Subscribed to 'actuator/control'
+
+  Publishing 15 messages with temp=35.0...
+
+
+
+  [PASS]  15 sensor messages published
+
+  Waiting 10.0s for actuator response...
+
+
+
+  [PASS]  Received 'COOL' on actuator/control
+
+         All commands received: ['COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL', 'COOL']
+
+
+
+======================================================================
+
+  RESULT:  3 passed / 0 failed / 0 skipped / 3 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 6: TLS Validation (test_6_tls_validation.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 6: TLS Certificate Validation
+
+  2026-06-10 09:50:18
+
+======================================================================
+
+
+
+  [PASS]  CA certificate file exists (../../CA/ca.crt)
+
+         Size: 1115 bytes
+
+  [PASS]  HTTPS request with correct CA succeeds
+
+         Status 200
+
+  [PASS]  HTTPS with wrong CA rejected (SSLError raised)
+
+
+
+======================================================================
+
+  RESULT:  3 passed / 0 failed / 0 skipped / 3 total
+
+======================================================================
+
+
+
+
+
+######################################################################
+
+  Running: Test 7: Dashboard Access (test_7_dashboard_access.py)
+
+######################################################################
+
+
+
+======================================================================
+
+  TEST 7: Dashboard Access (Role-Based)
+
+  2026-06-10 09:50:29
+
+======================================================================
+
+
+
+  --- 7a: Admin user ---
+
+
+
+  [PASS]  Login as 'admin'
+
+  [PASS]  Admin GET /api/sensordata -> 200 OK
+
+  [PASS]  Admin GET /api/admin/export -> 200 OK
+
+         Content-Type: text/csv; charset=utf-8
+
+
+
+  --- 7b: Normal user ---
+
+
+
+  [PASS]  Login as 'iotuser01'
+
+  [PASS]  User GET /api/sensordata -> 200 OK
+
+  [PASS]  User GET /api/admin/export -> 403 Forbidden
+
+
+
+  --- 7c: User without 'dashboard-user' role ---
+
+
+
+  [PASS]  Login as 'testuser_norole' (no roles)
+
+  [PASS]  No-role user GET /api/sensordata -> 403 Forbidden
+
+         AuthN passed but AuthZ denied (correct behavior)
+
+
+
+======================================================================
+
+  RESULT:  8 passed / 0 failed / 0 skipped / 8 total
+
+======================================================================
+
+
+
+
+
+
+
+======================================================================
+
+  COMBINED SUMMARY
+
+======================================================================
+
+
+
+  [PASS]  Test 1: Sensor -> DB
+
+  [PASS]  Test 2: Keycloak Token Flow
+
+  [PASS]  Test 3: No Auth Rejected
+
+  [PASS]  Test 4: Invalid Data Rejected
+
+  [PASS]  Test 5: Actuator Control
+
+  [PASS]  Test 6: TLS Validation
+
+  [PASS]  Test 7: Dashboard Access
+
+
+
+======================================================================
+
+  7/7 test suites passed, 0 failed
+
+======================================================================
