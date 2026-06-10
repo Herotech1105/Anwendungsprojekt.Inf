@@ -10,42 +10,68 @@ let chart = null;
 let lastFrom = null;
 let lastTo = null;
 
+function setStatus(type, text) {
+    const el = document.getElementById("chartStatus");
+    if (!el) return;
+
+    el.className = "";
+    if (type) el.classList.add(`status-${type}`);
+    el.textContent = text;
+}
+
 export async function renderRange(from, to) {
     lastFrom = from;
     lastTo = to;
 
-    const data = await getSensorRange(from, to);
+    const canvas = document.getElementById("sensorChart");
+    const ctx = canvas.getContext("2d");
 
-    if (!data || !data.labels || data.labels.length === 0) {
-        document.getElementById("chartStatus").textContent = "Keine Daten";
-        return;
-    }
+    try {
+        const data = await getSensorRange(from, to);
 
-    const ctx = document.getElementById("sensorChart").getContext("2d");
-    if (chart) chart.destroy();
+        if (!data || !data.labels || data.labels.length === 0) {
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+            canvas.style.display = "none";
+            setStatus("info", "Keine Daten im gewählten Zeitraum.");
+            return;
+        }
 
-    chart = new ChartLib(ctx, {
-        type: "line",
-        data: {
-            labels: data.labels,
-            datasets: getDatasets(data)
-        },
-        options: {
-            responsive: true,
-            scales: getAxesConfig(),
-            plugins: {
-                legend: {
-                    labels: {
-                        font: { weight: "600", size: 14 }
+        canvas.style.display = "block";
+
+        if (chart) chart.destroy();
+
+        chart = new ChartLib(ctx, {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: getDatasets(data)
+            },
+            options: {
+                responsive: true,
+                scales: getAxesConfig(),
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: { weight: "600", size: 14 }
+                        }
                     }
                 }
-            }
-        },
-        plugins: [targetRangePlugin]
-    });
+            },
+            plugins: [targetRangePlugin]
+        });
 
-    document.getElementById("chartStatus").textContent =
-        `${data.labels.length} Werte geladen`;
+        setStatus("success", `${data.labels.length} Werte geladen`);
+    } catch (err) {
+        if (chart) {
+            chart.destroy();
+            chart = null;
+        }
+        canvas.style.display = "none";
+        setStatus("error", "Fehler beim Laden der Daten.");
+    }
 }
 
 export function rebuildChart() {

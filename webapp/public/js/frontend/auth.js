@@ -13,7 +13,6 @@ export function initAuth() {
         clientId: "dashboard-client"
     });
 
-    // auch global verfügbar machen – wie früher
     window.keycloak = keycloak;
 
     keycloak.init({
@@ -27,11 +26,9 @@ export function initAuth() {
 
         updateUserInfo();
 
-        // erst NACH erfolgreichem Login:
         initEvents();
         initThemeToggle();
 
-        // Token regelmäßig erneuern (wie in vielen Keycloak-Beispielen)
         setInterval(() => {
             keycloak.updateToken(30).catch(() => keycloak.login());
         }, 20000);

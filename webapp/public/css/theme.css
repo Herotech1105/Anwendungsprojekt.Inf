@@ -8,6 +8,18 @@ body.dark .topbar {
     background: #0f172a;
 }
 
+body.dark h1 {
+    color: #e5e7eb;
+}
+
+body.dark .user-info {
+    color: #e5e7eb;
+}
+
+body.dark label {
+    color: #e5e7eb;
+}
+
 body.dark .card {
     background: #1e293b;
     color: #e5e7eb;

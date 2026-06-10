@@ -2,12 +2,17 @@
 import { logout, keycloak } from "./auth.js";
 import { exportDatabase } from "./api.js";
 
+function isAdmin() {
+    const rolesFromToken = keycloak.tokenParsed?.realm_access?.roles || [];
+    const rolesFromRealm = keycloak.realmAccess?.roles || [];
+    const roles = [...new Set([...rolesFromToken, ...rolesFromRealm])];
+    return roles.includes("admin");
+}
+
 export function initEvents() {
 
-    // Logout
     document.getElementById("logoutBtn").addEventListener("click", logout);
 
-    // Daten laden
     document.getElementById("loadDataBtn").addEventListener("click", () => {
         const from = document.getElementById("from").value;
         const to = document.getElementById("to").value || new Date().toISOString();
@@ -20,25 +25,21 @@ export function initEvents() {
         window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
     });
 
-    // Export nur für Admins
-    document.getElementById("exportBtn").addEventListener("click", () => {
-        const roles = keycloak.tokenParsed?.realm_access?.roles || [];
+    const exportBtn = document.getElementById("exportBtn");
 
-        if (!roles.includes("admin")) {
-            alert("Nur Admins dürfen exportieren.");
-            return;
-        }
+    if (!isAdmin()) {
+        exportBtn.style.display = "none";
+    } else {
+        exportBtn.style.display = "inline-block";
+        exportBtn.addEventListener("click", () => {
+            exportDatabase();
+        });
+    }
 
-        exportDatabase();
-    });
-
-    // Range Buttons
     const rangeButtons = document.querySelectorAll(".range-btn");
 
     rangeButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-
-            // Aktiven Button markieren
             rangeButtons.forEach(b => b.classList.remove("active-range"));
             btn.classList.add("active-range");
 

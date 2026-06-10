@@ -23,7 +23,8 @@ export function getAxesConfig() {
                         minute: "2-digit"
                     });
 
-                    return `${date} ${time}`;
+                    // zweizeilig: erste Zeile Datum, zweite Zeile Uhrzeit
+                    return [date, time];
                 }
             },
             grid: { color: c.text + "33" }
