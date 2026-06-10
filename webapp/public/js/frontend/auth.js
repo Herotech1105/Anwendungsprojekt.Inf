@@ -4,9 +4,7 @@ import { initThemeToggle } from "./theme.js";
 
 export let keycloak = null;
 
-/*
-* Initializes keycloak authentication
-*/
+// Initializes keycloak authentication
 export function initAuth() {
     const KeycloakCtor = window.Keycloak;
 
@@ -40,16 +38,12 @@ export function initAuth() {
     });
 }
 
-/*
-* Keycloak Logout
-*/
+// Keycloak Logout
 export function logout() {
     keycloak.logout();
 }
 
-/*
-* Shows logged-in user
-*/
+// Shows logged-in user
 function updateUserInfo() {
     const el = document.getElementById("userInfo");
     if (!el) return;

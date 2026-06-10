@@ -1,4 +1,4 @@
-# CA mit eigenem CN
+# CA with own CN
 openssl genrsa -out ca.key 2048
 
 openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
@@ -13,12 +13,12 @@ openssl req -new -key mqtt.key -out mqtt.csr \
 openssl x509 -req -days 3650 -in mqtt.csr \
   -CA ca.crt -CAkey ca.key -CAcreateserial -out mqtt.crt
 
-# Prüfen
+# Check
 openssl verify -CAfile ca.crt mqtt.crt
 
-### SAN für CA
+### SAN for CA
 
-# 1. Config Datei erstellen (san.cnf)
+# 1. Create config file (san.cnf)
 [req]
 distinguished_name = req_distinguished_name
 req_extensions = v3_req
@@ -37,15 +37,15 @@ DNS.2 = mosquitto
 DNS.3 = localhost
 DNS.4 = mqtt.local
 
-# 2. Neuen CSR erstellen
+# 2. Create new CSR
 openssl req -new -key mqtt.key -out mqtt.csr -config san.cnf
 
-# 3. Zertifikat mit SAN signieren
+# 3. Sign certificate with SAN
 openssl x509 -req -days 3650 -in mqtt.csr \
   -CA ca.crt -CAkey ca.key -CAcreateserial \
   -out mqtt.crt -extensions v3_req -extfile san.cnf
 
-# 4. Prüfen
+# 4. Check
 openssl verify -CAfile ca.crt mqtt.crt
 
 openssl x509 -in mqtt.crt -noout -text | grep -A3 "Subject Alternative"

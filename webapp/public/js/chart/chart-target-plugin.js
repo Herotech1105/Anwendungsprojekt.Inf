@@ -1,9 +1,7 @@
 // js/chart/chart-target-plugin.js
 import { getChartColors } from "./chart-colors.js";
 
-/*
-* Colors the background ranges of temperature and humidity before chart is rendered
-*/
+// Colors the background ranges of temperature and humidity before chart is rendered
 export const targetRangePlugin = {
     id: "targetRangePlugin",
     beforeDraw(chart) {

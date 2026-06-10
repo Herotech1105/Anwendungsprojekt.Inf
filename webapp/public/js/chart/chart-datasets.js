@@ -1,9 +1,7 @@
 // js/chart/chart-datasets.js
 import { getChartColors } from "./chart-colors.js";
 
-/*
-* Visual y-axes of temperature and humidity ranges for chart
-*/
+// Visual y-axes of temperature and humidity ranges for chart
 export function getDatasets(data) {
     const c = getChartColors();
 

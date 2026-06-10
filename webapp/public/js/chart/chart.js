@@ -11,9 +11,8 @@ let chart = null;
 let lastFrom = null;
 let lastTo = null;
 
-/*
-* Sets chart status
-*/
+
+// Sets chart status
 function setStatus(type, text) {
     const el = document.getElementById("chartStatus");
     if (!el) return;
@@ -23,9 +22,7 @@ function setStatus(type, text) {
     el.textContent = text;
 }
 
-/*
-* Renders the visual chart
-*/
+// Renders the visual chart
 export async function renderRange(from, to) {
     lastFrom = from;
     lastTo = to;
@@ -83,9 +80,7 @@ export async function renderRange(from, to) {
     }
 }
 
-/*
-* Destroys and rebuilds the Chart
-*/
+// Destroys and rebuilds the Chart
 export function rebuildChart() {
     if (lastFrom && lastTo) {
         renderRange(lastFrom, lastTo);

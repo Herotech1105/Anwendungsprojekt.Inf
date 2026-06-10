@@ -1,3 +1,5 @@
+// config/database.js
+
 require('dotenv').config(); // use .env file
 const DB_HOST = process.env.DB_HOST
 const DB_WRITE_USER = process.env.DB_WRITE_USER
@@ -11,6 +13,7 @@ let readPool;
 let writePool;
 let adminPool;
 
+// Lazy Initialization (Only creates when needed) for writePool
 async function getWritePool() {
     if (!writePool) {
         const mariadb = await import('mariadb');
@@ -25,6 +28,7 @@ async function getWritePool() {
     return writePool;
 }
 
+// Lazy Initialization for readPool
 async function getReadPool() {
     if (!readPool) {
         const mariadb = await import('mariadb');
@@ -39,6 +43,7 @@ async function getReadPool() {
     return readPool;
 }
 
+// Lazy Initialization for adminPool
 async function getAdminPool() {
     if (!adminPool) {
         const mariadb = await import('mariadb');

@@ -1,3 +1,5 @@
+// server.js
+
 require('dotenv').config(); // use .env file
 const express = require('express');
 const app = express();
@@ -71,7 +73,7 @@ app.post('/api/internal/sensordata', authenticateApiKey, async (req, res) => {
 });
 
 
-// For Dashboard chart
+// For dashboard chart
 app.get('/api/sensordata', authenticateToken("dashboard-client", "dashboard-user"), async (req, res) => {
     let conn;
     try {
@@ -93,7 +95,7 @@ app.get('/api/sensordata', authenticateToken("dashboard-client", "dashboard-user
     }
 });
 
-
+// For dashboard chart
 app.get('/api/sensordata/range', authenticateToken("dashboard-client", "dashboard-user"), async (req, res) => {
     const { from, to } = req.query;
 
@@ -130,18 +132,19 @@ app.get('/api/sensordata/range', authenticateToken("dashboard-client", "dashboar
     }
 });
 
-
+// Formatting for csv
 function toCsvField(v) {
     if (v === null || v === undefined) return '';
     if (v instanceof Date) v = v.toISOString().slice(0, 19).replace('T', ' ');
     const s = String(v);
-    // Felder mit Komma, Anführungszeichen oder Zeilenumbruch müssen gequotet werden
+    // Fields with Comma, Apostrophes or linebreaks have to be quoted
     if (/[",\n\r]/.test(s)) {
         return `"${s.replace(/"/g, '""')}"`;
     }
     return s;
 }
 
+// For dashboard data export
 app.get('/api/admin/export',
     authenticateToken("dashboard-client", "admin-user"),
     async (req, res) => {
@@ -157,7 +160,7 @@ app.get('/api/admin/export',
             const tables = ['sensor_data', 'sensor_data_archive'];
             const columns = ['id', 'timestamp', 'temperature', 'humidity'];
 
-            // Kopfzeile: Spalten + Herkunftstabelle
+            // Header: columns + origin table
             res.write(['source_table', ...columns].map(toCsvField).join(',') + '\r\n');
 
             for (const table of tables) {

@@ -1,8 +1,6 @@
 // js/chart/chart-colors.js
 
-/*
-* Colors used for chart elements
-*/
+// Colors used for chart elements
 export function getChartColors() {
     const dark = document.body.classList.contains("dark");
 

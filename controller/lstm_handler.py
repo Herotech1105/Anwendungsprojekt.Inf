@@ -40,7 +40,7 @@ def predict_next_value(temperature, humidity):
     # Get the RAW scaled prediction from the model -> Shape: (1, 2)
     prediction = model.predict(scaled_input, verbose=0)
 
-    # FIX: Inverse transform the full prediction array directly
+    # Inverse transform the full prediction array directly
     # prediction[0] contains [scaled_predicted_temp, scaled_predicted_hum]
     unscaled_result = scaler.inverse_transform(prediction)
 

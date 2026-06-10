@@ -1,9 +1,7 @@
 // js/chart/chart-axes.js
 import { getChartColors } from "./chart-colors.js";
 
-/*
-* Configuration of chart axes x and y
-*/
+// Configuration of chart axes x and y
 export function getAxesConfig() {
     const c = getChartColors();
 
@@ -26,7 +24,6 @@ export function getAxesConfig() {
                         minute: "2-digit"
                     });
 
-                    // zweizeilig: erste Zeile Datum, zweite Zeile Uhrzeit
                     return [date, time];
                 }
             },

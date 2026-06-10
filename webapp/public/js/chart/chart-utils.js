@@ -1,8 +1,6 @@
 // js/chart/chart-utils.js
 
-/*
-* Formatting of Timestamps
-*/
+// Formatting of Timestamps
 export function formatTimestampParts(ts) {
     const d = new Date(ts);
 
