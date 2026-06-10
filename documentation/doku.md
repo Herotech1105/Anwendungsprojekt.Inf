@@ -39,9 +39,9 @@ Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
 3. Verdrahtung des Pico und Übertragen der Sensordaten an das Backend
 4. Sicheres Speichern der Sensordaten in der Datenbank
 5. Steuerung der Aktoren des Pico mittels LSTM-Netz
-6. Erstellen einer sicheren Web Applikation für die Sensordaten
+6. Erstellen einer sicheren Webapplikation für die Sensordaten
 
-## Phasen (Patchnotes)
+## Phasen (patchnotes)
 
 Die Präsentationen zu den einzelnen Phasen sind als PDF im jeweiligen Verzeichnis zu
 finden.  
@@ -330,7 +330,7 @@ Einstiegspunkt des Controllers. Prüft beim Start die Keycloak-Authentifizierung
 
 #### `keycloak_auth.py`
 
-Holt und cached das Keycloak Access-Token per Client Credentials Flow und prüft ob die Rolle `controller-ingest`
+Holt und cached das Keycloak Access-Token per Client Credentials Flow und prüft, ob die Rolle `controller-ingest`
 enthalten ist.
 
 #### `mqtt_handler.py`
@@ -367,7 +367,8 @@ müssten.
 
 ### keycloak
 
-Hier liegen die Daten des Identitäts und Zugangsrechte Verwaltungsystem (IAM).
+Hier liegen die Daten des Identitäts- und Zugangsrechte-Verwaltungssystem (IAM).
+
 * Rollen: admin-user, dashboard-user, controller-ingest
 * Identitäten: testuser_norole, iotuser01, dashboard-user, admin, service-account-controller-client
 * Clients: dashboard-client, controller-client
@@ -375,6 +376,7 @@ Hier liegen die Daten des Identitäts und Zugangsrechte Verwaltungsystem (IAM).
 ### mariadb
 
 Hier liegen die Entrypoint Skripte für den Datenbank-Container. In diesen Skripten werden:
+
 * Tabellen für Sensordaten und ein Archiv angelegt
 * Ein Job konfiguriert, der einmal täglich alle Messwerte, die älter als eine Woche sind ins Archiv verschiebt
 * Nutzerrechte vergibt für einen iot-schreiber-, client-reader- und admin-export-Nutzer
@@ -383,7 +385,7 @@ Hier liegen die Entrypoint Skripte für den Datenbank-Container. In diesen Skrip
 
 Hier liegen die Konfigurationsdateien für den mosquitto-broker.  
 Unter config liegt die allgemeine Konfiguration, in der Port, Autorisierungsdateien und Zertifikate angegeben werden.  
-Unter log liegt eine leere log-file, die von mqtt nach dem Start verwendet wird.  
+Bei `log` liegt eine leere log-file, die von mqtt nach dem Start verwendet wird.  
 Unter secure liegen die Anmeldedaten für mqtt.
 
 ### nginx
@@ -399,7 +401,7 @@ Hier speziell für den Read-, Write- und Adminuser.
 
 #### public
 
-Dieser Ordner beinhaltet alle Frontendelemente für das Anzeigen des Dashboardes.
+Dieser Ordner beinhaltet alle Frontend-Elemente für das Anzeigen des Dashboards.
 
 - **css** — Verwendete CSS-Elemente
 - **external** — Extern importierte Skripte
@@ -411,11 +413,11 @@ Dieser Ordner beinhaltet alle Frontendelemente für das Anzeigen des Dashboardes
 
 Beinhaltet Middleware und Funktion für die Access Token Validierung
 Speziell geprüft wird das Vorhandensein des Tokens und die erwarteten Audiences und Rollen.
-Darüberhinaus ist der Endpoint für die Authentifizierung des API-Keys für die Datenbankzugriffe definiert.
+Darüber hinaus ist der Endpoint für die Authentifizierung des API-Keys für die Datenbankzugriffe definiert.
 
 #### `service/validateSensorPayload.js`
 
-Beinhaltet Funktion um Übertragunsinhalt der Sensoren (Temperatur, Luftfeuchtigkeit, Zeitstempel) zu validieren.
+Beinhaltet Funktion um Übertragungsinhalt der Sensoren (Temperatur, Luftfeuchtigkeit, Zeitstempel) zu validieren.
 Es wird speziell geprüft:
 
 1. Sind Temperatur und Luftfeuchtigkeit als Zahlen vertreten
@@ -434,7 +436,7 @@ Gegebene Endpoints:
 - **GET /api/status** — Serverstatus abfragen
 - **GET /api/sensordata** — Aktuellste Sensordaten erhalten
 - **GET /api/sensordata/range** — Sensordaten von einem bestimmten Zeitfenster erhalten
-- **GET /api/admin/export** — Aktuelle und Archivierte Sensordaten als CSV erhalten
+- **GET /api/admin/export** — Aktuelle und archivierte Sensordaten als CSV erhalten
 - **POST /api/internal/sensordata** — Sensordaten in Datenbank schreiben
 
 ### E2E-tests
@@ -472,7 +474,7 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 
 - 5 verschiedene ungültige Payloads publishen (fehlende Felder, falscher Typ, leerer String, kein JSON, Extremwerte)
 - Warten bis Pipeline verarbeitet hätte
-- Prüfen: Kein neuer Eintrag in der Datenbank seit Testbeginn
+- Prüfen: kein neuer Eintrag in der Datenbank seit Testbeginn
 
 #### Test 5: Aktor-Steuerung bei hoher Temperatur
 
@@ -503,13 +505,13 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 ### Pi Setup
 
 * Installiere das Raspberry Pi light Image auf beiden Pis
-* Lies die MAC-Addresse eines Pis aus; dieser Pi wird später zum Backend
+* Lies die MAC-Adresse eines Pis aus; dieser Pi wird später zum Backend
 
 ### WLAN AP
 
 * Verbinde den WLAN Pi über ein Netzwerkkabel mit dem Internet
 * Stelle eine Verbindung zum Pi via ssh her
-* Setze backend_mac_address in Zeile 4 in `/conficuration/wlan_ap_setup.py` auf die MAC-Addresse des Backends
+* Setze backend_mac_address in Zeile 4 in `/conficuration/wlan_ap_setup.py` auf die MAC-Adresse des Backends
 * Führe `sudo apt install hostapd dnsmasq` auf dem Pi aus
 * Kopiere jetzt das Skript `wlan_ap_setup.py` auf den Pi und führe es mit root-Rechten aus
 
@@ -552,6 +554,9 @@ Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu e
 ## E2E-tests Ergebnisse
 
 ## Fazit
+
+Das Fazit ist unterteilt in die Bewertung der Erfüllung der gegebenen Anforderungen und den persönlichen
+Erfahrungsgewinn des Teams.
 
 ### Anforderungen
 
