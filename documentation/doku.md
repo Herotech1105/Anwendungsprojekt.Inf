@@ -28,7 +28,7 @@ Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgeg
 Datum: 11.04.2026 - 23.04.2026  
 Problemstellung: Planung des Projektes und dessen 6 Phasen  
 Verantwortlicher: Jannis Weber  
-GANT-Diagramm: ![Gantt_Phase1.pdf](Phase_1/Phase1.png)
+Projektplan: ![Gantt_Phase1.pdf](Phase_1/Phase1.png)
 
 | Datei                                                    | Änderung | Erklärung                                                                           |
 |----------------------------------------------------------|----------|-------------------------------------------------------------------------------------|
