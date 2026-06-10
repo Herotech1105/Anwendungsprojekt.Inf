@@ -685,7 +685,7 @@ und unmittelbar auf ihre Kompatibilität getestet. Statt autoritärer Entscheidu
 Absprachen. Erleichtert wurde dies durch die Git-Autorenverfolgung, da sich darüber nachvollziehen ließ, welcher
 Entwickler an welchem Codeabschnitt gearbeitet hatte und über welche Kompetenzen er verfügte.
 Eine Folge dieses agilen Vorgehens war eine ungleiche Verteilung der Arbeitsaufwände. Gelöst wurde dies durch
-Kanban-Elemente wie „To-do", „In Bearbeitung", „Zu testen" und „Fertig", wodurch offene Aufgaben gezielt gefunden und
+Kanban-Elemente wie „To-do“, „In Bearbeitung“, „Zu testen“ und „Fertig“, wodurch offene Aufgaben gezielt gefunden und
 übernommen werden konnten.
 
 ## Literatur und Hilfsmittel
@@ -721,7 +721,7 @@ Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation einge
 Beispiel-Promt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu
 verändern
 Beispiel-Promt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
-Beispiel-Promt: Erkläre mir was genau ich brauche um einen Controller zu bauen.
+Beispiel-Promt: Erkläre mir was genau ich brauche, um einen Controller zu bauen.
 
 https://gemini.google.com/app
 Google Gemini: Eingesetzt zur Fehlercode-Analyse.
