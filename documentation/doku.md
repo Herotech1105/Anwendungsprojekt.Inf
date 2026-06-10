@@ -562,16 +562,20 @@ Erfahrungsgewinn des Teams.
 
 **Funktionale Anforderungen:**
 
-| Nr. | Funktion                            | Prio   | Bewertung |
-|-----|-------------------------------------|--------|-----------|
-| FA1 | Sensormessung                       | Must   |           |
-| FA2 | Datenübertragung                    | Must   |           |
-| FA3 | Automatische Temperatursteuerung    | Must   |           |
-| FA4 | Automatische Feuchtigkeitssteuerung | Must   |           |
-| FA5 | Web-Dashboard (Visualisierung)      | Must   |           |
-| FA6 | Manueller Eingriff                  | Must   |           |
-| FA7 | Datenspeicherung Kurzzeit           | Should |           |
-| FA8 | Datenspeicherung Langzeit           | Should |           |
+| Nr. | Funktion                            | Prio   | Bewertung                                                                                                                                                                                                    |
+|-----|-------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| FA1 | Sensormessung                       | Must   | Erfüllt; Der Pico misst realistische Werte                                                                                                                                                                   |
+| FA2 | Datenübertragung                    | Must   | Erfüllt; getestet in E2E test_1                                                                                                                                                                              |
+| FA3 | Automatische Temperatursteuerung    | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Temperatur kann erhöht und reduziert werden; Sollwerte sind aber zu weit von Außentemperatur entfernt, um diese zu erreichen                                |
+| FA4 | Automatische Feuchtigkeitssteuerung | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Luftfeuchtigkeit kann erhöht und reduziert werden; Programm ist mit der Temperaturanpassung stark ausgelastet; Luftfeuchtigkeit wird erst danach reguliert; |
+| FA5 | Web-Dashboard (Visualisierung)      | Must   | Erfüllt; Visualisiert SensorDaten der letzten Woche; Demonstration in Life-Demo                                                                                                                              |
+| FA6 | Manueller Eingriff                  | Must   | Nicht Erfüllt; Ausschließlich automatische Steuerung durch Backend                                                                                                                                           |
+| FA7 | Datenspeicherung Kurzzeit           | Should | Erfüllt; Sensordaten werden eine Woche in einer Tabelle gespeichert und danach archiviert                                                                                                                    |
+| FA8 | Datenspeicherung Langzeit           | Should | Erfüllt; Sensordaten werden nach einer Woche Archiviert; Sind danach im Archiv gespeichert                                                                                                                   |
+
+Das Produkt erfüllt die wichtigsten funktionalen Anforderungen.
+Es fehlt aber der manuelle Eingriff vom Dashboard.
+Dieser wäre relevant, wenn das LSTM-Modell es nicht schafft die richtigen Steuersignale an den Pico zu schicken.
 
 **Nicht-funktionale Anforderungen:**
 
