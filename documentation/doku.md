@@ -122,7 +122,9 @@ Datum: 13.05.2026 - 21.05.2026
 Problemstellung: Steuerung eines Aktors mittels LSTM-Neuronales Netz  
 Verantwortlicher: Tim Dorozynski  
 GANT-Diagramm:
-[GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)
+![GANT Diagramm Phase 5](./Phase_5/Phase_5_GANT.png)  
+Deployment-Diagramm:  
+![Deployment-Diagramm Phase 5](./Phase_5/Phase_5_deployment-diagram.png)
 
 | Datei                              | Änderung                                                  | Erklärung                                                                                                                                                                              |
 |------------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -139,11 +141,13 @@ GANT-Diagramm:
 
 ### Phase 6:
 
-Datum:  22.05.2026 - 28.05.2026     
+Datum:  22.05.2026 - 28.05.2026    
 Problemstellung:  Sichere Web-Applikation (AuthN/AuthZ mit Keycloak)    
 Verantwortlicher:  Barnabas Steiner    
 GANT-Diagramm:    
-[GANT Diagramm Phase 6](./Phase_6/GanttPh6.drawio.svg)
+![GANT Diagramm Phase 6](./Phase_6/GanttPh6.drawio.svg)  
+Deployment-Diagramm:  
+![Deployment Diagramm Phase 6](./Phase_6/Deployment%20KeyCloak.png)
 
 | Datei                                   | Änderung                                                                                                                    | Erklärung                                                                                                                    |
 |-----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
@@ -490,6 +494,10 @@ RP2 code reference
 https://github.com/micropython/micropython-lib/blob/master/micropython/umqtt.simple/example_sub.py
 Zugriff: 18.05.2026
 umqtt reference
+
+https://www.drawio.com/
+Zugriff 10.06.2026
+Deployment-Diagramme
 
 FreeCAD 1.0.2: Erstellung der 3D-Modelle und technischen Zeichnungen
 InkScape: Erstellung LOGO.svg
