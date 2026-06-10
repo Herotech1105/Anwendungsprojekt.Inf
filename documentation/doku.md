@@ -6,30 +6,30 @@ Die Anforderungen für das Endprodukt waren die folgenden:
 
 **Funktionale Anforderungen:**
 
-| Nr. | Funktion | Beschreibung | Prio |
-|-----|----------|-------------|------|
-| FA1 | Sensormessung | Das System misst regelmäßig (z. B. alle 60 s) Temperatur und Luftfeuchtigkeit an der Klebestation. | Must |
-| FA2 | Datenübertragung | Messwerte werden vom Mikrocontroller sicher über WLAN/MQTT an den Backend-Server übertragen. | Must |
-| FA3 | Automatische Temperatursteuerung | Temperatur wird automatisch im Bereich 19–21 °C gehalten (Aktor: Heizung/Lüfter, Regelung per LSTM). | Must |
-| FA4 | Automatische Feuchtigkeitssteuerung | Luftfeuchtigkeit wird automatisch im Bereich 40–55 % gehalten. | Must |
-| FA5 | Web-Dashboard (Visualisierung) | Mitarbeiter sehen den zeitlichen Verlauf von Temperatur und Luftfeuchtigkeit grafisch im Leitstand. | Must |
-| FA6 | Manueller Eingriff | Bei Ausfall der automatischen Steuerung können Mitarbeiter manuell über das Dashboard Aktoren steuern. | Must |
-| FA7 | Datenspeicherung Kurzzeit | Sensordaten werden für mindestens 7 Tage online in einer Datenbank abrufbar gespeichert. | Should |
-| FA8 | Datenspeicherung Langzeit | Ältere Daten werden für mindestens 3 Jahre archiviert und können bei Bedarf wieder eingespielt werden. | Should |
+| Nr. | Funktion                            | Beschreibung                                                                                           | Prio   |
+|-----|-------------------------------------|--------------------------------------------------------------------------------------------------------|--------|
+| FA1 | Sensormessung                       | Das System misst regelmäßig (z. B. alle 60 s) Temperatur und Luftfeuchtigkeit an der Klebestation.     | Must   |
+| FA2 | Datenübertragung                    | Messwerte werden vom Mikrocontroller sicher über WLAN/MQTT an den Backend-Server übertragen.           | Must   |
+| FA3 | Automatische Temperatursteuerung    | Temperatur wird automatisch im Bereich 19–21 °C gehalten (Aktor: Heizung/Lüfter, Regelung per LSTM).   | Must   |
+| FA4 | Automatische Feuchtigkeitssteuerung | Luftfeuchtigkeit wird automatisch im Bereich 40–55 % gehalten.                                         | Must   |
+| FA5 | Web-Dashboard (Visualisierung)      | Mitarbeiter sehen den zeitlichen Verlauf von Temperatur und Luftfeuchtigkeit grafisch im Leitstand.    | Must   |
+| FA6 | Manueller Eingriff                  | Bei Ausfall der automatischen Steuerung können Mitarbeiter manuell über das Dashboard Aktoren steuern. | Must   |
+| FA7 | Datenspeicherung Kurzzeit           | Sensordaten werden für mindestens 7 Tage online in einer Datenbank abrufbar gespeichert.               | Should |
+| FA8 | Datenspeicherung Langzeit           | Ältere Daten werden für mindestens 3 Jahre archiviert und können bei Bedarf wieder eingespielt werden. | Should |
 
 **Nicht-funktionale Anforderungen:**
 
-| Nr. | Anforderung | Beschreibung | Prio |
-|-----|-------------|-------------|------|
-| NFA1 | Sicherheit – Verschlüsselung | Alle Sensor- und Steuerungsdaten werden verschlüsselt (TLS) übertragen. | Must |
-| NFA2 | Authentifizierung & Autorisierung | Zugriff auf das Web-Dashboard nur mit gültigem Benutzerkonto und Passwort (z. B. Keycloak/IAM). | Must |
-| NFA3 | Netzwerkisolation | Das WLAN der Klebestation ist durch eine Firewall vom Unternehmens-LAN getrennt; eingehender Verkehr wird blockiert. | Must |
-| NFA4 | Verfügbarkeit / Zuverlässigkeit | Bei Ausfall der automatischen Steuerung muss manueller Eingriff weiterhin möglich sein (kein Single Point of Failure). | Must |
-| NFA5 | Kosteneffizienz | Gesamtkosten für Hardware und Software unter 10.000 €; Software soll Open Source sein. | Must |
-| NFA6 | Wartbarkeit | Betrieb mit standardisierten Docker-Containern für einfache Updates und Wartung. | Should |
-| NFA7 | Mobilität / WLAN | Kommunikation über WLAN, da die Klebestation häufig räumlich verschoben wird und Kabel nicht praktikabel sind. | Must |
-| NFA8 | Datenschutz (DSGVO) | Sensordaten sind keine personenbezogenen Daten — datenschutzrechtlich unkritisch, Compliance dennoch prüfen. | Should |
-| NFA9 | Benutzbarkeit | Das Dashboard muss für Leitstandmitarbeiter ohne IT-Kenntnisse intuitiv bedienbar sein. | Could |
+| Nr.  | Anforderung                       | Beschreibung                                                                                                           | Prio   |
+|------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------|--------|
+| NFA1 | Sicherheit – Verschlüsselung      | Alle Sensor- und Steuerungsdaten werden verschlüsselt (TLS) übertragen.                                                | Must   |
+| NFA2 | Authentifizierung & Autorisierung | Zugriff auf das Web-Dashboard nur mit gültigem Benutzerkonto und Passwort (z. B. Keycloak/IAM).                        | Must   |
+| NFA3 | Netzwerkisolation                 | Das WLAN der Klebestation ist durch eine Firewall vom Unternehmens-LAN getrennt; eingehender Verkehr wird blockiert.   | Must   |
+| NFA4 | Verfügbarkeit / Zuverlässigkeit   | Bei Ausfall der automatischen Steuerung muss manueller Eingriff weiterhin möglich sein (kein Single Point of Failure). | Must   |
+| NFA5 | Kosteneffizienz                   | Gesamtkosten für Hardware und Software unter 10.000 €; Software soll Open Source sein.                                 | Must   |
+| NFA6 | Wartbarkeit                       | Betrieb mit standardisierten Docker-Containern für einfache Updates und Wartung.                                       | Should |
+| NFA7 | Mobilität / WLAN                  | Kommunikation über WLAN, da die Klebestation häufig räumlich verschoben wird und Kabel nicht praktikabel sind.         | Must   |
+| NFA8 | Datenschutz (DSGVO)               | Sensordaten sind keine personenbezogenen Daten — datenschutzrechtlich unkritisch, Compliance dennoch prüfen.           | Should |
+| NFA9 | Benutzbarkeit                     | Das Dashboard muss für Leitstandmitarbeiter ohne IT-Kenntnisse intuitiv bedienbar sein.                                | Could  |
 
 Zur Erarbeitung des
 Projekts wurde dieses in die folgenden 6 Phasen eingeteilt:
@@ -62,14 +62,14 @@ Projektplan: ![Gantt_Phase1.pdf](Phase_1/Phase1.png)
 
 **Machbarkeitsstudie:**
 
-| Technik | Gegenstand der Bewertung | Bewertung |
-|---------|--------------------------|-----------|
-| Technische Machbarkeit | Personal und Fachkompetenz; Hardware; Software | Vorkenntnisse in Web-Entwicklung und teilweise Elektrotechnik vorhanden; Hardware bereits gestellt; ausschließlich Open-Source-Software verwendbar |
-| Wirtschaftliche Machbarkeit | Investitionskosten; Entwicklungskosten; Wartungskosten; Betriebskosten | Hardware bereits gestellt; kostenlose Software, keine Personalkosten; Betriebskosten beschränken sich auf Stromverbrauch und möglichen Hardware-Verschleiß |
-| Organisatorische Machbarkeit | Integration in bestehende Systeme; Fachkenntnisse für Betrieb | Keine bestehende Systemlandschaft, keine Integration notwendig; Betrieb erfordert keine spezifischen Fachkenntnisse nach Demonstration |
-| Zeitliche Machbarkeit | Zeit für Kompetenzgewinn; Zeit für Entwicklungsarbeit | Benötigte Kompetenzen können im Zeitrahmen erworben werden; ab dem 28.04.2026 ist die verfügbare Entwicklungszeit ausreichend |
-| Rechtliche Machbarkeit | Personenbezogene Daten; Schutz erhobener Daten | Keine personenbezogenen Daten erhoben; Daten können durch Security-By-Design geschützt werden |
-| Risiken und Gegenmaßnahmen | Frühere Abgabe; Verzug durch langsame Arbeit oder größeren Zeitaufwand bei Kompetenzaneignung | Risiko gering; Verzug wahrscheinlich, Gegenmaßnahme: Überstunden |
+| Technik                      | Gegenstand der Bewertung                                                                      | Bewertung                                                                                                                                                  |
+|------------------------------|-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Technische Machbarkeit       | Personal und Fachkompetenz; Hardware; Software                                                | Vorkenntnisse in Web-Entwicklung und teilweise Elektrotechnik vorhanden; Hardware bereits gestellt; ausschließlich Open-Source-Software verwendbar         |
+| Wirtschaftliche Machbarkeit  | Investitionskosten; Entwicklungskosten; Wartungskosten; Betriebskosten                        | Hardware bereits gestellt; kostenlose Software, keine Personalkosten; Betriebskosten beschränken sich auf Stromverbrauch und möglichen Hardware-Verschleiß |
+| Organisatorische Machbarkeit | Integration in bestehende Systeme; Fachkenntnisse für Betrieb                                 | Keine bestehende Systemlandschaft, keine Integration notwendig; Betrieb erfordert keine spezifischen Fachkenntnisse nach Demonstration                     |
+| Zeitliche Machbarkeit        | Zeit für Kompetenzgewinn; Zeit für Entwicklungsarbeit                                         | Benötigte Kompetenzen können im Zeitrahmen erworben werden; ab dem 28.04.2026 ist die verfügbare Entwicklungszeit ausreichend                              |
+| Rechtliche Machbarkeit       | Personenbezogene Daten; Schutz erhobener Daten                                                | Keine personenbezogenen Daten erhoben; Daten können durch Security-By-Design geschützt werden                                                              |
+| Risiken und Gegenmaßnahmen   | Frühere Abgabe; Verzug durch langsame Arbeit oder größeren Zeitaufwand bei Kompetenzaneignung | Risiko gering; Verzug wahrscheinlich, Gegenmaßnahme: Überstunden                                                                                           |
 
 **Machbarkeitsbericht:** Das Projekt wird unter den oben angegebenen Umständen als durchführbar eingestuft.
 
@@ -306,6 +306,12 @@ Sendet Sensordaten über MQTT an den MQTT-Broker, liest vom controller gesendete
 
 #### wlan_ap_setup.py
 
+Mit diesem Skript wird der WLAN-AP aufgesetzt.  
+Es wird mit `hostapd` ein Wifi aufgespannt.  
+Mit `dnsmasq` wird die Verteilung von IP-Adressen definiert. Das Backend erhält hierbei die statische IP `192.168.4.18`
+und den DNS-Namen `local.kleber.data`.
+Mittels `nftables`
+
 ### controller
 
 Empfängt Sensordaten vom MQTT-Broker, validiert und leitet sie per HTTPS an das Backend weiter.
@@ -362,8 +368,8 @@ müssten.
 ### keycloak
 
 Hier liegen die Daten des Identitäts und Zugangsrechte Verwaltungsystem (IAM).
-* Rollen: dashboard-user (Lesen von 1 Woche), admin-user (Exportieren von DB), controller-ingest (zum schreiben von Daten)
-* Identitäten: iotuser01(Daschboard User Identität), dashboard-user("), admin ("), service-account-controller-client(NICHT menschlicher User), testuser_norole (E2E Probe), 
+* Rollen: admin-user, dashboard-user, controller-ingest
+* Identitäten: testuser_norole, iotuser01, dashboard-user, admin, service-account-controller-client
 * Clients: dashboard-client, controller-client
 
 ### mariadb
@@ -383,6 +389,8 @@ Unter secure liegen die Anmeldedaten für mqtt.
 ### nginx
 
 ### webapp
+
+Unter webapp liegen alle Dateien für den webserver Container.
 
 #### `config/database.js`
 
@@ -544,6 +552,37 @@ Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu e
 ## E2E-tests Ergebnisse
 
 ## Fazit
+
+### Anforderungen
+
+**Funktionale Anforderungen:**
+
+| Nr. | Funktion                            | Prio   | Bewertung |
+|-----|-------------------------------------|--------|-----------|
+| FA1 | Sensormessung                       | Must   |           |
+| FA2 | Datenübertragung                    | Must   |           |
+| FA3 | Automatische Temperatursteuerung    | Must   |           |
+| FA4 | Automatische Feuchtigkeitssteuerung | Must   |           |
+| FA5 | Web-Dashboard (Visualisierung)      | Must   |           |
+| FA6 | Manueller Eingriff                  | Must   |           |
+| FA7 | Datenspeicherung Kurzzeit           | Should |           |
+| FA8 | Datenspeicherung Langzeit           | Should |           |
+
+**Nicht-funktionale Anforderungen:**
+
+| Nr.  | Anforderung                       | Prio   | Bewertung |
+|------|-----------------------------------|--------|-----------|
+| NFA1 | Sicherheit – Verschlüsselung      | Must   |           |
+| NFA2 | Authentifizierung & Autorisierung | Must   |           |
+| NFA3 | Netzwerkisolation                 | Must   |           |
+| NFA4 | Verfügbarkeit / Zuverlässigkeit   | Must   |           |
+| NFA5 | Kosteneffizienz                   | Must   |           |
+| NFA6 | Wartbarkeit                       | Should |           |
+| NFA7 | Mobilität / WLAN                  | Must   |           |
+| NFA8 | Datenschutz (DSGVO)               | Should |           |
+| NFA9 | Benutzbarkeit                     | Could  |           |
+
+### Erfahrungsgewinn
 
 ## Literatur und Hilfsmittel
 
