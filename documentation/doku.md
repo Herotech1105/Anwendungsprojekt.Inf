@@ -642,17 +642,51 @@ entschieden aus Sicherheitsgründen auf manuelle Steuerung zu verzichten.
 
 ### Erfahrungsgewinn
 
-#### Management
-Das Projekt war nicht nur kompliziert, sondern wies eine hohe Komplexität auf, die durch die unterschiedlichen Qualifikationen der Entwickler zusätzlich verstärkt wurde. Diese ermöglicht einen großen Erfahrungsgewinn.
+Das Projekt war nicht nur kompliziert, sondern wies eine hohe Komplexität auf, die durch die unterschiedlichen
+Qualifikationen der Entwickler zusätzlich verstärkt wurde. Diese ermöglicht einen großen Erfahrungsgewinn.
 
-##### Wechsel der Projektmanagement-Plattform
-Während der Projektentwicklung musste die Projektmanagement-Plattform mehrfach gewechselt werden, da es wiederholt zu Zugangssperren kam. Ursache waren nicht offensichtlich gekennzeichnete Probezeiträume: Nach deren Ablauf wurden entweder kostenpflichtige Beiträge gefordert, oder der Zugriff auf die bereits eingegebenen Daten ging verloren. Dieses Problem lässt sich vermeiden, indem die AGB vor der Nutzung genau gelesen oder von vornherein selbst gehostete Management-Tools eingesetzt werden.
+#### Fachliche Kompetenz
 
-##### Unklare Abhängigkeiten, Aufwände und Kompetenzen
+Im Laufe des Projekts wurden die bestehenden Kompetenzen zu Docker vertieft. Gerade in Bezug auf Sicherheit wurde
+Folgendes erlernt:
+
+1. Container in Netzwerken strukturieren, damit sie nicht nach außen sichtbar sind
+2. Schnittstellen nach außen gezielt auswählen (Ports, http/https ...)
+3. An den Außenschnittstellen Sicherheit gewährleisten (nginx schützt durch OWASP/modsecurity)
+4. Validierung von externen Daten nach jeder Kommunikation
+
+Auch in Bezug auf CIA - Confidentiality, Integrity und Availability wurde einiges gelernt:
+
+1. Nur authentifizierte Nutzer (bei uns der controller) können Daten an die Datenbank weitergeben (Integrity)
+2. Keycloak bietet eine einfache und unkomplizierte Methode zur Authentifizierung (Availability)
+3. Nutzer sind je nach Account zu unterschiedlichen Operationen berechtigt. <br/>Nur mit den richtigen Rechten dürfen
+   Daten abgefragt werden (confidentiality)
+
+In Bezug auf Sicherheit wurden uns auch mögliche Sicherheitslücken gezeigt. Hierzu gehören Cross-Site-Scripting,
+SQL-Injection und Directory-Traversal.
+
+#### Wechsel der Projektmanagement-Plattform
+
+Während der Projektentwicklung musste die Projektmanagement-Plattform mehrfach gewechselt werden, da es wiederholt zu
+Zugangssperren kam. Ursache waren nicht offensichtlich gekennzeichnete Probezeiträume: Nach deren Ablauf wurden entweder
+kostenpflichtige Beiträge gefordert, oder der Zugriff auf die bereits eingegebenen Daten ging verloren. Dieses Problem
+lässt sich vermeiden, indem die AGB vor der Nutzung genau gelesen oder von vornherein selbst gehostete Management-Tools
+eingesetzt werden.
+
+#### Unklare Abhängigkeiten, Aufwände und Kompetenzen
+
 Es ergaben sich Unklarheiten bei der Einteilung der Unteraufgaben und der Planung ihrer Abhängigkeiten.
-Als Reaktion darauf wurde ein Projektstrukturplan (PSP) adaptiv eingesetzt; seine Aufgabenzuordnung diente als initiale Vorgehensweise für die jeweilige Projektphase. Ergänzend wurde eine Verantwortungszuordnung genutzt, um mehrere Phasen gleichzeitig an verschiedenen Stellen zu starten.
-Während der Bearbeitung traten jedoch latente Abhängigkeiten zutage, die zu vermeidbaren Verzögerungen führten. Um diese Effekte zu minimieren, wurde mit einem agilen PDCA-Zyklus gearbeitet: Änderungen wurden direkt im Main-Branch umgesetzt und unmittelbar auf ihre Kompatibilität getestet. Statt autoritärer Entscheidungsfindung erfolgten möglichst direkte Absprachen. Erleichtert wurde dies durch die Git-Autorenverfolgung, da sich darüber nachvollziehen ließ, welcher Entwickler an welchem Codeabschnitt gearbeitet hatte und über welche Kompetenzen er verfügte.
-Eine Folge dieses agilen Vorgehens war eine ungleiche Verteilung der Arbeitsaufwände. Gelöst wurde dies durch Kanban-Elemente wie „To-do", „In Bearbeitung", „Zu testen" und „Fertig", wodurch offene Aufgaben gezielt gefunden und übernommen werden konnten.
+Als Reaktion darauf wurde ein Projektstrukturplan (PSP) adaptiv eingesetzt; seine Aufgabenzuordnung diente als initiale
+Vorgehensweise für die jeweilige Projektphase. Ergänzend wurde eine Verantwortungszuordnung genutzt, um mehrere Phasen
+gleichzeitig an verschiedenen Stellen zu starten.
+Während der Bearbeitung traten jedoch latente Abhängigkeiten zutage, die zu vermeidbaren Verzögerungen führten. Um diese
+Effekte zu minimieren, wurde mit einem agilen PDCA-Zyklus gearbeitet: Änderungen wurden direkt im Main-Branch umgesetzt
+und unmittelbar auf ihre Kompatibilität getestet. Statt autoritärer Entscheidungsfindung erfolgten möglichst direkte
+Absprachen. Erleichtert wurde dies durch die Git-Autorenverfolgung, da sich darüber nachvollziehen ließ, welcher
+Entwickler an welchem Codeabschnitt gearbeitet hatte und über welche Kompetenzen er verfügte.
+Eine Folge dieses agilen Vorgehens war eine ungleiche Verteilung der Arbeitsaufwände. Gelöst wurde dies durch
+Kanban-Elemente wie „To-do", „In Bearbeitung", „Zu testen" und „Fertig", wodurch offene Aufgaben gezielt gefunden und
+übernommen werden konnten.
 
 ## Literatur und Hilfsmittel
 
@@ -684,6 +718,12 @@ Bambu Lab P1S-Drucker: Drucken der 3D-Modelle
 
 https://claude.ai/
 Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation eingesetzt.
-Beispiel-Promt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu verändern
+Beispiel-Promt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu
+verändern
 Beispiel-Promt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
-Beispiel-Promt: Erkläre mir was genau ich brauche um einen Controller zu bauen. 
+Beispiel-Promt: Erkläre mir was genau ich brauche um einen Controller zu bauen.
+
+https://gemini.google.com/app
+Google Gemini: Eingesetzt zur Fehlercode-Analyse.
+Beispiel-Prompt: What is the source of the following error on python3.13 if it works on a python3.12-slim: "ca cert does
+not include key usage extension"
