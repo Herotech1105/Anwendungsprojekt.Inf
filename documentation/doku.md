@@ -313,7 +313,7 @@ Erstellt mithilfe eines LSTM-Modells Vorhersagen und publiziert Steuerungsbefehl
 Pico.
 Authentifiziert sich per Keycloak Client Credentials Flow mit der Rolle `controller-ingest`.
 
-#### `config.py`
+#### `config.py´
 
 Liest alle Betriebsparameter (MQTT, Backend-URL, Keycloak, Schwellenwerte) aus Environment-Variablen und konfiguriert
 das Logging.
@@ -384,7 +384,7 @@ Unter secure liegen die Anmeldedaten für mqtt.
 
 ### webapp
 
-#### config/database.js
+#### `config/database.js`
 
 In dieser Datei sind Pools für die jeweiligen Datenbanknutzer definiert.
 Hier speziell für den Read-, Write- und Adminuser.
@@ -399,13 +399,13 @@ Dieser Ordner beinhaltet alle Frontendelemente für das Anzeigen des Dashboardes
 - **js** — Verwendete Skripte
 - **index.html** — HTML-Element für das Dashboard
 
-#### service/authentication.js
+#### `service/authentication.js`
 
 Beinhaltet Middleware und Funktion für die Access Token Validierung
 Speziell geprüft wird das Vorhandensein des Tokens und die erwarteten Audiences und Rollen.
 Darüberhinaus ist der Endpoint für die Authentifizierung des API-Keys für die Datenbankzugriffe definiert.
 
-#### service/validateSensorPayload.js
+#### `service/validateSensorPayload.js`
 
 Beinhaltet Funktion um Übertragunsinhalt der Sensoren (Temperatur, Luftfeuchtigkeit, Zeitstempel) zu validieren.
 Es wird speziell geprüft:
@@ -417,9 +417,9 @@ Es wird speziell geprüft:
 
 Damit werden korrekte Einträge in der Datenbank gewährleistet.
 
-#### server.js
+#### `server.js`
 
-Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
+Hauptkomponente zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
 Datenbank.
 Gegebene Endpoints:
 
