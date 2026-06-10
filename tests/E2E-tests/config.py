@@ -39,10 +39,8 @@ CA_CERT_FILE = os.getenv("CA_CERT_PATH", "../../CA/ca.crt")
 # self-signed certs and strict Python 3.13+ SSL validation).
 VERIFY_SSL = os.getenv("VERIFY_SSL", "false").lower() == "true"
 
-# This is what gets passed to requests' verify= parameter:
-# - CA_CERT_FILE path when VERIFY_SSL is True
-# - False when VERIFY_SSL is False
-SSL_VERIFY = CA_CERT_FILE if VERIFY_SSL else False
+
+SSL_VERIFY = CA_CERT_FILE
 
 # ---------------------------------------------------------------------------
 # Keycloak
