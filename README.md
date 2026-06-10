@@ -55,3 +55,15 @@
 * Klone das Repository auf das Backend
 * Installiere Docker Compose
 * Zum Starten der Software führe jetzt `sudo docker compose up` im Projektverzeichnis aus
+
+## Bedienung
+
+Die Applikation lässt sich mit `sudo docker compose up/down` starten und beenden.  
+Vor dem Start ist sicherzustellen, dass der WLAN-AP Pi hochgefahren und funktionstüchtig ist (z.B. indem geprüft wird,
+ob das Backend ´mit dem zugehörigen WLAN verbunden ist).  
+Der Pico wird durch Ausführen der `main.py` gestartet.
+Nach dem Start kann eine Verbindung zum Netzwerk aufgebaut werden und
+unter [https://local.kleber.data](https://local.kleber.data) das Web Dashboard besucht werden.  
+Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].  
+Danach wird das Dashboard angezeigt.
+Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
