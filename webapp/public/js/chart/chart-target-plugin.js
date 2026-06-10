@@ -1,13 +1,16 @@
 // js/chart/chart-target-plugin.js
 import { getChartColors } from "./chart-colors.js";
 
+/*
+* Colors the background ranges of temperature and humidity before chart is rendered
+*/
 export const targetRangePlugin = {
     id: "targetRangePlugin",
     beforeDraw(chart) {
         const { ctx, chartArea, scales } = chart;
         const c = getChartColors();
 
-        // Temperaturbereich (19–21 °C)
+        // Temperature range (19–21 °C)
         const yTemp = scales.y;
         const topTemp = yTemp.getPixelForValue(21);
         const bottomTemp = yTemp.getPixelForValue(19);
@@ -17,7 +20,7 @@ export const targetRangePlugin = {
         ctx.fillRect(chartArea.left, topTemp, chartArea.right - chartArea.left, bottomTemp - topTemp);
         ctx.restore();
 
-        // Luftfeuchtigkeit (40–55 %)
+        // Humidity (40–55 %)
         const yHum = scales.y1;
         const topHum = yHum.getPixelForValue(55);
         const bottomHum = yHum.getPixelForValue(40);

@@ -1,6 +1,9 @@
 // js/frontend/api.js
 import { keycloak } from "./auth.js";
 
+/*
+* Fetches keycloak token
+*/
 async function apiGet(path) {
     const res = await fetch(`/api${path}`, {
         headers: {
@@ -12,11 +15,17 @@ async function apiGet(path) {
     return res.json();
 }
 
+/*
+* Fetches sensor data
+*/
 export function getSensorRange(from, to) {
     const q = new URLSearchParams({ from, to }).toString();
     return apiGet(`/sensordata/range?${q}`);
 }
 
+/*
+* Downloads data archive
+*/
 export async function exportDatabase() {
     const res = await fetch("/api/admin/export", {
         headers: { Authorization: "Bearer " + keycloak.token }

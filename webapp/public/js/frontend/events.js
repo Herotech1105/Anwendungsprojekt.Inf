@@ -3,10 +3,7 @@ import { logout, keycloak } from "./auth.js";
 import { exportDatabase } from "./api.js";
 
 /*
-   Robuste Rollen-Erkennung:
-   - realm_access.roles
-   - resource_access["dashboard-client"].roles
-   - legacy realmAccess.roles
+* Gets the User roles from the keycloak token
 */
 function getUserRoles() {
     const t = keycloak.tokenParsed;
@@ -27,10 +24,16 @@ function getUserRoles() {
     ])];
 }
 
+/*
+* Checks if a user is an admin user
+*/
 function isAdmin() {
     return getUserRoles().includes("admin-user");
 }
 
+/*
+* Event-Handling for Buttons
+*/
 export function initEvents() {
 
     document.getElementById("logoutBtn").addEventListener("click", logout);
@@ -50,7 +53,6 @@ export function initEvents() {
         window.dispatchEvent(new CustomEvent("loadRange", { detail: { from, to } }));
     });
 
-    // --- Export Button Sichtbarkeit ---
     const exportBtn = document.getElementById("exportBtn");
 
     if (!isAdmin()) {
@@ -60,7 +62,6 @@ export function initEvents() {
         exportBtn.addEventListener("click", exportDatabase);
     }
 
-    // --- Range Buttons ---
     const rangeButtons = document.querySelectorAll(".range-btn");
 
     rangeButtons.forEach(btn => {

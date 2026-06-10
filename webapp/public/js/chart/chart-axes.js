@@ -1,6 +1,9 @@
 // js/chart/chart-axes.js
 import { getChartColors } from "./chart-colors.js";
 
+/*
+* Configuration of chart axes x and y
+*/
 export function getAxesConfig() {
     const c = getChartColors();
 

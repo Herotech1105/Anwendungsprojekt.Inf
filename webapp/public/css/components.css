@@ -1,4 +1,4 @@
-/* --- Inputs --- */
+/* Inputs */
 input[type="datetime-local"] {
     padding: 8px 10px;
     border: 1px solid #ccc;
@@ -9,7 +9,7 @@ input[type="datetime-local"] {
     width: 180px;
 }
 
-/* --- Buttons --- */
+/* Buttons */
 button {
     padding: 10px 18px;
     background: #2563eb;
@@ -26,7 +26,7 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* --- Logout Button --- */
+/* Logout Button */
 .logout-btn {
     background: #6b7280;
 }
@@ -35,7 +35,7 @@ button:hover {
     background: #4b5563;
 }
 
-/* --- Dark Mode Label + Toggle --- */
+/* Dark Mode Label + Toggle */
 .darkmode-wrapper {
     display: flex;
     align-items: center;
@@ -47,7 +47,7 @@ button:hover {
     color: white;
 }
 
-/* --- Toggle Switch --- */
+/* Toggle Switch */
 .switch {
     position: relative;
     display: inline-block;
@@ -89,7 +89,7 @@ input:checked + .slider:before {
     transform: translateX(24px);
 }
 
-/* --- Chart Header (Title + Buttons right) --- */
+/* Chart Header (Title + Buttons right) */
 .chart-header {
     display: flex;
     justify-content: space-between;
@@ -97,13 +97,13 @@ input:checked + .slider:before {
     margin-bottom: 15px;
 }
 
-/* --- Range Buttons Container --- */
+/* Range Buttons Container */
 .range-buttons {
     display: flex;
     gap: 10px;
 }
 
-/* --- Range Buttons --- */
+/* Range Buttons */
 .range-btn {
     padding: 6px 12px;
     font-size: 0.9rem;
@@ -123,7 +123,7 @@ input:checked + .slider:before {
     transform: translateY(0);
 }
 
-/* --- Aktiver Range Button --- */
+/* Active Range Button */
 .range-btn.active-range {
     background: #1d4ed8;
     box-shadow: 0 0 0 3px rgba(37,99,235,0.4);

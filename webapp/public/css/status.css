@@ -1,3 +1,4 @@
+/* Chart status id */
 #chartStatus {
     padding: 10px 14px;
     border-radius: 8px;
@@ -7,6 +8,7 @@
     transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Status states */
 .status-success { background:#d4f8d4; color:#1b7a1b; border:1px solid #8fd98f; }
 .status-live    { background:#fff4cc; color:#8a6d00; border:1px solid #e6c200; }
 .status-error   { background:#ffd6d6; color:#a30000; border:1px solid #ff8a8a; }
