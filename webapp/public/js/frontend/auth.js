@@ -8,9 +8,9 @@ export function initAuth() {
     const KeycloakCtor = window.Keycloak;
 
     keycloak = new KeycloakCtor({
-        url: "https://auth.kleber.data/",
+        url: "https://local.kleber.data/auth",
         realm: "iot",
-        clientId: "iot-frontend"
+        clientId: "dashboard-client"
     });
 
     // auch global verfügbar machen – wie früher
