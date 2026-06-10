@@ -1,7 +1,8 @@
 # Temperatur- und Luftfeuchtigkeitsregulierer
 
 In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Temperatur entwickelt, dass die Messdaten sicher
-speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.
+speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
+Zielwerte 
 
 ## Anforderungen und Struktur
 
@@ -607,21 +608,23 @@ Erfahrungsgewinn des Teams.
 
 **Funktionale Anforderungen:**
 
-| Nr. | Funktion                            | Prio   | Bewertung                                                                                                                                                                                                    |
-|-----|-------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| FA1 | Sensormessung                       | Must   | Erfüllt; Der Pico misst realistische Werte                                                                                                                                                                   |
-| FA2 | Datenübertragung                    | Must   | Erfüllt; getestet in E2E Test 1                                                                                                                                                                              |
-| FA3 | Automatische Temperatursteuerung    | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Temperatur kann erhöht und reduziert werden; Sollwerte sind aber zu weit von Außentemperatur entfernt, um diese zu erreichen                                |
-| FA4 | Automatische Feuchtigkeitssteuerung | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Luftfeuchtigkeit kann erhöht und reduziert werden; Programm ist mit der Temperaturanpassung stark ausgelastet; Luftfeuchtigkeit wird erst danach reguliert; |
-| FA5 | Web-Dashboard (Visualisierung)      | Must   | Erfüllt; Visualisiert SensorDaten der letzten Woche; Demonstration in Life-Demo                                                                                                                              |
-| FA6 | Manueller Eingriff                  | Must   | Nicht Erfüllt; Ausschließlich automatische Steuerung durch controller; Aus Sicherheitsgründen keine Kommunikation zwischen Pico und Webserver                                                                |
-| FA7 | Datenspeicherung Kurzzeit           | Should | Erfüllt; Sensordaten werden eine Woche in einer Tabelle gespeichert und danach archiviert                                                                                                                    |
-| FA8 | Datenspeicherung Langzeit           | Should | Erfüllt; Sensordaten werden nach einer Woche Archiviert; Sind danach im Archiv gespeichert                                                                                                                   |
+| Nr. | Funktion                            | Prio   | Bewertung                                                                                                                                                                                                                                                                                                                             |
+|-----|-------------------------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| FA1 | Sensormessung                       | Must   | Erfüllt; Der Pico misst realistische Werte                                                                                                                                                                                                                                                                                            |
+| FA2 | Datenübertragung                    | Must   | Erfüllt; getestet in E2E Test 1                                                                                                                                                                                                                                                                                                       |
+| FA3 | Automatische Temperatursteuerung    | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Temperatur kann erhöht und reduziert werden; Sollwerte sind aber zu weit von Außentemperatur entfernt, um diese zu erreichen; Es entstand das Gefühl, dass zum einen der Temperatursensor nicht immer korrekt misst; Die Luftzirkulation in unserem Gehäuse ist auch nicht optimiert |
+| FA4 | Automatische Feuchtigkeitssteuerung | Must   | Erfüllt im Rahmen der technischen Möglichkeiten; Luftfeuchtigkeit kann erhöht und reduziert werden; Programm ist mit der Temperaturanpassung stark ausgelastet; Luftfeuchtigkeit wird erst danach reguliert;                                                                                                                          |
+| FA5 | Web-Dashboard (Visualisierung)      | Must   | Erfüllt; Visualisiert SensorDaten der letzten Woche; Demonstration in Life-Demo                                                                                                                                                                                                                                                       |
+| FA6 | Manueller Eingriff                  | Must   | Nicht Erfüllt; Ausschließlich automatische Steuerung durch controller; Aus Sicherheitsgründen keine Kommunikation zwischen Pico und Webserver                                                                                                                                                                                         |
+| FA7 | Datenspeicherung Kurzzeit           | Should | Erfüllt; Sensordaten werden eine Woche in einer Tabelle gespeichert und danach archiviert                                                                                                                                                                                                                                             |
+| FA8 | Datenspeicherung Langzeit           | Should | Erfüllt; Sensordaten werden nach einer Woche Archiviert; Sind danach im Archiv gespeichert                                                                                                                                                                                                                                            |
 
 Das Produkt erfüllt die wichtigsten funktionalen Anforderungen.
 Es fehlt aber der manuelle Eingriff vom Dashboard.
 Dieser wäre relevant, wenn das LSTM-Modell es nicht schafft die richtigen Steuersignale an den Pico zu schicken.
 Zur Kontrolle wurde in E2E Test 5 geprüft, ob der Controller bei kritisch hohen Temperaturen auf jeden Fall kühlt.
+Außerdem gehen wir davon aus, dass der verwendete Temperatursensor defekt ist.
+Deswegen ist unklar, inwiefern der gewünschte Temperaturbereich reguliert werden kann.
 
 **Nicht-funktionale Anforderungen:**
 
