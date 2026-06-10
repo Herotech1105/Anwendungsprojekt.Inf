@@ -567,6 +567,16 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 * Bei Spannungsversorgung ohne Datenfluss (zum Beispiel Pico direkt über USB-Kabel an Netzteil) startet main.py
   automatisch
 
+### Gehäuse
+
+* Das Gehäuse besteht aus mehreren Komponenten, die in "documentation/technical drawings" und auch den "documentation/stl-files" gefunden werden können
+* Der Peltier-Adapter kann an die Rückseite des Gehäuses eingeschoben werden
+* Weitere Komponenten werden verschraubt
+* Die stl-files sind 3D-Modell-Dateien, die in einem beliebigen CAD-Programm geöffnet werden können
+* Die Technischen Zeichnungen und der Schaltplan sind als SVG-Vektorgrafiken gespeichert
+* In CAD-file findet sich die FreeCAD 1.0.2 Projektdatei, welche alle Modelle, Technische Zeichnungen und deren Entwicklungsverlauf aufzeigt
+* Bilder des Aufbaus finden sich im Verzeichnis "pico exterior"
+
 ### Backend server
 
 * Verbinde dich über ssh mit dem Backend
@@ -697,6 +707,13 @@ Entwickler an welchem Codeabschnitt gearbeitet hatte und über welche Kompetenze
 Eine Folge dieses agilen Vorgehens war eine ungleiche Verteilung der Arbeitsaufwände. Gelöst wurde dies durch
 Kanban-Elemente wie „To-do“, „In Bearbeitung“, „Zu testen“ und „Fertig“, wodurch offene Aufgaben gezielt gefunden und
 übernommen werden konnten.
+
+#### Weitere Hürden im Projektverlauf
+
+Das Zeitmanagement der Vorlesungen, Selbststudium und Projektarbeiten zeigte klare Konflikte bei der Bearbeitung des Projekts, 
+es musste flexibel geplant werden, da andere Tätigkeiten meist prioritär waren und somit das Abschließen von Projektaufgaben sich verzögerte. 
+Weiterhin bestanden Engpässe in den Lieferzeiten verwendeter, zusätzlicher Komponenten wie zum Beispiel dem Peltier-Element und den dazugehörigen Netzteilen.
+Viele Aufgaben einzelner Phasen konnten nicht innerhalb der jeweiligen Phasen abgeschlossen werden, weshalb diese in den nächsten Phasen weiter bearbeitet wurden.
 
 ## Literatur und Hilfsmittel
 
