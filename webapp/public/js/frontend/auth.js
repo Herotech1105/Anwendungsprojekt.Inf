@@ -26,9 +26,11 @@ export function initAuth() {
 
         updateUserInfo();
 
+        // Events & Theme erst nach Login
         initEvents();
         initThemeToggle();
 
+        // Token automatisch erneuern
         setInterval(() => {
             keycloak.updateToken(30).catch(() => keycloak.login());
         }, 20000);
@@ -48,3 +50,4 @@ function updateUserInfo() {
     const name = keycloak.tokenParsed?.preferred_username || "Unbekannt";
     el.textContent = `Eingeloggt als: ${name}`;
 }
+
