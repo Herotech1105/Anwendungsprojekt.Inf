@@ -225,6 +225,7 @@ Liste mit übrigen Aufgaben
 | CA/*               | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt                                                                     | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis                                                                                                                                                                       |
 | environment/*      | Environment Variablen wurden von der docker-compose und den Dockerfiles in dieses Verzeichnis nach dem Namensschema [container_name].env ausgelagert | Die Environment Dateien sind jetzt an einem Ort gebündelt; <br/>Es war geplant die Applikation so zu gestalten, dass die Änderungen in den environment Dateien reichen, um alle notwendigen Änderungen auf das gesammte Projekt auszuweiten;<br/> Aus Zeitdruck wurde das leider nicht mehr erreicht |
 | docker-compose.yml | Anpassung an obere Änderungen; docker-compose stellt den Services die Zertifikate jetzt über volumes zur Verfügung                                   | Die Zertifikate lagen vorher als Kopie im jeweiligen Verzeichnis, in dem sie gebraucht wurden; <br/>Jetzt werden die Zertifikate nur unter CA abgelegt und von der docker-compose als volumes in die Container gemounted                                                                             |
+|train.py| Entfernt| Wurde nicht mehr benötigt, weil die Trainingsmethode von model_trainer.py effizienter ist.
 
 ## Projektstruktur
 
