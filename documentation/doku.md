@@ -52,14 +52,38 @@ GANT-Diagramm:
 
 ### Phase 3:
 
-Datum: 29.04.2026 - 05.05.2026
-Problemstellung: Sichere Übertragung der Sensordaten an MQTT
-Verantwortlicher: Walter neer
+Datum: 29.04.2026 - 05.05.2026  
+Problemstellung: Sichere Übertragung der Sensordaten an MQTT  
+Verantwortlicher: Walter neer  
 GANT-Diagramm:
 ![GANT Diagramm Phase 3](./Phase_3/Phase_3_GANT.png)
 
-| Datei | Änderung | Erklärung |
-|-------|----------|-----------|
+| Datei                                   | Änderung                                          | Erklärung                                                                                                                                      |
+|-----------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| configurations/pico_main.py             | In Module aufgeteilt                              | Aufgrund von Erweiterungen des Codes, für die Übersichtlichkeit in Module mit eigener Zuständigkeit aufgeteilt                                 |
+| configurations/pico/iot_config.py       | Neu                                               | Enthält alle Variablen für die Konfiguration von MQTT, CA und WLAN                                                                             |
+| configurations/pico/control.py          | Neu                                               | Initialisierung der Pico Pins und Zuweisung an Sensor und Aktoren                                                                              |
+| configurations/pico/wifi.py             | Neu                                               | Zuständig für Konfiguration und Aufbau einer WLAN-Verbindung                                                                                   |
+| configurations/pico/mqtt.py             | Neu                                               | Zuständig für Konfiguration, Verarbeitung und Aufbau einer MQTT-Verbindung mit CA                                                              |
+| configurations/pico/states.py           | Neu                                               | Steuert Aktoren je nach erhaltener Anweisung mit Zustandsinformation                                                                           |
+| configurations/pico/main.py             | Neu                                               | Hauptdatei des Pico, wird als erstes ausgeführt und ist für den Programmablauf verantwortlich                                                  |
+| configurations/pico/lib/picozero        | Schon in Phase 2 enthalten                        | Bibliothek für die Ansteuerung der On-Board-LED des Pico                                                                                       |
+| configurations/pico/lib/umqtt           | Neu                                               | Bibliothek für MQTT relevante Funktionen, enthält simple.py und robust.py                                                                      |
+| configurations/pico/lib/lcd_api.py      | Neu                                               | Basisklasse für den Aufbau einer I2C-Verbindung                                                                                                |
+| configurations/pico/lib/pico_i2c_lcd.py | Neu                                               | Enthält Methoden für das Ansteuern eines LCD-Displays über den Pico, verwendet die Basisklasse aus lcd_api.py                                  |
+| CA/ca.key                               | Neu                                               | Private Schlüsseldatei der CA, zum signieren von Zertifikaten                                                                                  |
+| CA/ca.srl                               | Neu                                               | Seriennummerndatei der CA, enthält Seriennummern von signierten Zertifikaten                                                                   |
+| CA/ca.crt                               | Neu                                               | Öffentliches Zertifikat der CA, zum prüfen der Signatur anderer Zertifikate                                                                    |
+| CA/ca.der                               | Neu                                               | Wie ca.crt aber als Binärdatei statt Text, damit der Pico damit arbeiten kann                                                                  |
+| CA/req.cnf                              | Neu                                               | Konfigurationsdatei für OpenSSL mit Einstellungen für beispielsweise Erweiterungen (weitere Hostnamen), wird für mqtt.csr und ca.crt verwendet |
+| CA/mqtt.key                             | Neu                                               | Privater Schlüssel des MQTT-Servers, wird für TLS-Verschlüsselung benutzt                                                                      |
+| CA/mqtt.csr                             | Neu                                               | Wird aus mqtt.key erzeugt, für das Erhalten eines Zertifikats vom CA                                                                           |
+| CA/mqtt.crt                             | Neu                                               | Signiertes Zertifikat des MQTT-Brokers, vom ca.key signiert, Beweis für Clients, dass das Zertifikat über CA gültig ist                        |
+| docker-compose.yml                      | Neu, Konfiguration für mqtt-Container hinzugefügt | Konfiguration mit eclipse-mosquitto Image und Port 8883, benötigte volumes gemountet                                                           |
+| mosquitto/config/mosquitto.conf         | Neu                                               | Konfigurationsdatei für den MQTT-Broker                                                                                                        |
+| mosquitto/log/mosquitto.log             | Neu                                               | Logdatei für den MQTT-Broker                                                                                                                   |
+| mosquitto/secure/acl                    | Neu                                               | Angelegte Nutzer und deren Zugriffsrechte auf topics                                                                                           |
+| mosquitto/secure/pwfile                 | Neu                                               | Existierende Nutzer und deren verschlüsselte Zugangsdaten                                                                                      |
 
 ### Phase 4:
 
