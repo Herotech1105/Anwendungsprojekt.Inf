@@ -642,6 +642,18 @@ entschieden aus Sicherheitsgründen auf manuelle Steuerung zu verzichten.
 
 ### Erfahrungsgewinn
 
+#### Management
+Das Projekt war nicht nur kompliziert, sondern wies eine hohe Komplexität auf, die durch die unterschiedlichen Qualifikationen der Entwickler zusätzlich verstärkt wurde. Diese ermöglicht einen großen Erfahrungsgewinn.
+
+##### Wechsel der Projektmanagement-Plattform
+Während der Projektentwicklung musste die Projektmanagement-Plattform mehrfach gewechselt werden, da es wiederholt zu Zugangssperren kam. Ursache waren nicht offensichtlich gekennzeichnete Probezeiträume: Nach deren Ablauf wurden entweder kostenpflichtige Beiträge gefordert, oder der Zugriff auf die bereits eingegebenen Daten ging verloren. Dieses Problem lässt sich vermeiden, indem die AGB vor der Nutzung genau gelesen oder von vornherein selbst gehostete Management-Tools eingesetzt werden.
+
+##### Unklare Abhängigkeiten, Aufwände und Kompetenzen
+Es ergaben sich Unklarheiten bei der Einteilung der Unteraufgaben und der Planung ihrer Abhängigkeiten.
+Als Reaktion darauf wurde ein Projektstrukturplan (PSP) adaptiv eingesetzt; seine Aufgabenzuordnung diente als initiale Vorgehensweise für die jeweilige Projektphase. Ergänzend wurde eine Verantwortungszuordnung genutzt, um mehrere Phasen gleichzeitig an verschiedenen Stellen zu starten.
+Während der Bearbeitung traten jedoch latente Abhängigkeiten zutage, die zu vermeidbaren Verzögerungen führten. Um diese Effekte zu minimieren, wurde mit einem agilen PDCA-Zyklus gearbeitet: Änderungen wurden direkt im Main-Branch umgesetzt und unmittelbar auf ihre Kompatibilität getestet. Statt autoritärer Entscheidungsfindung erfolgten möglichst direkte Absprachen. Erleichtert wurde dies durch die Git-Autorenverfolgung, da sich darüber nachvollziehen ließ, welcher Entwickler an welchem Codeabschnitt gearbeitet hatte und über welche Kompetenzen er verfügte.
+Eine Folge dieses agilen Vorgehens war eine ungleiche Verteilung der Arbeitsaufwände. Gelöst wurde dies durch Kanban-Elemente wie „To-do", „In Bearbeitung", „Zu testen" und „Fertig", wodurch offene Aufgaben gezielt gefunden und übernommen werden konnten.
+
 ## Literatur und Hilfsmittel
 
 https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3
