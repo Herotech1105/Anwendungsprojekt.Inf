@@ -2,6 +2,7 @@
 
 In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Temperatur entwickelt, dass die Messdaten sicher
 speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
+Zielwerte für die Temperatur sind zwischen 19 °C und 21 °C und für die Luftfeuchtigkeit zwischen 40 % und 55 %.
 Das Projekt wurde bewältigt durch:
 * Tim Dorozynski
 * Lennart Esch
@@ -9,7 +10,6 @@ Das Projekt wurde bewältigt durch:
 * Walter Neer
 * Barnabas Steiner
 * Jannis Weber
-Zielwerte für die Temperatur sind zwischen 19 °C und 21 °C und für die Luftfeuchtigkeit zwischen 40 % und 55 %.
 
 ## Anforderungen und Struktur
 
