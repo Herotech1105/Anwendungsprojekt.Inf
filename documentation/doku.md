@@ -4,6 +4,8 @@ In diesem Projekt wurde ein Regulierungssystem für Luftfeuchtigkeit und Tempera
 speichert und für einen authentifizierten Nutzer die Messdaten der letzten Woche visualisiert.  
 Die Anforderungen für das Endprodukt waren die folgenden:
 
+## Anforderungen und Struktur
+
 **Funktionale Anforderungen:**
 
 | Nr. | Funktion                            | Beschreibung                                                                                           | Prio   |
@@ -445,7 +447,7 @@ Gegebene Endpoints:
 - **GET /api/admin/export** — Aktuelle und archivierte Sensordaten als CSV erhalten
 - **POST /api/internal/sensordata** — Sensordaten in Datenbank schreiben
 
-### E2E-tests
+### tests/E2E-tests
 
 End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bzw. zum Dashboard abdecken.
 
@@ -506,22 +508,6 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 - 7b: Normaler User (`dashboard-user`) → 200 auf `/api/sensordata` + 403 auf `/api/admin/export`
 - 7c: User ohne Rolle (`testuser_norole`) → 403 auf `/api/sensordata`
 
-## E2E-tests Ergebnisse
-
-Ausgeführt am 10.06.2026 auf dem Raspberry Pi Backend.
-
-| Test | Beschreibung | Ergebnis | Details |
-|------|-------------|----------|---------|
-| Test 1 | Sensor → DB | PASS (4/4) | Temperatur 17.77 in DB gefunden |
-| Test 2 | Keycloak Token Flow | PASS (5/5) | Rolle `controller-ingest` vorhanden, Bearer akzeptiert |
-| Test 3 | No Auth Rejected | PASS (4/4) | Alle unautorisierten Requests korrekt abgelehnt |
-| Test 4 | Invalid Data Rejected | PASS (3/3) | Kein neuer DB-Eintrag nach 5 ungültigen Nachrichten |
-| Test 5 | Actuator Control | PASS (3/3) | 15× `COOL` auf `actuator/control` empfangen |
-| Test 6 | TLS Validation | PASS (3/3) | CA-Zertifikat validiert, falsches Zertifikat abgelehnt |
-| Test 7 | Dashboard Access | PASS (8/8) | Admin: voll, User: eingeschränkt, Ohne Rolle: abgelehnt |
-
-**Gesamtergebnis: 7/7 Tests bestanden **
-
 ## Installation und Inbetriebnahme
 
 ### Pi Setup
@@ -574,6 +560,20 @@ Danach wird das Dashboard angezeigt.
 Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
 
 ## E2E-tests Ergebnisse
+
+Ausgeführt am 10.06.2026 auf dem Raspberry Pi Backend.
+
+| Test   | Beschreibung          | Ergebnis   | Details                                                 |
+|--------|-----------------------|------------|---------------------------------------------------------|
+| Test 1 | Sensor → DB           | PASS (4/4) | Temperatur 17.77 in DB gefunden                         |
+| Test 2 | Keycloak Token Flow   | PASS (5/5) | Rolle `controller-ingest` vorhanden, Bearer akzeptiert  |
+| Test 3 | No Auth Rejected      | PASS (4/4) | Alle unautorisierten Requests korrekt abgelehnt         |
+| Test 4 | Invalid Data Rejected | PASS (3/3) | Kein neuer DB-Eintrag nach 5 ungültigen Nachrichten     |
+| Test 5 | Actuator Control      | PASS (3/3) | 15× `COOL` auf `actuator/control` empfangen             |
+| Test 6 | TLS Validation        | PASS (3/3) | CA-Zertifikat validiert, falsches Zertifikat abgelehnt  |
+| Test 7 | Dashboard Access      | PASS (8/8) | Admin: voll, User: eingeschränkt, Ohne Rolle: abgelehnt |
+
+**Gesamtergebnis: 7/7 Tests bestanden **
 
 ## Fazit
 
