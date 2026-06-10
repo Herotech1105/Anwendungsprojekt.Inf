@@ -28,7 +28,7 @@ Im Folgenden sind die konkreten Änderungen während der einzelnen Phasen aufgeg
 Datum: 11.04.2026 - 23.04.2026  
 Problemstellung: Planung des Projektes und dessen 6 Phasen  
 Verantwortlicher: Jannis Weber  
-GANT-Diagramm: [Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
+GANT-Diagramm: ![Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
 
 | Datei                                                    | Änderung | Erklärung                                                                           |
 |----------------------------------------------------------|----------|-------------------------------------------------------------------------------------|
@@ -41,8 +41,10 @@ GANT-Diagramm: [Gantt_Phase1.pdf](Phase_1/Gantt_Phase1.pdf)
 Datum: 11.04.2026 - 28.04.2026  
 Problemstellung: Deployment der Kern-Infrastruktur  
 Verantwortlicher: Benjamin Hager  
-GANT-Diagramm: 
-![GANT Diagramm Phase 2](./Phase_2/phase-2-gantt.svg)  
+GANT-Diagramm:
+![GANT Diagramm Phase 2](./Phase_2/phase-2-gantt.svg)
+Deployment-Diagramm:  
+
 
 | Datei                           | Änderung                                                                                                                   | Erklärung                                                                                                                                                                                                                                                                             |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -91,7 +93,9 @@ Datum: 06.05.2026 - 12.05.2026
 Problemstellung: Sichere Übermittlung der Sensordaten und Speicherung in der Datenbank  
 Verantwortlicher: Lennart Esch  
 GANT-Diagramm:
-![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)
+![GANT Diagramm Phase 4](./Phase_4/Phase_4_GANT.png)  
+Deployment-Diagramm:  
+![Deployment-Diagramm Phase 4](Phase_4/Phase_4_deployment_diagram.png)
 
 | Datei                      | Änderung                                         | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |----------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -169,10 +173,11 @@ GANT-Diagramm:
 
 Liste mit übrigen Aufgaben
 
-| Datei         | Änderung                                                                                                                                             | Erklärung                                                                                                                                            |
-|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CA/*          | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt                                                                     | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis                       |
-| environment/* | Environment Variablen wurden von der docker-compose und den Dockerfiles in dieses Verzeichnis nach dem Namensschema [container_name].env ausgelagert | Die Environment Dateien sind jetzt an einem Ort gebündelt und müssen bei Installation der Software angepasst werden, was hierdurch vereinfacht wurde |
+| Datei              | Änderung                                                                                                                                             | Erklärung                                                                                                                                                                                                                                                                                            |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CA/*               | Neugennerierung aller Zertifikate; Alle Zertifikate sind jetzt unter CA abgelegt                                                                     | Aufgrund von Schwierigkeiten bei den Zertifikaten wurden alle Zertifikate neu erstellt und befinden sich nun im CA Verzeichnis                                                                                                                                                                       |
+| environment/*      | Environment Variablen wurden von der docker-compose und den Dockerfiles in dieses Verzeichnis nach dem Namensschema [container_name].env ausgelagert | Die Environment Dateien sind jetzt an einem Ort gebündelt; <br/>Es war geplant die Applikation so zu gestalten, dass die Änderungen in den environment Dateien reichen, um alle notwendigen Änderungen auf das gesammte Projekt auszuweiten;<br/> Aus Zeitdruck wurde das leider nicht mehr erreicht |
+| docker-compose.yml | Anpassung an obere Änderungen; docker-compose stellt den Services die Zertifikate jetzt über volumes zur Verfügung                                   | Die Zertifikate lagen vorher als Kopie im jeweiligen Verzeichnis, in dem sie gebraucht wurden; <br/>Jetzt werden die Zertifikate nur unter CA abgelegt und von der docker-compose als volumes in die Container gemounted                                                                             |
 
 ## Projektstruktur
 
@@ -224,6 +229,9 @@ Erstellt mit MS-DOS `tree`
     ├───nginx
     │       nginx.conf
     │
+    ├───tests/E2E-tests
+    │       (Testdateien für die Ende zu Ende Tests)
+    │
     └───webapp
          │   (Hauptdateien für den Webserver)
          │
@@ -232,7 +240,7 @@ Erstellt mit MS-DOS `tree`
 
 ## Deployment Diagramm
 
-[Deployment Diagramm Gesammt](./DeploymentDiagramm.png)
+![Deployment Diagramm Gesamt](./DeploymentDiagramm.png)
 
 ## Beschreibung der Komponenten
 
@@ -256,12 +264,14 @@ Sendet Sensordaten über MQTT an den MQTT-Broker, liest vom controller gesendete
 ### controller
 
 Empfängt Sensordaten vom MQTT-Broker, validiert und leitet sie per HTTPS an das Backend weiter.
-Erstellt mithilfe eines LSTM-Modells Vorhersagen und publiziert Steuerungsbefehle (`COOL`, `HEAT`, `DRY`, `HUM`) an den Pico.
+Erstellt mithilfe eines LSTM-Modells Vorhersagen und publiziert Steuerungsbefehle (`COOL`, `HEAT`, `DRY`, `HUM`) an den
+Pico.
 Authentifiziert sich per Keycloak Client Credentials Flow mit der Rolle `controller-ingest`.
 
 #### `config.py`
 
-Liest alle Betriebsparameter (MQTT, Backend-URL, Keycloak, Schwellenwerte) aus Environment-Variablen und konfiguriert das Logging.
+Liest alle Betriebsparameter (MQTT, Backend-URL, Keycloak, Schwellenwerte) aus Environment-Variablen und konfiguriert
+das Logging.
 
 #### `controller.py`
 
@@ -269,11 +279,13 @@ Einstiegspunkt des Controllers. Prüft beim Start die Keycloak-Authentifizierung
 
 #### `keycloak_auth.py`
 
-Holt und cached das Keycloak Access-Token per Client Credentials Flow und prüft ob die Rolle `controller-ingest` enthalten ist.
+Holt und cached das Keycloak Access-Token per Client Credentials Flow und prüft ob die Rolle `controller-ingest`
+enthalten ist.
 
 #### `mqtt_handler.py`
 
-Baut den MQTT-Client auf und verarbeitet eingehende Nachrichten: Validierung, Weiterleitung ans Backend, LSTM-Vorhersage und Publish der Steuerungsbefehle auf `actuator/control`.
+Baut den MQTT-Client auf und verarbeitet eingehende Nachrichten: Validierung, Weiterleitung ans Backend, LSTM-Vorhersage
+und Publish der Steuerungsbefehle auf `actuator/control`.
 
 #### `https_client.py`
 
@@ -332,7 +344,8 @@ Damit werden korrekte Einträge in der Datenbank gewährleistet.
 
 #### server.js
 
-Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die Datenbank.
+Hauptkomponente des zum Starten des Webservers. Beinhaltet ebenfalls API für Lese- und Schreibzugriffe auf die
+Datenbank.
 Gegebene Endpoints:
 
 - **GET /api/status** — Serverstatus abfragen
@@ -360,14 +373,15 @@ Gegebene Endpoints:
 ### Pi Pico
 
 * Verbinde den Pi Pico über Micro-USB an USB-A/USB-C eines Endgerätes mit Thonny:
-  1. BOOTSEL-Taste (weiße Taste auf Pico) gedrückt halten
-  2. An Entwicklungs-Endgerät per USB-Kabel anschließen
-  3. .uf2-Datei mit der MicroPython-Firmware auf das Laufwerk "RPI-RP2" per Drag und Drop kopieren. 
-  4. Pico startet neu
+    1. BOOTSEL-Taste (weiße Taste auf Pico) gedrückt halten
+    2. An Entwicklungs-Endgerät per USB-Kabel anschließen
+    3. .uf2-Datei mit der MicroPython-Firmware auf das Laufwerk "RPI-RP2" per Drag und Drop kopieren.
+    4. Pico startet neu
 * Danach kann der Pi Pico immer wieder eingesteckt und Thonny geöffnet werden
 * Der Pi Pico verbindet sich dann automatisch mit Thonny
 * main.py auswählen und "Run current script" Button klicken um zu starten
-* Bei Spannungsversorgung ohne Datenfluss (zum Beispiel Pico direkt über USB-Kabel an Netzteil) startet main.py automatisch
+* Bei Spannungsversorgung ohne Datenfluss (zum Beispiel Pico direkt über USB-Kabel an Netzteil) startet main.py
+  automatisch
 
 ### Backend server
 
@@ -389,12 +403,10 @@ Der Pico wird durch Ausführen der `main.py` gestartet.
 Nach dem Start kann eine Verbindung zum Netzwerk aufgebaut werden und
 unter [https://local.kleber.data](https://local.kleber.data) das Web Dashboard besucht werden.  
 Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].
-Danach wird das Dashboard angezeigt. 
-Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren. 
+Danach wird das Dashboard angezeigt.
+Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
 
 ## Fazit
-
-
 
 ## Literatur und Hilfsmittel
 
