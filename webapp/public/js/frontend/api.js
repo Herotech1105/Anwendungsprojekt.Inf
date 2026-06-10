@@ -31,7 +31,7 @@ export async function exportDatabase() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "myapp_export.sql";
+    a.download = `myapp_export${new Date().toString()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
 }
