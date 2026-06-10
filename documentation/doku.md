@@ -708,25 +708,31 @@ umqtt reference
 
 https://www.drawio.com/
 Zugriff 10.06.2026
-Deployment-Diagramme
+Deployment-Diagramme und Schaltplan
 
 FreeCAD 1.0.2: Erstellung der 3D-Modelle und technischen Zeichnungen
-InkScape: Erstellung LOGO.svg
-draw.io: Erstellung Schaltplan
+Inkscape: Erstellung LOGO.svg
 Bambu Studio: 3D-Modelle für den Druck slicen
 Bambu Lab P1S-Drucker: Drucken der 3D-Modelle
 
+Google Übersetzer: Deutsch zu Englisch
+
 https://claude.ai/
-Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation eingesetzt.
-Beispiel-Promt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu
+Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation.
+Beispiel-Prompt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu
 verändern
-Beispiel-Promt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
-Beispiel-Promt: Erkläre mir was genau ich brauche, um einen Controller zu bauen.
+Beispiel-Prompt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
+Beispiel-Prompt: Erkläre mir was genau ich brauche um einen Controller zu bauen.
 
 https://gemini.google.com/app
 Google Gemini: Eingesetzt zur Fehlercode-Analyse.
 Beispiel-Prompt: What is the source of the following error on python3.13 if it works on a python3.12-slim: "ca cert does
 not include key usage extension"
 
+https://copilot.microsoft.com/
+Microsoft Copilot: Eingesetzt für Fehleranalyse und Informationsrecherche.  
+Beispiel-Prompt: Mir wird aktuell dieser Fehlercode ausgegeben, könntest du mir erläutern, wieso dieser geworfen wird?  
+Beispiel-Prompt: Finde mir Datenblätter zu diesem Bauteil.
+
 https://github.com/
-Codereposortory für Synkrosination und Rapid Deployment.
+Code-Repository
