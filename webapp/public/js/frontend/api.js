@@ -19,7 +19,7 @@ export function getSensorRange(from, to) {
 
 export async function exportDatabase() {
     const res = await fetch("/api/admin/export", {
-        headers: { Authorization: `Bearer ${keycloak.token}` }
+        headers: { Authorization: "Bearer " + keycloak.token }
     });
 
     if (!res.ok) {

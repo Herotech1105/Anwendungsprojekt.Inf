@@ -1,5 +1,5 @@
 // js/frontend/events.js
-import { logout } from "./auth.js";
+import { logout, keycloak } from "./auth.js";
 import { exportDatabase } from "./api.js";
 
 export function initEvents() {
@@ -22,7 +22,7 @@ export function initEvents() {
 
     // Export nur für Admins
     document.getElementById("exportBtn").addEventListener("click", () => {
-        const roles = window.keycloak.tokenParsed?.realm_access?.roles || [];
+        const roles = keycloak.tokenParsed?.realm_access?.roles || [];
 
         if (!roles.includes("admin")) {
             alert("Nur Admins dürfen exportieren.");
