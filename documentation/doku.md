@@ -362,8 +362,8 @@ müssten.
 ### keycloak
 
 Hier liegen die Daten des Identitäts und Zugangsrechte Verwaltungsystem (IAM).
-* Rollen: admin-user, dashboard-user, controller-ingest
-* Identitäten: testuser_norole, iotuser01, dashboard-user, admin, service-account-controller-client
+* Rollen: dashboard-user (Lesen von 1 Woche), admin-user (Exportieren von DB), controller-ingest (zum schreiben von Daten)
+* Identitäten: iotuser01(Daschboard User Identität), dashboard-user("), admin ("), service-account-controller-client(NICHT menschlicher User), testuser_norole (E2E Probe), 
 * Clients: dashboard-client, controller-client
 
 ### mariadb
