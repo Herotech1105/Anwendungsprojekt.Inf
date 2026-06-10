@@ -354,6 +354,67 @@ Gegebene Endpoints:
 - **GET /api/admin/export** — Aktuelle und Archivierte Sensordaten als CSV erhalten
 - **POST /api/internal/sensordata** — Sensordaten in Datenbank schreiben
 
+### E2E-tests
+
+End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bzw. zum Dashboard abdecken.
+
+#### Test 1: Sensordaten → Datenbank (Happy Path)
+
+    MQTT-Nachricht publizieren → Broker → controller.py → HTTP POST an Backend → Wert in MariaDB prüfen
+
+- Simulierte MQTT-Nachricht `{"temperature": 17.77, "humidity": 44.33}` auf `sensor/data` publishen
+- Warten bis der Wert durch die Pipeline fließt
+- Prüfen: Ist der Wert im Zeitfenster über `/api/sensordata/range` auffindbar?
+
+#### Test 2: Keycloak AuthN/AuthZ (Token-Flow)
+
+    Controller holt Token → JWT dekodieren → Rolle prüfen → Request mit Bearer Header → Backend akzeptiert
+
+- Client Credentials Flow: Token von Keycloak mit `controller-client` holen
+- Prüfen: Hat das JWT die Rolle `controller-ingest` in `realm_access.roles`?
+- Prüfen: Akzeptiert `/api/sensordata` einen Request nur mit Bearer Token?
+
+#### Test 3: Unauthentifizierte Requests werden abgelehnt
+
+    Request ohne Auth → nginx → server.js → 401/403 Rejected
+
+- POST ohne jegliche Header → erwartet 401
+- POST mit falschem API-Key → erwartet 401
+- GET ohne Bearer Token → erwartet 401
+- GET mit ungültigem Bearer Token → erwartet 403
+
+#### Test 4: Ungültige Sensordaten werden verworfen
+
+    Ungültige MQTT-Nachricht → Broker → controller.py (verwirft) → kein neuer Eintrag in DB
+
+- 5 verschiedene ungültige Payloads publishen (fehlende Felder, falscher Typ, leerer String, kein JSON, Extremwerte)
+- Warten bis Pipeline verarbeitet hätte
+- Prüfen: Kein neuer Eintrag in der Datenbank seit Testbeginn
+
+#### Test 5: Aktor-Steuerung bei hoher Temperatur
+
+    MQTT "sensor/data" (35°C) → controller.py → LSTM-Modell → MQTT "actuator/control" = "COOL"
+
+- 15 Nachrichten mit `temperature: 35.0` publishen um den LSTM-Buffer zu füllen
+- Gleichzeitig auf `actuator/control` Topic subscriben
+- Prüfen: Kommt ein `COOL`-Befehl vom Controller zurück?
+
+#### Test 6: TLS-Zertifikatsvalidierung
+
+    HTTPS-Request → nginx (mit CA-Zertifikat validiert)
+
+- Prüfen: CA-Zertifikatsdatei existiert auf dem System
+- Prüfen: HTTPS-Verbindung mit korrektem CA-Zertifikat funktioniert
+- Prüfen: HTTPS-Verbindung mit falschem Zertifikat wird abgelehnt (SSLError)
+
+#### Test 7: Dashboard-Zugriff (Rollenbasiert)
+
+    User → Keycloak (Login + Token) → nginx → server.js → Rolle prüfen → Zugriff erlauben/verweigern
+
+- 7a: Admin-User (`admin-user` + `dashboard-user`) → 200 auf `/api/sensordata` + 200 auf `/api/admin/export`
+- 7b: Normaler User (`dashboard-user`) → 200 auf `/api/sensordata` + 403 auf `/api/admin/export`
+- 7c: User ohne Rolle (`testuser_norole`) → 403 auf `/api/sensordata`
+
 ## Installation und Inbetriebnahme
 
 ### Pi Setup
@@ -405,6 +466,9 @@ unter [https://local.kleber.data](https://local.kleber.data) das Web Dashboard b
 Hier folgt eine Anmeldung mit [iotuser01]: [password] oder [admin]: [admin].
 Danach wird das Dashboard angezeigt.
 Als Admin besteht außerdem die Möglichkeit alle Sensordaten als CSV-Datei zu exportieren.
+
+### E2E-tests Ergebnisse
+
 
 ## Fazit
 
