@@ -681,3 +681,9 @@ InkScape: Erstellung LOGO.svg
 draw.io: Erstellung Schaltplan
 Bambu Studio: 3D-Modelle für den Druck slicen
 Bambu Lab P1S-Drucker: Drucken der 3D-Modelle
+
+https://claude.ai/
+Claude Code: Eingesetzt bei Recherche, Code-Vorschlägen und Dokumentation eingesetzt.
+Beispiel-Promt: Übersetze diese deutschen Kommentare und Docstrings in meinen Code ins Englische, ohne die Logik zu verändern
+Beispiel-Promt: Warum schlägt mein E2E-Test fehl, obwohl die Daten in der Datenbank ankommen?
+Beispiel-Promt: Erkläre mir was genau ich brauche um einen Controller zu bauen. 
