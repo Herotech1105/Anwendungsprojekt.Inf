@@ -500,6 +500,22 @@ End-to-End-Tests, die die gesamte Pipeline vom MQTT-Publish bis zur Datenbank bz
 - 7b: Normaler User (`dashboard-user`) → 200 auf `/api/sensordata` + 403 auf `/api/admin/export`
 - 7c: User ohne Rolle (`testuser_norole`) → 403 auf `/api/sensordata`
 
+## E2E-tests Ergebnisse
+
+Ausgeführt am 10.06.2026 auf dem Raspberry Pi Backend.
+
+| Test | Beschreibung | Ergebnis | Details |
+|------|-------------|----------|---------|
+| Test 1 | Sensor → DB | PASS (4/4) | Temperatur 17.77 in DB gefunden |
+| Test 2 | Keycloak Token Flow | PASS (5/5) | Rolle `controller-ingest` vorhanden, Bearer akzeptiert |
+| Test 3 | No Auth Rejected | PASS (4/4) | Alle unautorisierten Requests korrekt abgelehnt |
+| Test 4 | Invalid Data Rejected | PASS (3/3) | Kein neuer DB-Eintrag nach 5 ungültigen Nachrichten |
+| Test 5 | Actuator Control | PASS (3/3) | 15× `COOL` auf `actuator/control` empfangen |
+| Test 6 | TLS Validation | PASS (3/3) | CA-Zertifikat validiert, falsches Zertifikat abgelehnt |
+| Test 7 | Dashboard Access | PASS (8/8) | Admin: voll, User: eingeschränkt, Ohne Rolle: abgelehnt |
+
+**Gesamtergebnis: 7/7 Tests bestanden **
+
 ## Installation und Inbetriebnahme
 
 ### Pi Setup
